@@ -1,0 +1,312 @@
+{
+  "head": {
+    "vars": [ "tag" ]
+  } ,
+  "results": {
+    "bindings": [
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/9月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/木曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/朝" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/深夜" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/8月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/土曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/夏" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/夜" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/火曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/昼" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/夕方" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/水曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/部屋" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/作業" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/月曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/帰り" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/泣きたい" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/金曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/雪" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/ドライブ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/電車" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/ポジティブ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/海" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/車" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/6月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/誕生日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/日曜日" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/カフェ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/雨" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/風呂" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/楽しい" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/晴" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/春" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/花火" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/秋" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/失恋" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/サッカー" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/幸せ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/職場" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/アゲアゲ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/暑い" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/疲れた" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/7月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/10月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/カラオケ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/パーティー" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/眠い" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/山" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/スッキリ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/冬" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/街" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/ネガティブ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/クリスマス" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/踊る" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/田舎" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/移動" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/野球" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/だるい" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/つらい" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/悲しい" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/11月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/イライラ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/読書" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/しっとり" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/癒し" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/3月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/旅行" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/やる気" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/ハロウィン" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/飲み会" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/寒い" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/曇" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/12月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/散歩" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/レストラン" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/病み" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/落ち込む" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/体育祭" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/やる気出ない" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/ランニング" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/結婚式" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/フェス" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/七夕" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/明け方" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/卒業" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/紅葉" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/緊張" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/年末" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/文化祭" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/スキー" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/5月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/正月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/4月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/都会" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/1月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/2月" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/モヤモヤ" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/入学" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/夏祭り" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/節分" }
+      } ,
+      {
+        "tag": { "type": "uri" , "value": "http://music.metadata.database.tag/バレンタイン" }
+      }
+    ]
+  }
+}

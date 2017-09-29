@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="500"
+    android:exitFadeDuration="200">
+    <!-- ImageButtonの画像クリック時に色を変える -->
+    <item android:state_pressed="true">
+        <!-- 丸ボタン用(oval) -->
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval">
+            <!-- ボタンの色(半透明で薄いグレー) -->
+            <solid android:color="#22000000"/>
+            <!-- ボタンの枠線(透過してマージン代わり) -->
+            <stroke android:width="2dp" android:color="#AAA"/>
+        </shape>
+    </item>
+    <item android:drawable="@android:color/transparent"/>
+</selector>
