@@ -9,7 +9,7 @@ import android.widget.ImageView;
  * Created by tlabuser on 2017/07/13.
  */
 
-class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
+public class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
     private ImageView image;
     private String    tag;
 
