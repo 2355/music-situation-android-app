@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Root;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,17 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.tlabuser.musicapplication.Model.Situation;
+import com.example.tlabuser.musicapplication.R;
+
 import java.util.List;
 
 /**
  * set values to Views in item_artist
  */
 
-public class ListArtistAdapter extends ArrayAdapter<Artist> {
+public class ListSituationAdapter extends ArrayAdapter<Situation> {
 
     LayoutInflater mInflater;
 
-    public ListArtistAdapter(Context context, List<Artist> item){
+    public ListSituationAdapter(Context context, List<Situation> item){
         super(context, 0, item);
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
     }
@@ -25,30 +28,27 @@ public class ListArtistAdapter extends ArrayAdapter<Artist> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
 
-        Artist item = getItem(position);
+        Situation item = getItem(position);
         ViewHolder holder;
 
         if(convertView==null){
-            convertView = mInflater.inflate(R.layout.item_artist, null);
+            convertView = mInflater.inflate(R.layout.item_situation, null);
             holder = new ViewHolder();
-            holder.artistTextView   = (TextView)convertView.findViewById(R.id.artist);
-            holder.albumsTextView   = (TextView)convertView.findViewById(R.id.albums);
-            holder.tracksTextView   = (TextView)convertView.findViewById(R.id.tracks);
+            holder.situationTextView = (TextView)convertView.findViewById(R.id.situation);
+            holder.tracksTextView    = (TextView)convertView.findViewById(R.id.tracks);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.artistTextView.setText(item.artist);
-        holder.albumsTextView.setText(String.format("%d Albums", item.albums));
+        holder.situationTextView.setText(item.name);
         holder.tracksTextView.setText(String.format("%d tracks", item.tracks));
 
         return convertView;
     }
 
     static class ViewHolder{
-        TextView  artistTextView;
-        TextView  albumsTextView;
+        TextView  situationTextView;
         TextView  tracksTextView;
     }
 

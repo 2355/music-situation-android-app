@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Artist;
 
 
 import android.os.Bundle;
@@ -6,9 +6,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.tlabuser.musicapplication.View.Root.ListAlbumAdapter;
+import com.example.tlabuser.musicapplication.Main;
+import com.example.tlabuser.musicapplication.Model.Album;
+import com.example.tlabuser.musicapplication.Model.Artist;
+import com.example.tlabuser.musicapplication.R;
 
 import java.util.List;
 

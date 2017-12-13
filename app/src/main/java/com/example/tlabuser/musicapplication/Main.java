@@ -23,6 +23,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tlabuser.musicapplication.Model.Album;
+import com.example.tlabuser.musicapplication.Model.Artist;
+import com.example.tlabuser.musicapplication.Model.ExTrack;
+import com.example.tlabuser.musicapplication.Model.Situation;
+import com.example.tlabuser.musicapplication.Model.Track;
+import com.example.tlabuser.musicapplication.View.Album.AlbumMenu;
+import com.example.tlabuser.musicapplication.View.Artist.ArtistMenu;
+import com.example.tlabuser.musicapplication.View.Player.PlayScreen;
+import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreen;
+import com.example.tlabuser.musicapplication.View.Root.RootMenu;
+import com.example.tlabuser.musicapplication.View.Situation.SituationMenu;
+
 
 public class Main extends FragmentActivity{
 
@@ -33,19 +45,19 @@ public class Main extends FragmentActivity{
     public  void      focusSituation(Situation item)   {if(item != null) focusedSituaion = item;}
     public  Situation getFocusedSituaion()             {return focusedSituaion ;}
 
-    private Album     focusedAlbum;
+    private Album focusedAlbum;
     public  void      focusAlbum(Album item)           {if(item != null) focusedAlbum = item;}
     public  Album     getFocusedAlbum()                {return focusedAlbum ;}
 
-    private Artist    focusedArtist;
+    private Artist focusedArtist;
     public  void      focusArtist(Artist item)         {if(item != null) focusedArtist = item;}
     public  Artist    getFocusedArtist()               {return focusedArtist ;}
 
-    private static Track              focusedTrack;
+    private static Track focusedTrack;
     public  void   focusTrack(Track item)                        {if(item != null) focusedTrack = item;}
     public  static Track              getFocusedTrack()          {return focusedTrack ;}
 
-    private static ExTrack     focusedExTrack;
+    private static ExTrack focusedExTrack;
     public  void   focusExTrack(ExTrack item)      {if(item != null) focusedExTrack = item;}
     public  static ExTrack     getFocusedExTrack() {return focusedExTrack ;}
 

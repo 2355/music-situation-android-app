@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Situation;
 
 
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +14,15 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tlabuser.musicapplication.JsonLoader;
+import com.example.tlabuser.musicapplication.Main;
+import com.example.tlabuser.musicapplication.Model.ExTrack;
+import com.example.tlabuser.musicapplication.Model.Situation;
+import com.example.tlabuser.musicapplication.Model.Track;
+import com.example.tlabuser.musicapplication.R;
+import com.example.tlabuser.musicapplication.SQLOpenHelper;
+import com.example.tlabuser.musicapplication.View.Root.ListTrackAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,12 +43,12 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
 
     JSONArray            jsonArray = new JSONArray();
     List<Track>          trackList;
-    ListTrackAdapter     trackListAdapter;
+    ListTrackAdapter trackListAdapter;
 
-    private SQLOpenHelper        sqlOpenHelper;
+    private SQLOpenHelper sqlOpenHelper;
     private SQLiteDatabase       db;
     List<ExTrack>        exTracks, internalExTracks;
-    ListExTrackAdapter   listExTrackAdapter, listInternalExTrackAdapter;
+    ListExTrackAdapter listExTrackAdapter, listInternalExTrackAdapter;
 
     private CheckBox checkBox;
     private TextView tv_situation_name;
@@ -99,17 +108,17 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
         String urlStr = String.format(
                         "prefix dc: <http://purl.org/dc/elements/1.1/> \n" +
                         "prefix foaf: <http://xmlns.com/foaf/0.1/> \n" +
-                        "prefix name: <http://music.metadata.database.name/> \n" +
+                        "prefix situation: <http://music.metadata.database.situation/> \n" +
                         "prefix tag: <http://music.metadata.database.tag/>\n" +
                         "\n" +
                         "SELECT ?artist ?title ?tag ?weight\n" +
                         "WHERE {\n" +
                         "  ?s foaf:maker ?artist;\n" +
                         "     dc:title ?title;\n" +
-                        "     name:blank ?b.\n" +
+                        "     situation:blank ?b.\n" +
                         "  \n" +
-                        "  ?b name:tag ?tag;\n" +
-                        "      name:weight ?weight.\n" +
+                        "  ?b situation:tag ?tag;\n" +
+                        "      situation:weight ?weight.\n" +
                         "\n" +
                         "FILTER( ?tag = tag:%s ) \n" +
                         "}\n" +
@@ -119,7 +128,7 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
-            Log.d("onCreateLoader","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+            Log.d("SituationMenu","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         urlStr = head + urlStr + tail;
 
@@ -149,15 +158,15 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
                     listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
 
                 }else{
-                    Log.d("getTracks", "No Tracks!");
+                    Log.d("SituationMenu", "No Tracks!");
                 }
 
             } catch (JSONException e) {
-                Log.d("onLoadFinished","JSONのパースに失敗しました。 JSONException=" + e);
+                Log.d("SituationMenu","JSONのパースに失敗しました。 JSONException=" + e);
             }
 
         }else{
-            Log.d("onLoadFinished", "onLoadFinished error!");
+            Log.d("SituationMenu", "onLoadFinished error!");
         }
     }
 

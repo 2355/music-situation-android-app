@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.Model;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -100,7 +100,7 @@ public class ExTrack {
             }
 
         } catch (JSONException e) {
-            Log.d("onLoadFinished","JSONのパースに失敗しました。 JSONException=" + e);
+            Log.d("ExTrack","JSONのパースに失敗しました。 JSONException=" + e);
         }
 
         return exTracks;
@@ -144,7 +144,9 @@ public class ExTrack {
         exTrack.artistId = track.artistId;
         exTrack.duration = track.duration;
         exTrack.trackNo  = track.trackNo;
-        exTrack.bookmark = track.bookmark;
+        if(track.bookmark != null){
+            exTrack.bookmark = track.bookmark;
+        }
         exTrack.year     = track.year;
         exTrack.uri      = track.uri;
         exTrack.internal = 1;
@@ -175,7 +177,7 @@ public class ExTrack {
         }
         values.put("album_art",   exTrack.albumArt);
         values.put("album_year",  exTrack.albumYear);
-        values.put("name",   exTrack.situation);
+        values.put("situation",   exTrack.situation);
         values.put("weight",      exTrack.weight);
         values.put("weight_d",    exTrack.weight_d);
         values.put("weight_u",    exTrack.weight_u);
@@ -218,7 +220,7 @@ public class ExTrack {
      **********************************************************************************************/
     // call at SituationMenu.onCreate()
     public static List<ExTrack> getExTracksBySituation(SQLiteDatabase db, String situation){
-        String   where = "name = ?";
+        String   where = "situation = ?";
         String[] params = new String[]{situation};
         String   orderBy = "weight DESC";
 
@@ -228,7 +230,7 @@ public class ExTrack {
     }
 
     public static List<ExTrack> getInternalExTracksBySituation(SQLiteDatabase db, String situation){
-        String   where = "name = ? AND internal = 1";
+        String   where = "situation = ? AND internal = 1";
         String[] params = new String[]{situation};
         String   orderBy = "weight DESC";
 
@@ -277,7 +279,7 @@ public class ExTrack {
             exTrack.uri        = Uri.parse(cursor.getString(cursor.getColumnIndex("uri")));
             exTrack.albumArt   = cursor.getString(cursor.getColumnIndex("album_art"));
             exTrack.albumYear  = cursor.getInt(cursor.getColumnIndex("album_year"));
-            exTrack.situation  = cursor.getString(cursor.getColumnIndex("name"));
+            exTrack.situation  = cursor.getString(cursor.getColumnIndex("situation"));
             exTrack.weight     = cursor.getInt(cursor.getColumnIndex("weight"));
             exTrack.weight_d   = cursor.getInt(cursor.getColumnIndex("weight_d"));
             exTrack.weight_u   = cursor.getInt(cursor.getColumnIndex("weight_u"));

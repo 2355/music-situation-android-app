@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -26,7 +26,7 @@ public class Situation{
         name   = "";
         tracks = 0;
     }
-    
+
     /***********************************************************************************************
      * to SQL
      **********************************************************************************************/
@@ -44,7 +44,7 @@ public class Situation{
 
 
         } catch (JSONException e) {
-            Log.d("onLoadFinished","JSONのパースに失敗しました。 JSONException=" + e);
+            Log.d("Situation","JSONのパースに失敗しました。 JSONException=" + e);
         }
 
         return situations;
@@ -78,7 +78,7 @@ public class Situation{
      **********************************************************************************************/
 
     public static List<Situation> getSituationsFromSQL(SQLiteDatabase db){
-        String orderBy = "weight DESC";
+        String orderBy = "name";
 
         // query(tableName, selectColumns, whereClause, whereArgs, groupBy, having, orderBy, limit);
         Cursor cursor = db.query(SITUATION_TABLE, null, null, null, null, null, orderBy, null);

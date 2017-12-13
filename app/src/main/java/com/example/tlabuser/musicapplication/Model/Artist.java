@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.Model;
 
 import android.content.ContentResolver;
 import android.content.Context;

@@ -21,8 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayScreen"/>
-        <activity android:name=".YoutubePlayScreen"/>
+        <activity android:name=".View.Player.PlayScreen"/>
+        <activity android:name=".View.Player.YoutubePlayScreen"/>
 
         <service
             android:name=".MediaPlayerService"

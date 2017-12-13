@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Root;
 
 
 import android.content.Context;
@@ -18,6 +18,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.tlabuser.musicapplication.JsonLoader;
+import com.example.tlabuser.musicapplication.Main;
+import com.example.tlabuser.musicapplication.Model.Album;
+import com.example.tlabuser.musicapplication.Model.Artist;
+import com.example.tlabuser.musicapplication.Model.Situation;
+import com.example.tlabuser.musicapplication.Model.Track;
+import com.example.tlabuser.musicapplication.R;
+import com.example.tlabuser.musicapplication.SQLOpenHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,10 +101,11 @@ public class RootMenu extends Fragment{
 
         private Main activity;
 
-        private SQLOpenHelper       sqlOpenHelper;
-        private SQLiteDatabase      db;
+        private SQLOpenHelper sqlOpenHelper;
+        private SQLiteDatabase db;
 
         private List<Situation> situations;
+        private ListSituationAdapter listSituationAdapter;
 
         @Override
         public void onAttach(Context context) {
@@ -110,6 +120,7 @@ public class RootMenu extends Fragment{
 
             if(situations.isEmpty()){
                 // JSONの取得
+                Log.d("RootMenu", "situations.isEmpty()");
                 getLoaderManager().restartLoader(1, null, this);
                 Toast.makeText(activity, "SituationListを取得しています。\nしばらくお待ちください。", Toast.LENGTH_LONG).show();
             }
@@ -122,6 +133,9 @@ public class RootMenu extends Fragment{
             View v = inflater.inflate(R.layout.menu_situations,container,false);
             situationList = (ListView) v.findViewById(R.id.situation_list);
 
+
+            listSituationAdapter = new ListSituationAdapter(activity, situations);
+            situationList.setAdapter(listSituationAdapter);
             situationList.setOnItemClickListener(activity.SituationClickListener);
             situationList.setOnItemLongClickListener(activity.SituationLongClickListener);
 
@@ -134,18 +148,18 @@ public class RootMenu extends Fragment{
             String head = "https://musicmetadata.herokuapp.com/ds/query?query=";
             String tail = "&output=json&stylesheet=/xml-to-html.xsl";
             String urlStr =
-                            "prefix name: <http://music.metadata.database.name/> \n" +
+                            "prefix situation: <http://music.metadata.database.situation/> \n" +
                             "\n" +
                             "SELECT distinct ?tag\n" +
                             "WHERE {\n" +
-                            "  ?b name:tag ?tag;\n" +
-                            "      name:weight ?weight.\n" +
+                            "  ?b situation:tag ?tag;\n" +
+                            "      situation:weight ?weight.\n" +
                             "}\n" +
-                            "order by desc(?weight)";
+                            "order by (?tag)";
             try {
                 urlStr = URLEncoder.encode(urlStr, "UTF-8");
             }catch (UnsupportedEncodingException e){
-                Log.d("onCreateLoader","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+                Log.d("RootMenu","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
             }
             urlStr = head + urlStr + tail;
 
@@ -170,10 +184,10 @@ public class RootMenu extends Fragment{
                     }
 
                 } catch (JSONException e) {
-                    Log.d("onLoadFinished","JSONのパースに失敗しました。 JSONException=" + e);
+                    Log.d("RootMenu","JSONのパースに失敗しました。 JSONException=" + e);
                 }
             }else{
-                Log.d("onLoadFinished", "onLoadFinished error!");
+                Log.d("RootMenu", "onLoadFinished error!");
             }
         }
 

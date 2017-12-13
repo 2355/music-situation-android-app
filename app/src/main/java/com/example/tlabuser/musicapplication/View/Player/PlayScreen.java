@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Player;
 
 
 import android.content.Intent;
@@ -14,6 +14,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tlabuser.musicapplication.Main;
+import com.example.tlabuser.musicapplication.MediaPlayerService;
+import com.example.tlabuser.musicapplication.Model.Track;
+import com.example.tlabuser.musicapplication.PlayerBroadcastReceiver;
+import com.example.tlabuser.musicapplication.R;
 
 /**
  * A simple {@link Fragment} subclass.

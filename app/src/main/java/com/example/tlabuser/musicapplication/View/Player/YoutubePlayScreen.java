@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Player;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +9,11 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tlabuser.musicapplication.JsonLoader;
+import com.example.tlabuser.musicapplication.Keys;
+import com.example.tlabuser.musicapplication.Main;
+import com.example.tlabuser.musicapplication.Model.ExTrack;
+import com.example.tlabuser.musicapplication.R;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;

@@ -1,4 +1,4 @@
-package com.example.tlabuser.musicapplication;
+package com.example.tlabuser.musicapplication.View.Situation;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,28 +7,31 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.tlabuser.musicapplication.Model.ExTrack;
+import com.example.tlabuser.musicapplication.R;
+
 import java.util.List;
 
 /**
  * Created by tlabuser on 2017/07/12.
  */
 
-public class ListTrackAdapter3 extends ArrayAdapter<SituationTrack> {
+public class ListExTrackAdapter extends ArrayAdapter<ExTrack> {
 
     LayoutInflater mInflater;
     int tracks;
 
-    public ListTrackAdapter3(Context context, List<SituationTrack> item){
-        super(context, 0, item);
+    public ListExTrackAdapter(Context context, List<ExTrack> exTracks){
+        super(context, 0, exTracks);
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
-        tracks = item.size();
+        tracks = exTracks.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
 
-        SituationTrack item = getItem(position);
+        ExTrack exTrack = getItem(position);
         ViewHolder holder;
 
         if(convertView==null){
@@ -42,9 +45,9 @@ public class ListTrackAdapter3 extends ArrayAdapter<SituationTrack> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.trackTextView.setText(item.title);
-        holder.artistTextView.setText(item.artist);
-        holder.weightTextView.setText(String.valueOf(item.weight));
+        holder.trackTextView.setText(exTrack.title);
+        holder.artistTextView.setText(exTrack.artist);
+        holder.weightTextView.setText(String.valueOf(exTrack.weight));
 
         return convertView;
     }

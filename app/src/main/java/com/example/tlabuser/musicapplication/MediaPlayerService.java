@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.tlabuser.musicapplication.View.Player.PlayScreen;
+
 import java.io.IOException;
 
 public class MediaPlayerService extends Service {
