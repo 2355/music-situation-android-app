@@ -15,8 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tlabuser.musicapplication.util.ExTrackUtil;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +58,7 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
         // 選択されたSituationを取得
         situation_item = activity.getFocusedSituaion();
 
-        exTracks = ExTrackUtil.getExTracksBySituation(db, situation_item.name);
+        exTracks = ExTrack.getExTracksBySituation(db, situation_item.name);
 
         if(exTracks.isEmpty()) {
             // JSONの取得
@@ -88,7 +86,7 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
         tv_tracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
 
         // 端末内のみリスト
-        internalExTracks = ExTrackUtil.getInternalExTracksBySituation(db, situation_item.name);
+        internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
         listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
 
         return partView;
@@ -137,8 +135,8 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                 if (jsonArray.getJSONObject(0).has("artist")) {
 
-                    exTracks = ExTrackUtil.parseJsonArray(activity, jsonArray);
-                    ExTrackUtil.insertRows(db, exTracks);
+                    exTracks = ExTrack.parseJsonArray(activity, jsonArray);
+                    ExTrack.insertRows(db, exTracks);
 
                     listExTrackAdapter = new ListExTrackAdapter(activity, exTracks);
                     lv_track_list.setAdapter(listExTrackAdapter);
@@ -147,7 +145,7 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
                     tv_tracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
 
                     // 端末内のみリスト
-                    internalExTracks = ExTrackUtil.getInternalExTracksBySituation(db, situation_item.name);
+                    internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
                     listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
 
                 }else{
