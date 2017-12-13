@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 
 public class YoutubePlayScreen extends FragmentActivity implements LoaderManager.LoaderCallbacks<JSONObject>{
     // API キー
-    private static final String API_KEY = keys.YT_KEY;
+    private static final String API_KEY = Keys.YT_KEY;
     // YouTubeのビデオID
     private static String videoId;
     // 検索クエリ
@@ -35,22 +35,22 @@ public class YoutubePlayScreen extends FragmentActivity implements LoaderManager
 
     private YouTubePlayerSupportFragment youTubePlayerFragment;
 
-    private static SituationTrack situationtrack_item;
+    private static ExTrack exTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.youtube_play_screen);
 
-        situationtrack_item = Main.getFocusedSituationTrack();
+        exTrack = Main.getFocusedExTrack();
 
         TextView title      = (TextView) findViewById(R.id.title);
         TextView artist     = (TextView) findViewById(R.id.artist);
 
-        title.setText( situationtrack_item.title);
-        artist.setText(situationtrack_item.artist);
+        title.setText( exTrack.title);
+        artist.setText(exTrack.artist);
 
-        query = situationtrack_item.artist + situationtrack_item.title;
+        query = exTrack.artist + exTrack.title;
 
         // YouTubeフラグメントインスタンスを取得
         youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();

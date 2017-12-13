@@ -37,7 +37,7 @@ public class SituationTrack {
 
             for(int i=0; i<jsonArray.length(); i++){
                 artist = jsonArray.getJSONObject(i).getJSONObject("artist").getString("value");
-                title = jsonArray.getJSONObject(i).getJSONObject("title" ).getString("value");
+                title  = jsonArray.getJSONObject(i).getJSONObject("title" ).getString("value");
                 weight = jsonArray.getJSONObject(i).getJSONObject("weight").getInt("value");
                 situationTracks.add(new SituationTrack(situation, artist, title, weight));
             }

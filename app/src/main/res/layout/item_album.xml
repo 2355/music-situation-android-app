@@ -9,7 +9,8 @@
     <ImageView
         android:id="@+id/albumart"
         android:layout_width="72dp"
-        android:layout_height="72dp" />
+        android:layout_height="72dp"
+        android:src="@drawable/icon_album"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -25,7 +26,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="AlbumTitle"
+            android:text="Album"
             android:textSize="20sp" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="artist"
+            android:textColor="@color/gray_dark"
             android:textSize="15sp" />
 
         <TextView
@@ -46,6 +48,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="tracks"
+            android:textColor="@color/gray_dark"
             android:textSize="15sp" />
 
     </LinearLayout>

@@ -31,7 +31,6 @@
             android:layout_height="60dp"
             android:layout_gravity="start"
             android:scaleType="fitCenter"
-            android:background="@color/gray"
             android:src="@drawable/icon_album"
             android:onClick="onPlayPanelClick"/>
 
@@ -62,6 +61,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="artist"
+                android:textColor="@color/gray_dark"
                 android:textSize="14sp"
                 android:clickable="true"
                 android:onClick="onPlayPanelClick"/>

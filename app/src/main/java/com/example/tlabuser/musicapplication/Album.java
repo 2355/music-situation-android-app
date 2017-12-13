@@ -4,12 +4,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by tlabuser on 2017/07/13.
@@ -45,6 +42,23 @@ public class Album {
         artist   = cursor.getString(cursor.getColumnIndex( MediaStore.Audio.Albums.ARTIST         ));
         year     = cursor.getInt(   cursor.getColumnIndex( MediaStore.Audio.Albums.FIRST_YEAR     ));
         tracks   = cursor.getInt(   cursor.getColumnIndex( MediaStore.Audio.Albums.NUMBER_OF_SONGS));
+    }
+
+    public static String getAlbumArt(Context activity, long albumID){
+        String albumArt = "";
+        ContentResolver resolver = activity.getContentResolver();
+        Cursor cursor = resolver.query(
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Audio.Albums.ALBUM_ART},
+                MediaStore.Audio.Media.ALBUM_ID + "= ?",
+                new String[]{String.valueOf(albumID)},
+                "album  ASC"
+        );
+        if (cursor.moveToFirst()){
+            albumArt = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+        }
+        cursor.close();
+        return albumArt;
     }
 
 

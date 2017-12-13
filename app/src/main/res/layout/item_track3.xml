@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:minHeight="72dp"
-    android:padding="10dp"
-    android:gravity="center">
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/albumart"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/icon_track"/>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TrackTitle"
+            android:text="Title"
             android:textSize="20sp"
             android:ellipsize="end"
             android:maxLines="1"/>
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <TextView
+            android:id="@+id/artist"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="artist"
+            android:textColor="@color/gray_dark"
+            android:textSize="15sp"
+            android:ellipsize="end"
+            android:maxLines="1"/>
 
-            <TextView
-                android:id="@+id/artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="artist"
-                android:textSize="15sp"
-                android:ellipsize="end"
-                android:maxLines="1"/>
-
-            <TextView
-                android:id="@+id/weight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingLeft="10dp"
-                android:text="100"
-                android:textSize="15sp"/>
-        </LinearLayout>
     </LinearLayout>
 
-
+    <TextView
+        android:id="@+id/weight"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:paddingRight="10dp"
+        android:text="100"
+        android:textColor="@color/gray_dark"
+        android:textSize="15sp"/>
 
 </LinearLayout>

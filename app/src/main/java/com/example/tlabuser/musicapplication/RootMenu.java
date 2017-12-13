@@ -2,6 +2,7 @@ package com.example.tlabuser.musicapplication;
 
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -89,22 +90,34 @@ public class RootMenu extends Fragment{
         JSONArray jsonArray = new JSONArray();
         ListView  situationList;
 
+        private Main activity;
+
+        private SQLOpenHelper       sqlOpenHelper;
+        private SQLiteDatabase      db;
+
+        private List<Situation> situations;
+
         @Override
         public void onAttach(Context context) {
             super.onAttach(context);
 
-            // JSONの取得
-            getLoaderManager().restartLoader(1, null, this);
+            activity = (Main)getActivity();
 
-            Main activity = (Main)getActivity();
-            Toast.makeText(activity, "SituationListを取得しています。\nしばらくお待ちください。", Toast.LENGTH_LONG).show();
+            sqlOpenHelper = new SQLOpenHelper(activity);
+            db = sqlOpenHelper.getReadableDatabase();
+
+            situations = Situation.getSituationsFromSQL(db);
+
+            if(situations.isEmpty()){
+                // JSONの取得
+                getLoaderManager().restartLoader(1, null, this);
+                Toast.makeText(activity, "SituationListを取得しています。\nしばらくお待ちください。", Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
-
-            Main activity = (Main)getActivity();
 
             View v = inflater.inflate(R.layout.menu_situations,container,false);
             situationList = (ListView) v.findViewById(R.id.situation_list);
@@ -121,12 +134,12 @@ public class RootMenu extends Fragment{
             String head = "https://musicmetadata.herokuapp.com/ds/query?query=";
             String tail = "&output=json&stylesheet=/xml-to-html.xsl";
             String urlStr =
-                            "prefix situation: <http://music.metadata.database.situation/> \n" +
+                            "prefix name: <http://music.metadata.database.name/> \n" +
                             "\n" +
                             "SELECT distinct ?tag\n" +
                             "WHERE {\n" +
-                            "  ?b situation:tag ?tag;\n" +
-                            "      situation:weight ?weight.\n" +
+                            "  ?b name:tag ?tag;\n" +
+                            "      name:weight ?weight.\n" +
                             "}\n" +
                             "order by desc(?weight)";
             try {
@@ -149,7 +162,8 @@ public class RootMenu extends Fragment{
                 try {
                     jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                     if (jsonArray.getJSONObject(0).has("tag")) {
-                        List situations = Situation.getItems(jsonArray);
+                        situations = Situation.getItems(jsonArray);
+                        Situation.insertRows(db, situations);
 
                         ListSituationAdapter adapter = new ListSituationAdapter(activity, situations);
                         situationList.setAdapter(adapter);

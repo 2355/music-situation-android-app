@@ -38,7 +38,7 @@ public class ListSituationAdapter extends ArrayAdapter<Situation> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.situationTextView.setText(item.situation);
+        holder.situationTextView.setText(item.name);
         holder.tracksTextView.setText(String.format("%d tracks", item.tracks));
 
         return convertView;

@@ -45,9 +45,9 @@ public class Main extends FragmentActivity{
     public  void   focusTrack(Track item)                        {if(item != null) focusedTrack = item;}
     public  static Track              getFocusedTrack()          {return focusedTrack ;}
 
-    private static SituationTrack     focusedSituationTrack;
-    public  void   focusSituationTrack(SituationTrack item)      {if(item != null) focusedSituationTrack = item;}
-    public  static SituationTrack     getFocusedSituationTrack() {return focusedSituationTrack ;}
+    private static ExTrack     focusedExTrack;
+    public  void   focusExTrack(ExTrack item)      {if(item != null) focusedExTrack = item;}
+    public  static ExTrack     getFocusedExTrack() {return focusedExTrack ;}
 
     PlayerBroadcastReceiver receiver;
     IntentFilter            intentFilter;
@@ -167,7 +167,7 @@ public class Main extends FragmentActivity{
         public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
             ListView lv = (ListView)parent;
             Situation situation = (Situation) lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+situation.situation, Toast.LENGTH_LONG).show();
+            Toast.makeText(Main.this, "LongClick:"+situation.name, Toast.LENGTH_LONG).show();
             return true;
         }
     };
@@ -239,24 +239,24 @@ public class Main extends FragmentActivity{
         }
     };
 
-    public AdapterView.OnItemClickListener  SituationTrackClickListener = new AdapterView.OnItemClickListener(){
+    public AdapterView.OnItemClickListener  ExTrackClickListener = new AdapterView.OnItemClickListener(){
 
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             ListView lv = (ListView)parent;
-            focusSituationTrack( (SituationTrack) lv.getItemAtPosition(position) );
+            focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
             Intent intent = new Intent(getApplication(), YoutubePlayScreen.class);
             startActivity(intent);
         }
     };
 
-    public  AdapterView.OnItemLongClickListener SituationTrackLongClickListener = new AdapterView.OnItemLongClickListener(){
+    public  AdapterView.OnItemLongClickListener ExTrackLongClickListener = new AdapterView.OnItemLongClickListener(){
 
         @Override
         public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
             ListView lv = (ListView)parent;
-            SituationTrack item = (SituationTrack) lv.getItemAtPosition(position);
+            ExTrack item = (ExTrack) lv.getItemAtPosition(position);
             Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
             return true;
         }

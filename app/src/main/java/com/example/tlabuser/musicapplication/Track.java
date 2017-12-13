@@ -16,41 +16,46 @@ import java.util.List;
 
 
 public class Track{
-    public long     id;             //コンテントプロバイダに登録されたID
-    public long     albumId;        //同じくトラックのアルバムのID
-    public long     artistId;       //同じくトラックのアーティストのID
-    public String   path;           //実データのPATH
-    public String   title;          //トラックタイトル
-    public String   album;          //アルバムタイトル
-    public String   artist;         //アーティスト名
-    public Uri      uri;            // URI
-    public long     duration;       // 再生時間(ミリ秒)
-    public int      trackNo;        // アルバムのトラックナンバ
+    public long   id;          // コンテントプロバイダに登録されたID
+    public String path;        // 実データのPATH
+    public String title;       // トラックタイトル
+    public String album;       // アルバムタイトル
+    public long   albumId;     // アルバムのID
+    public String artist;      // アーティスト名
+    public long   artistId;    // アーティストのID
+    public long   duration;    // 再生時間(ミリ秒)
+    public int    trackNo;     // アルバムのトラックナンバ
+    public String bookmark;    // 最後に聴いた場所(ms)
+    public String year;        // 発売年
+    public Uri    uri;         // URI
 
     public static final String[] COLUMNS = {
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ARTIST_ID,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.TRACK,
+            MediaStore.Audio.Media.BOOKMARK,
+            MediaStore.Audio.Media.YEAR,
     };
 
-    public  Track(Cursor cursor)
-    {
-        id              = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media._ID ));
-        path            = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-        title           = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.TITLE ));
-        album           = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM ));
-        artist          = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ARTIST ));
-        albumId         = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ));
-        artistId        = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.ARTIST_ID ));
-        duration        = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.DURATION ));
-        trackNo         = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media.TRACK ));
-        uri             = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+    public void setTrack(Cursor cursor){
+        id       = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+        path     = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+        title    = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+        album    = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+        albumId  = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+        artist   = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+        artistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID));
+        duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+        trackNo  = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK));
+        bookmark = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.BOOKMARK));
+        year     = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR));
+        uri      = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
     }
 
     public static List<Track> getItems(Context activity) {
@@ -66,7 +71,9 @@ public class Track{
         );
         while( cursor.moveToNext() ){
             if( cursor.getLong(cursor.getColumnIndex( MediaStore.Audio.Media.DURATION)) < 3000 ){continue;}
-            tracks.add(new Track(cursor));
+            Track track = new Track();
+            track.setTrack(cursor);
+            tracks.add(track);
         }
         cursor.close();
         return tracks;
@@ -87,45 +94,12 @@ public class Track{
         );
         while( cursor.moveToNext() ){
             if( cursor.getLong(cursor.getColumnIndex( MediaStore.Audio.Media.DURATION)) < 3000 ){continue;}
-            tracks.add(new Track(cursor));
+            Track track = new Track();
+            track.setTrack(cursor);
+            tracks.add(track);
         }
         cursor.close();
         return tracks;
-    }
-
-    public static List<Track> getItemsBySituationTrack(Context activity, List<SituationTrack> situationTracks) {
-
-        List<Track> tracks = new ArrayList();
-
-        for (int i=0; i<situationTracks.size(); i++){
-            List<Track> same_tracks = getItemByArtistTitle(activity, situationTracks.get(i).artist, situationTracks.get(i).title);
-            if (same_tracks.size() > 0){
-                tracks.add(same_tracks.get(0));
-            }
-        }
-
-        return tracks;
-    }
-
-    // A support method called by getItemsBySituationTrack
-    public static List<Track> getItemByArtistTitle(Context activity, String artist, String title) {
-
-        List<Track> same_tracks = new ArrayList();
-        ContentResolver resolver = activity.getContentResolver();
-        String[] SELECTION_ARG = {artist, title};
-        Cursor cursor = resolver.query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                Track.COLUMNS,
-                "artist = ? AND title = ?",
-                SELECTION_ARG,
-                null
-        );
-        while( cursor.moveToNext() ){
-            if( cursor.getLong(cursor.getColumnIndex( MediaStore.Audio.Media.DURATION)) < 3000 ){continue;}
-            same_tracks.add(new Track(cursor));
-        }
-        cursor.close();
-        return same_tracks;
     }
 
 }

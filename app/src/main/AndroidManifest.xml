@@ -21,13 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayScreen"></activity>
-        <activity android:name=".YoutubePlayScreen"></activity>
+        <activity android:name=".PlayScreen"/>
+        <activity android:name=".YoutubePlayScreen"/>
 
         <service
             android:name=".MediaPlayerService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

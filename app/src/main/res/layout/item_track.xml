@@ -1,59 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:minHeight="72dp"
     android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="TrackTitle"
-        android:textSize="20sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
+    <ImageView
+        android:id="@+id/albumart"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/icon_track"/>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="20sp"
+            android:ellipsize="end"
+            android:maxLines="1"/>
 
         <TextView
             android:id="@+id/artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="artist"
+            android:textColor="@color/gray_dark"
             android:textSize="15sp"
             android:ellipsize="end"
             android:maxLines="1"/>
+
 
         <TextView
             android:id="@+id/album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
             android:text="album"
+            android:textColor="@color/gray_dark"
             android:textSize="15sp"
             android:ellipsize="end"
             android:maxLines="1"/>
 
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingLeft="10dp"
-            android:text="0:00"
-            android:textSize="15sp"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:paddingRight="10dp"
+        android:text="00:00"
+        android:textColor="@color/gray_dark"
+        android:textSize="15sp"/>
 
 </LinearLayout>
