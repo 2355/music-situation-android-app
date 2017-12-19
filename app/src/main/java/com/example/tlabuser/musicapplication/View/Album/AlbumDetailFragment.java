@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AlbumMenu extends Fragment{
+public class AlbumDetailFragment extends Fragment{
 
     private static Album album_item;
 

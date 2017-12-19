@@ -13,6 +13,7 @@ import com.example.tlabuser.musicapplication.R;
 import java.util.List;
 
 /**
+ * UNNECESSARY FILE
  * set values to Views in item_artist
  */
 
@@ -34,8 +35,8 @@ public class ListSituationAdapter extends ArrayAdapter<Situation> {
         if(convertView==null){
             convertView = mInflater.inflate(R.layout.item_situation, null);
             holder = new ViewHolder();
-            holder.situationTextView = (TextView)convertView.findViewById(R.id.situation);
-            holder.tracksTextView    = (TextView)convertView.findViewById(R.id.tracks);
+            holder.situationTextView = (TextView)convertView.findViewById(R.id.tv_situation);
+            holder.tracksTextView    = (TextView)convertView.findViewById(R.id.tv_tracks);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();

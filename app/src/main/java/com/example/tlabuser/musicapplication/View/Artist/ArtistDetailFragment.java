@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ArtistMenu extends Fragment{
+public class ArtistDetailFragment extends Fragment{
 
     private static Artist artist_item;
 

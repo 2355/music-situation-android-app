@@ -28,12 +28,12 @@ import com.example.tlabuser.musicapplication.Model.Artist;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.Model.Track;
-import com.example.tlabuser.musicapplication.View.Album.AlbumMenu;
-import com.example.tlabuser.musicapplication.View.Artist.ArtistMenu;
+import com.example.tlabuser.musicapplication.View.Album.AlbumDetailFragment;
+import com.example.tlabuser.musicapplication.View.Artist.ArtistDetailFragment;
 import com.example.tlabuser.musicapplication.View.Player.PlayScreen;
 import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreen;
-import com.example.tlabuser.musicapplication.View.Root.RootMenu;
-import com.example.tlabuser.musicapplication.View.Situation.SituationMenu;
+import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
+import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
 
 
 public class Main extends FragmentActivity{
@@ -111,7 +111,7 @@ public class Main extends FragmentActivity{
     private void showFragment(){
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.root, new RootMenu(),"Root");
+        ft.replace(R.id.root, new RootMenuFragment(),"Root");
         ft.commit();
 
         receiver     = new PlayerBroadcastReceiver();
@@ -138,10 +138,10 @@ public class Main extends FragmentActivity{
         fTop = CallFragment;
         switch(CallFragment)
         {
-            case fRoot      : ft.replace(R.id.root, new RootMenu(),      "Root");      break;
-            case fSituation : ft.replace(R.id.root, new SituationMenu(), "Situation"); break;
-            case fAlbum     : ft.replace(R.id.root, new AlbumMenu(),     "Album");     break;
-            case fArtist    : ft.replace(R.id.root, new ArtistMenu(),    "Artist");    break;
+            case fRoot      : ft.replace(R.id.root, new RootMenuFragment(), "Root");      break;
+            case fSituation : ft.replace(R.id.root, new SituationDetailFragment(), "Situation"); break;
+            case fAlbum     : ft.replace(R.id.root, new AlbumDetailFragment(), "Album");     break;
+            case fArtist    : ft.replace(R.id.root, new ArtistDetailFragment(), "Artist"); break;
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.addToBackStack(null);

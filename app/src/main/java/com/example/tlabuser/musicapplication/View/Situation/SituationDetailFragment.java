@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SituationMenu extends Fragment implements LoaderManager.LoaderCallbacks<JSONObject>{
+public class SituationDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<JSONObject>{
 
     private Main activity;
     private static Situation situation_item;
@@ -128,7 +128,7 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
-            Log.d("SituationMenu","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+            Log.d("SituationDetailFragment","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         urlStr = head + urlStr + tail;
 
@@ -158,15 +158,15 @@ public class SituationMenu extends Fragment implements LoaderManager.LoaderCallb
                     listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
 
                 }else{
-                    Log.d("SituationMenu", "No Tracks!");
+                    Log.d("SituationDetailFragment", "No Tracks!");
                 }
 
             } catch (JSONException e) {
-                Log.d("SituationMenu","JSONのパースに失敗しました。 JSONException=" + e);
+                Log.d("SituationDetailFragment","JSONのパースに失敗しました。 JSONException=" + e);
             }
 
         }else{
-            Log.d("SituationMenu", "onLoadFinished error!");
+            Log.d("SituationDetailFragment", "onLoadFinished error!");
         }
     }
 

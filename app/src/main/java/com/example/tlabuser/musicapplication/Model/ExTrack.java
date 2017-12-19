@@ -82,7 +82,7 @@ public class ExTrack {
     /***********************************************************************************************
      * to SQL
      **********************************************************************************************/
-    // called at SituationMenu.onLoadFinished()
+    // called at SituationDetailFragment.onLoadFinished()
     // get ExTracks from server
     public static List<ExTrack> parseJsonArray(Context context, JSONArray jsonArray){
         List<ExTrack> exTracks = new ArrayList<ExTrack>();
@@ -218,7 +218,7 @@ public class ExTrack {
     /***********************************************************************************************
      * from SQL
      **********************************************************************************************/
-    // call at SituationMenu.onCreate()
+    // call at SituationDetailFragment.onCreate()
     public static List<ExTrack> getExTracksBySituation(SQLiteDatabase db, String situation){
         String   where = "situation = ?";
         String[] params = new String[]{situation};
