@@ -186,8 +186,8 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                     Toast.makeText(activity, "端末内に該当楽曲がありません", Toast.LENGTH_LONG).show();
                 }
                 lv_track_list.setAdapter(listInternalExTrackAdapter);
-                lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
-                lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
+                lv_track_list.setOnItemClickListener(activity.internalExTrackClickListener);
+                lv_track_list.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
                 tv_tracks.setText(String.valueOf(listInternalExTrackAdapter.getTracks())+"tracks");
             } else {
                 // チェックボックスのチェックが外される

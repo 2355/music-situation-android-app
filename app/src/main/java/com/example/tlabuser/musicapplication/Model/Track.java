@@ -60,7 +60,7 @@ public class Track{
 
     public static List<Track> getItems(Context activity) {
 
-        List tracks = new ArrayList();
+        List<Track> tracks = new ArrayList<Track>();
         ContentResolver resolver = activity.getContentResolver();
         Cursor cursor = resolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -81,7 +81,7 @@ public class Track{
 
     public static List<Track> getItemsByAlbum(Context activity, long albumID) {
 
-        List tracks = new ArrayList();
+        List<Track> tracks = new ArrayList<Track>();
         ContentResolver resolver = activity.getContentResolver();
         String[] SELECTION_ARG = {""};
         SELECTION_ARG[0] = String.valueOf(albumID);

@@ -64,7 +64,7 @@ public class Album {
 
     public static List<Album> getItems(Context activity) {
 
-        List albums = new ArrayList();
+        List<Album> albums = new ArrayList<Album>();
         ContentResolver resolver = activity.getContentResolver();
         Cursor cursor = resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -84,7 +84,7 @@ public class Album {
 
     public static List<Album> getItemsByArtist(Context activity, String artist) {
 
-        List albums = new ArrayList();
+        List<Album> albums = new ArrayList<Album>();
         ContentResolver resolver = activity.getContentResolver();
         String[] SELECTION_ARG = {""};
         SELECTION_ARG[0] = artist;

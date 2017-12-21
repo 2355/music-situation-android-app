@@ -21,7 +21,7 @@ public class AlbumMenuFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Main activity = (Main)getActivity();
-        List albums = Album.getItems(activity);
+        List<Album> albums = Album.getItems(activity);
 
         View v = inflater.inflate(R.layout.menu_albums,container,false);
         ListView albumList = (ListView) v.findViewById(R.id.album_list);

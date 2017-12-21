@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.MediaPlayerService;
-import com.example.tlabuser.musicapplication.Model.Track;
+import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.PlayerBroadcastReceiver;
 import com.example.tlabuser.musicapplication.R;
 
@@ -26,7 +26,7 @@ import com.example.tlabuser.musicapplication.R;
  */
 public class PlayScreen extends FragmentActivity{
 
-    private static Track track_item;
+    private static ExTrack exTrack;
 
     PlayerBroadcastReceiver receiver;
     IntentFilter            intentFilter;
@@ -52,16 +52,16 @@ public class PlayScreen extends FragmentActivity{
         btPlay = (ImageButton) findViewById(R.id.btPlay);
         btSkip = (ImageButton) findViewById(R.id.btSkip);
 
-        TextView  tvTitle     = (TextView) findViewById(R.id.title);
-        TextView  tvArtist    = (TextView) findViewById(R.id.artist);
-        TextView  tvAlbum     = (TextView) findViewById(R.id.album);
-        ImageView ivAlbum_art = (ImageView)findViewById(R.id.albumart);
+        TextView  tvTitle    = (TextView) findViewById(R.id.title);
+        TextView  tvArtist   = (TextView) findViewById(R.id.artist);
+        TextView  tvAlbum    = (TextView) findViewById(R.id.album);
+        ImageView ivAlbumArt = (ImageView)findViewById(R.id.albumart);
 
-        track_item = Main.getFocusedTrack();
-        tvTitle.setText( track_item.title);
-        tvArtist.setText(track_item.artist);
-        tvAlbum.setText( track_item.album);
-        ivAlbum_art.setImageResource(R.drawable.icon_album);
+        exTrack = Main.getFocusedExTrack();
+        tvTitle.setText(exTrack.title);
+        tvArtist.setText(exTrack.artist);
+        tvAlbum.setText(exTrack.album);
+        ivAlbumArt.setImageResource(R.drawable.icon_album);
 
         Intent fromIntent = getIntent();
         String from = fromIntent.getStringExtra("from");
@@ -73,7 +73,7 @@ public class PlayScreen extends FragmentActivity{
                 Intent intent = new Intent(PlayScreen.this, MediaPlayerService.class);
                 nowState = "Playing";
                 intent.putExtra("click", "Start");
-                intent.putExtra("mediaFileUriStr", track_item.uri.toString());
+                intent.putExtra("mediaFileUriStr", exTrack.uri.toString());
                 startService(intent);
                 btPlay.setImageResource(R.drawable.icon_pause);
                 break;
@@ -128,7 +128,7 @@ public class PlayScreen extends FragmentActivity{
         switch(nowState){
             case "Stop":
                 intent.putExtra("click", "Start");
-                intent.putExtra("mediaFileUriStr", track_item.uri.toString());
+                intent.putExtra("mediaFileUriStr", exTrack.uri.toString());
                 startService(intent);
                 break;
 
@@ -147,7 +147,7 @@ public class PlayScreen extends FragmentActivity{
     public void onSkipButtonClick(View view) {
         Intent intent = new Intent(PlayScreen.this, MediaPlayerService.class);
         intent.putExtra("click", "Skip");
-        intent.putExtra("duration", track_item.duration);
+        intent.putExtra("duration", exTrack.duration);
         startService(intent);
     }
 

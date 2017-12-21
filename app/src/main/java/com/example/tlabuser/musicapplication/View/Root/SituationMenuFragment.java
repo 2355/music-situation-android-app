@@ -84,16 +84,12 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         rvSituations = (RecyclerView) v.findViewById(R.id.rv_situations);
         rvSituations.setLayoutManager(new LinearLayoutManager(mainActivity));
         rvSituations.setNestedScrollingEnabled(false);
-
         situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, situations);
-        situationsRecyclerAdapter.setItemClickedListener(new SituationsRecyclerAdapter.ItemClickedListener() {
-            @Override
-            public void onItemClicked(Situation situation) {
-                mainActivity.focusSituation(situation);
-                FragmentManager fm = mainActivity.getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
-            }
+        situationsRecyclerAdapter.setItemClickedListener(situation -> {
+            mainActivity.focusSituation(situation);
+            FragmentManager fm = mainActivity.getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
         });
         rvSituations.setAdapter(situationsRecyclerAdapter);
 
@@ -103,14 +99,11 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         rvRecommendedSituations.setNestedScrollingEnabled(false);
 
         situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
-        situationsRecyclerAdapter.setItemClickedListener(new SituationsRecyclerAdapter.ItemClickedListener() {
-            @Override
-            public void onItemClicked(Situation situation) {
-                mainActivity.focusSituation(situation);
-                FragmentManager fm = mainActivity.getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
-            }
+        situationsRecyclerAdapter.setItemClickedListener(situation -> {
+            mainActivity.focusSituation(situation);
+            FragmentManager fm = mainActivity.getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
         });
         rvRecommendedSituations.setAdapter(situationsRecyclerAdapter);
 

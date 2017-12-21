@@ -36,9 +36,9 @@ public class Artist {
         tracks          =cursor.getInt(   cursor.getColumnIndex( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ));
     }
 
-    public static List getItems(Context activity) {
+    public static List<Artist> getItems(Context activity) {
 
-        List artists = new ArrayList();
+        List<Artist> artists = new ArrayList<Artist>();
 
         ContentResolver resolver = activity.getContentResolver();
         Cursor cursor = resolver.query(

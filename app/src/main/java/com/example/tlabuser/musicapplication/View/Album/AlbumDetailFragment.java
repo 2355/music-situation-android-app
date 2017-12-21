@@ -56,7 +56,7 @@ public class AlbumDetailFragment extends Fragment{
         {@Override public void onClick(View v) {}});
         */
 
-        List tracks  = Track.getItemsByAlbum(getActivity(), album_item.albumId);
+        List<Track> tracks  = Track.getItemsByAlbum(getActivity(), album_item.albumId);
 
         ListView trackList = (ListView) partView.findViewById(R.id.track_list);
         ListTrackAdapter2 adapter = new ListTrackAdapter2(activity, tracks);

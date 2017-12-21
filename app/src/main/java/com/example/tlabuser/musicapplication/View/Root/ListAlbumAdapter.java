@@ -41,40 +41,40 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
         if(convertView==null){
             convertView = mInflater.inflate(R.layout.item_album, null);
             holder = new ViewHolder();
-            holder.albumTextView    = (TextView)convertView.findViewById(R.id.album);
-            holder.artistTextView   = (TextView)convertView.findViewById(R.id.artist);
-            holder.tracksTextView   = (TextView)convertView.findViewById(R.id.tracks);
-            holder.artworkImageView = (ImageView)convertView.findViewById(R.id.albumart);
+            holder.tvAlbum  = (TextView)convertView.findViewById(R.id.album);
+            holder.tvArtist = (TextView)convertView.findViewById(R.id.artist);
+            holder.tvTracks = (TextView)convertView.findViewById(R.id.tracks);
+            holder.ivAlbumArt = (ImageView)convertView.findViewById(R.id.albumart);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.albumTextView.setText(item.album);
-        holder.artistTextView.setText(item.artist);
-        holder.tracksTextView.setText(String.valueOf(item.tracks)+"tracks");
+        holder.tvAlbum.setText(item.album);
+        holder.tvArtist.setText(item.artist);
+        holder.tvTracks.setText(String.valueOf(item.tracks)+"tracks");
 
         String path = item.albumArt;
-        holder.artworkImageView.setImageResource(R.drawable.dummy_album_art);
+        holder.ivAlbumArt.setImageResource(R.drawable.icon_album);
         if(path==null){
-            path = String.valueOf( R.drawable.dummy_album_art);
+            path = String.valueOf(R.drawable.icon_album);
             Bitmap bitmap = ImageCache.getImage(path);
             if(bitmap==null){
-                bitmap = BitmapFactory.decodeResource(Mcontext.getResources(),R.drawable.dummy_album_art);
+                bitmap = BitmapFactory.decodeResource(Mcontext.getResources(),R.drawable.icon_album);
                 ImageCache.setImage(path, bitmap);
             }
         }
-        holder.artworkImageView.setTag(path);
-        ImageGetTask task = new ImageGetTask(holder.artworkImageView);
+        holder.ivAlbumArt.setTag(path);
+        ImageGetTask task = new ImageGetTask(holder.ivAlbumArt);
         task.execute(path);
 
         return convertView;
     }
 
     static class ViewHolder{
-        TextView  albumTextView;
-        TextView  artistTextView;
-        TextView  tracksTextView;
-        ImageView artworkImageView;
+        TextView tvAlbum;
+        TextView tvArtist;
+        TextView tvTracks;
+        ImageView ivAlbumArt;
     }
 }

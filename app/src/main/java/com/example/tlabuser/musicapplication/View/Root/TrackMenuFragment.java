@@ -20,7 +20,7 @@ public class TrackMenuFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Main activity = (Main)getActivity();
-        List tracks = Track.getItems(activity);
+        List<Track> tracks = Track.getItems(activity);
 
         View v = inflater.inflate(R.layout.menu_tracks,container,false);
         ListView trackList = (ListView) v.findViewById(R.id.track_list);

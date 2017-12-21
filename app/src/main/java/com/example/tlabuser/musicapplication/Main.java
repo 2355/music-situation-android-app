@@ -48,29 +48,29 @@ public class Main extends FragmentActivity{
     private FrgmType fTop;
 
     private Situation focusedSituaion;
-    public  void      focusSituation(Situation item)   {if(item != null) focusedSituaion = item;}
-    public  Situation getFocusedSituaion()             {return focusedSituaion ;}
+    public  void      focusSituation(Situation item) {if(item != null) focusedSituaion = item;}
+    public  Situation getFocusedSituaion() {return focusedSituaion ;}
 
     private Album focusedAlbum;
-    public  void      focusAlbum(Album item)           {if(item != null) focusedAlbum = item;}
-    public  Album     getFocusedAlbum()                {return focusedAlbum ;}
+    public  void  focusAlbum(Album item) {if(item != null) focusedAlbum = item;}
+    public  Album getFocusedAlbum() {return focusedAlbum ;}
 
     private Artist focusedArtist;
-    public  void      focusArtist(Artist item)         {if(item != null) focusedArtist = item;}
-    public  Artist    getFocusedArtist()               {return focusedArtist ;}
+    public  void   focusArtist(Artist item) {if(item != null) focusedArtist = item;}
+    public  Artist getFocusedArtist() {return focusedArtist ;}
 
     private static Track focusedTrack;
-    public  void   focusTrack(Track item)                        {if(item != null) focusedTrack = item;}
-    public  static Track              getFocusedTrack()          {return focusedTrack ;}
+    public  void   focusTrack(Track item) {if(item != null) focusedTrack = item;}
+    public  static Track getFocusedTrack() {return focusedTrack ;}
 
     private static ExTrack focusedExTrack;
-    public  void   focusExTrack(ExTrack item)      {if(item != null) focusedExTrack = item;}
-    public  static ExTrack     getFocusedExTrack() {return focusedExTrack ;}
+    public  void   focusExTrack(ExTrack item) {if(item != null) focusedExTrack = item;}
+    public  static ExTrack getFocusedExTrack() {return focusedExTrack ;}
 
     PlayerBroadcastReceiver receiver;
     IntentFilter            intentFilter;
 
-    ImageView   ivAlbum_art;
+    ImageView   ivAlbumArt;
     TextView    tvTitle;
     TextView    tvArtist;
     ImageButton btBack;
@@ -128,12 +128,12 @@ public class Main extends FragmentActivity{
 
         setContentView(R.layout.main);
 
-        tvTitle     = (TextView)    findViewById(R.id.title);
-        tvArtist    = (TextView)    findViewById(R.id.artist);
-        ivAlbum_art = (ImageView)   findViewById(R.id.albumart);
-        btBack      = (ImageButton) findViewById(R.id.btBack);
-        btPlay      = (ImageButton) findViewById(R.id.btPlay);
-        btSkip      = (ImageButton) findViewById(R.id.btSkip);
+        tvTitle    = (TextView)    findViewById(R.id.title);
+        tvArtist   = (TextView)    findViewById(R.id.artist);
+        ivAlbumArt = (ImageView)   findViewById(R.id.albumart);
+        btBack     = (ImageButton) findViewById(R.id.btBack);
+        btPlay     = (ImageButton) findViewById(R.id.btPlay);
+        btSkip     = (ImageButton) findViewById(R.id.btSkip);
 
     }
 
@@ -144,9 +144,9 @@ public class Main extends FragmentActivity{
         fTop = CallFragment;
         switch(CallFragment)
         {
-            case fRoot      : ft.replace(R.id.root, new RootMenuFragment(), "Root");      break;
+            case fRoot      : ft.replace(R.id.root, new RootMenuFragment(), "Root"); break;
             case fSituation : ft.replace(R.id.root, new SituationDetailFragment(), "Situation"); break;
-            case fAlbum     : ft.replace(R.id.root, new AlbumDetailFragment(), "Album");     break;
+            case fAlbum     : ft.replace(R.id.root, new AlbumDetailFragment(), "Album"); break;
             case fArtist    : ft.replace(R.id.root, new ArtistDetailFragment(), "Artist"); break;
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -161,123 +161,106 @@ public class Main extends FragmentActivity{
     }
 
     public void updatePanel(){
-        Track track_item = getFocusedTrack();
-        Log.d("Main", "updatePanel:" + track_item.title);
+        ExTrack exTrack = getFocusedExTrack();
+        Log.d("Main", "updatePanel:" + exTrack.title);
 
-        tvTitle.setText( track_item.title);
-        tvArtist.setText(track_item.artist);
-        ivAlbum_art.setImageResource(R.drawable.icon_album);
+        tvTitle.setText(exTrack.title);
+        tvArtist.setText(exTrack.artist);
+        ivAlbumArt.setImageResource(R.drawable.icon_album);
     }
 
-    public AdapterView.OnItemClickListener  SituationClickListener = new AdapterView.OnItemClickListener(){
-
+    public AdapterView.OnItemClickListener  SituationClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ListView lv = (ListView)parent;
-            focusSituation( (Situation) lv.getItemAtPosition(position) );
-            setNewFragment(FrgmType.fSituation);
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            ListView lv = (ListView) parent;
+            Main.this.focusSituation((Situation) lv.getItemAtPosition(position));
+            Main.this.setNewFragment(FrgmType.fSituation);
         }
     };
 
-    public  AdapterView.OnItemLongClickListener SituationLongClickListener = new AdapterView.OnItemLongClickListener(){
-
+    public AdapterView.OnItemLongClickListener SituationLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
-            ListView lv = (ListView)parent;
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            ListView lv = (ListView) parent;
             Situation situation = (Situation) lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+situation.name, Toast.LENGTH_LONG).show();
+            Toast.makeText(Main.this, "LongClick:" + situation.name, Toast.LENGTH_LONG).show();
             return true;
         }
     };
 
-    public AdapterView.OnItemClickListener  AlbumClickListener = new AdapterView.OnItemClickListener(){
-
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ListView lv = (ListView)parent;
-            focusAlbum( (Album)lv.getItemAtPosition(position) );
-            setNewFragment(FrgmType.fAlbum);
-        }
+    public AdapterView.OnItemClickListener  AlbumClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        focusAlbum( (Album)lv.getItemAtPosition(position) );
+        setNewFragment(FrgmType.fAlbum);
     };
 
-    public  AdapterView.OnItemLongClickListener AlbumLongClickListener = new AdapterView.OnItemLongClickListener(){
-
-        @Override
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
-            ListView lv = (ListView)parent;
-            Album item = (Album)lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+item.album, Toast.LENGTH_LONG).show();
-            return true;
-        }
+    public AdapterView.OnItemLongClickListener AlbumLongClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        Album item = (Album)lv.getItemAtPosition(position);
+        Toast.makeText(Main.this, "LongClick:"+item.album, Toast.LENGTH_LONG).show();
+        return true;
     };
 
-    public AdapterView.OnItemClickListener  ArtistClickListener = new AdapterView.OnItemClickListener(){
-
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ListView lv = (ListView)parent;
-            focusArtist( (Artist)lv.getItemAtPosition(position) );
-            setNewFragment(FrgmType.fArtist);
-        }
+    public AdapterView.OnItemClickListener  ArtistClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        focusArtist( (Artist)lv.getItemAtPosition(position) );
+        setNewFragment(FrgmType.fArtist);
     };
 
-    public  AdapterView.OnItemLongClickListener ArtistLongClickListener = new AdapterView.OnItemLongClickListener(){
-
-        @Override
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
-            ListView lv = (ListView)parent;
-            Artist item = (Artist)lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+item.artist, Toast.LENGTH_LONG).show();
-            return true;
-        }
+    public AdapterView.OnItemLongClickListener ArtistLongClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        Artist item = (Artist)lv.getItemAtPosition(position);
+        Toast.makeText(Main.this, "LongClick:"+item.artist, Toast.LENGTH_LONG).show();
+        return true;
     };
 
-    public AdapterView.OnItemClickListener  TrackClickListener = new AdapterView.OnItemClickListener(){
+    public AdapterView.OnItemClickListener  TrackClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        focusTrack( (Track) lv.getItemAtPosition(position) );
 
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ListView lv = (ListView)parent;
-            focusTrack( (Track) lv.getItemAtPosition(position) );
-
-            Intent intent = new Intent(getApplication(), PlayScreen.class);
-            intent.putExtra("from", "fromTrackList");
-            intent.putExtra("state", "Stop");
-            startActivity(intent);
-        }
+        Intent intent = new Intent(getApplication(), PlayScreen.class);
+        intent.putExtra("from", "fromTrackList");
+        intent.putExtra("state", "Stop");
+        startActivity(intent);
     };
 
-    public  AdapterView.OnItemLongClickListener TrackLongClickListener = new AdapterView.OnItemLongClickListener(){
-
-        @Override
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
-            ListView lv = (ListView)parent;
-            Track item = (Track) lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
-            return true;
-        }
+    public AdapterView.OnItemLongClickListener TrackLongClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        Track item = (Track) lv.getItemAtPosition(position);
+        Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
+        return true;
     };
 
-    public AdapterView.OnItemClickListener  ExTrackClickListener = new AdapterView.OnItemClickListener(){
+    public AdapterView.OnItemClickListener  ExTrackClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ListView lv = (ListView)parent;
-            focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
-
-            Intent intent = new Intent(getApplication(), YoutubePlayScreen.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(getApplication(), YoutubePlayScreen.class);
+        startActivity(intent);
     };
 
-    public  AdapterView.OnItemLongClickListener ExTrackLongClickListener = new AdapterView.OnItemLongClickListener(){
+    public AdapterView.OnItemLongClickListener ExTrackLongClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        ExTrack item = (ExTrack) lv.getItemAtPosition(position);
+        Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
+        return true;
+    };
 
-        @Override
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id){
-            ListView lv = (ListView)parent;
-            ExTrack item = (ExTrack) lv.getItemAtPosition(position);
-            Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
-            return true;
-        }
+    public AdapterView.OnItemClickListener  internalExTrackClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
+
+        Intent intent = new Intent(getApplication(), PlayScreen.class);
+        intent.putExtra("from", "fromTrackList");
+        intent.putExtra("state", "Stop");
+        startActivity(intent);
+    };
+
+    public AdapterView.OnItemLongClickListener internalExTrackLongClickListener = (parent, view, position, id) -> {
+        ListView lv = (ListView)parent;
+        ExTrack item = (ExTrack) lv.getItemAtPosition(position);
+        Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
+        return true;
     };
 
     public void onPlayPanelClick(View view) {
