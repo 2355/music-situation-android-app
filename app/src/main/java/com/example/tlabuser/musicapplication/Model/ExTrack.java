@@ -12,12 +12,12 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
+import static com.example.tlabuser.musicapplication.CalendarUtil.strToCal;
 import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_TABLE;
 
 /**
@@ -26,31 +26,31 @@ import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_TABLE;
 
 
 public class ExTrack {
-    public long   id;          // コンテントプロバイダに登録されたID
-    public String path;        // 実データのPATH
-    public String title;       // トラックタイトル
-    public String album;       // アルバムタイトル
-    public long   albumId;     // アルバムのID
-    public String artist;      // アーティスト名
-    public long   artistId;    // アーティストのID
-    public long   duration;    // 再生時間(ミリ秒)
-    public int    trackNo;     // アルバムのトラックナンバ
-    public String bookmark;    // 最後に聴いた場所(ms)
-    public String year;        // 発売年
-    public Uri    uri;         // URI
+    public long     id;          // コンテントプロバイダに登録されたID
+    public String   path;        // 実データのPATH
+    public String   title;       // トラックタイトル
+    public String   album;       // アルバムタイトル
+    public long     albumId;     // アルバムのID
+    public String   artist;      // アーティスト名
+    public long     artistId;    // アーティストのID
+    public long     duration;    // 再生時間(ミリ秒)
+    public int      trackNo;     // アルバムのトラックナンバ
+    public String   bookmark;    // 最後に聴いた場所(ms)
+    public String   year;        // 発売年
+    public Uri      uri;         // URI
 
-    public String albumArt;
-    public int    albumYear;
+    public String   albumArt;
+    public int      albumYear;
 
-    public String situation;    // name name
-    public int    weight;       // name weight (weight_d + weight_u)
-    public int    weight_d;     // name weight (default by server)
-    public int    weight_u;     // name weight (feedback by user)
-    public int    fav;          // favorite +1 by good button, -1 by bad button
-    public Date   lastPlayed;
-    public int    playCount;
-    public int    skipCount;
-    public int    internal;     // 1 means the song is internal storage
+    public String   situation;    // situation name
+    public int      weight;       // situation weight (weight_d + weight_u)
+    public int      weight_d;     // situation weight (default by server)
+    public int      weight_u;     // situation weight (feedback by user)
+    public int      fav;          // favorite +1 by good button, -1 by bad button
+    public Calendar lastPlayed;
+    public int      playCount;
+    public int      skipCount;
+    public int      internal;     // 1 means the song is internal storage
 
 
     public ExTrack(){
@@ -84,7 +84,7 @@ public class ExTrack {
      **********************************************************************************************/
     // called at SituationDetailFragment.onLoadFinished()
     // get ExTracks from server
-    public static List<ExTrack> parseJsonArray(Context context, JSONArray jsonArray){
+    public static List<ExTrack> getExTracksFromJson(Context context, JSONArray jsonArray){
         List<ExTrack> exTracks = new ArrayList<ExTrack>();
 
         try{
@@ -183,7 +183,7 @@ public class ExTrack {
         values.put("weight_u",    exTrack.weight_u);
         values.put("fav",         exTrack.fav);
         if (exTrack.lastPlayed != null){
-            values.put("last_played", exTrack.lastPlayed.toString());
+            values.put("last_played", calToStr(exTrack.lastPlayed));
         }
         values.put("play_count",  exTrack.playCount);
         values.put("skip_count",  exTrack.skipCount);
@@ -284,7 +284,7 @@ public class ExTrack {
             exTrack.weight_d   = cursor.getInt(cursor.getColumnIndex("weight_d"));
             exTrack.weight_u   = cursor.getInt(cursor.getColumnIndex("weight_u"));
             exTrack.fav        = cursor.getInt(cursor.getColumnIndex("fav"));
-            exTrack.lastPlayed = strToDate(cursor.getString(cursor.getColumnIndex("last_played")));
+            exTrack.lastPlayed = strToCal(cursor.getString(cursor.getColumnIndex("last_played")));
             exTrack.playCount  = cursor.getInt(cursor.getColumnIndex("play_count"));
             exTrack.skipCount  = cursor.getInt(cursor.getColumnIndex("skip_count"));
             exTrack.internal   = cursor.getInt(cursor.getColumnIndex("internal"));
@@ -295,17 +295,6 @@ public class ExTrack {
         cursor.close();
 
         return exTracks;
-    }
-
-    private static Date strToDate(String dateString) {
-        Date date;
-        try{
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            date = format.parse(dateString);
-            return date;
-        }catch (ParseException e){
-            return null;
-        }
     }
 
     private static Cursor selectRows(SQLiteDatabase db, String where, String[] params) {

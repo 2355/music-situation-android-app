@@ -72,7 +72,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
         if(exTracks.isEmpty()) {
             // JSONの取得
             getLoaderManager().restartLoader(2, null, this);
-            Toast.makeText(activity, "SituationTrackListを取得しています。\nしばらくお待ちください。", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "SituationTrackListを取得しています。\nこれには30秒ほどかかる場合があります。", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -144,7 +144,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                 if (jsonArray.getJSONObject(0).has("artist")) {
 
-                    exTracks = ExTrack.parseJsonArray(activity, jsonArray);
+                    exTracks = ExTrack.getExTracksFromJson(activity, jsonArray);
                     ExTrack.insertRows(db, exTracks);
 
                     listExTrackAdapter = new ListExTrackAdapter(activity, exTracks);

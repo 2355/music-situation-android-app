@@ -30,21 +30,26 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.List;
+
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToSituations;
 
 public class SituationMenuFragment extends Fragment implements LoaderManager.LoaderCallbacks<JSONObject>{
 
-    private JSONArray jsonArray = new JSONArray();
-
-    private RecyclerView rvRecommendedSituations, rvSituations;
+    private final String TAG = "SituationMenuFragment";
 
     private Main mainActivity;
 
     private SQLOpenHelper sqlOpenHelper;
     private SQLiteDatabase db;
+    private Calendar cal = Calendar.getInstance();
 
+    private List<String> nowSituations;
     private List<Situation> recommendedSituations, situations;
+    private JSONArray jsonArray = new JSONArray();
 
+    private RecyclerView rvRecommendedSituations, rvSituations;
     private SituationsRecyclerAdapter situationsRecyclerAdapter;
 
     @Override
@@ -56,13 +61,16 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         sqlOpenHelper = new SQLOpenHelper(mainActivity);
         db = sqlOpenHelper.getReadableDatabase();
 
-        situations = Situation.getSituationsFromSQL(db);
+        situations = Situation.getAllSituations(db);
+        cal.getTime();
+        nowSituations = calToSituations(cal);
+        recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
 
         if(situations.isEmpty()){
             // JSONの取得
-            Log.d("RootMenuFragment", "situations.isEmpty()");
+            Log.d(TAG, "situations.isEmpty()");
             getLoaderManager().restartLoader(1, null, this);
-            Toast.makeText(mainActivity, "SituationListを取得しています。\nしばらくお待ちください。", Toast.LENGTH_LONG).show();
+            Toast.makeText(mainActivity, "SituationListを取得しています。\nこれには30秒ほどかかる場合があります。", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -72,9 +80,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
 
         View v = inflater.inflate(R.layout.fragment_situation_menu,container,false);
 
-        rvRecommendedSituations = (RecyclerView) v.findViewById(R.id.rv_recommended_situations);
-        rvRecommendedSituations.setLayoutManager(new GridLayoutManager(mainActivity, 2));
-        rvRecommendedSituations.setNestedScrollingEnabled(false);
+        // show SituationList
         rvSituations = (RecyclerView) v.findViewById(R.id.rv_situations);
         rvSituations.setLayoutManager(new LinearLayoutManager(mainActivity));
         rvSituations.setNestedScrollingEnabled(false);
@@ -91,7 +97,11 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         });
         rvSituations.setAdapter(situationsRecyclerAdapter);
 
-        recommendedSituations = situations.subList(0, 4);
+        // show RecommendedSituationList
+        rvRecommendedSituations = (RecyclerView) v.findViewById(R.id.rv_recommended_situations);
+        rvRecommendedSituations.setLayoutManager(new GridLayoutManager(mainActivity, 2));
+        rvRecommendedSituations.setNestedScrollingEnabled(false);
+
         situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
         situationsRecyclerAdapter.setItemClickedListener(new SituationsRecyclerAdapter.ItemClickedListener() {
             @Override
@@ -105,7 +115,6 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         rvRecommendedSituations.setAdapter(situationsRecyclerAdapter);
 
         return v;
-
     }
 
     @Override
@@ -124,7 +133,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
-            Log.d("RootMenuFragment","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+            Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         urlStr = head + urlStr + tail;
 
@@ -140,18 +149,25 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
             try {
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                 if (jsonArray.getJSONObject(0).has("tag")) {
-                    situations = Situation.getItems(jsonArray);
+                    situations = Situation.getSituationsFromJson(jsonArray);
                     Situation.insertRows(db, situations);
 
                     situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, situations);
                     rvSituations.setAdapter(situationsRecyclerAdapter);
+
+                    cal.getTime();
+                    nowSituations = calToSituations(cal);
+                    recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
+
+                    situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
+                    rvRecommendedSituations.setAdapter(situationsRecyclerAdapter);
                 }
 
             } catch (JSONException e) {
-                Log.d("RootMenuFragment","JSONのパースに失敗しました。 JSONException=" + e);
+                Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
             }
         }else{
-            Log.d("RootMenuFragment", "onLoadFinished error!");
+            Log.d(TAG, "onLoadFinished error!");
         }
     }
 

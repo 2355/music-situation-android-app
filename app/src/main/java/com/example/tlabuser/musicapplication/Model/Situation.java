@@ -31,7 +31,7 @@ public class Situation{
      * to SQL
      **********************************************************************************************/
 
-    public static List<Situation> getItems(JSONArray jsonArray) {
+    public static List<Situation> getSituationsFromJson(JSONArray jsonArray) {
         List<Situation> situations = new ArrayList<Situation>();
 
         try{
@@ -77,11 +77,28 @@ public class Situation{
      * from SQL
      **********************************************************************************************/
 
-    public static List<Situation> getSituationsFromSQL(SQLiteDatabase db){
+    public static List<Situation> getAllSituations(SQLiteDatabase db){
         String orderBy = "name";
 
         // query(tableName, selectColumns, whereClause, whereArgs, groupBy, having, orderBy, limit);
         Cursor cursor = db.query(SITUATION_TABLE, null, null, null, null, null, orderBy, null);
+
+        return setSituationsFromSQL(cursor);
+    }
+
+    public static List<Situation> getRecommendedSituations(SQLiteDatabase db, List<String> situations){
+        String where = "";
+        for (int i = 0; i < situations.size(); i++) {
+            where += "name = ? OR ";
+        }
+        where = where.substring(0, where.length()-3);
+
+        String[] situationsArray = situations.toArray(new String[situations.size()]);
+
+        String orderBy = "name";
+
+        // query(tableName, selectColumns, whereClause, whereArgs, groupBy, having, orderBy, limit);
+        Cursor cursor = db.query(SITUATION_TABLE, null, where, situationsArray, null, null, orderBy, null);
 
         return setSituationsFromSQL(cursor);
     }

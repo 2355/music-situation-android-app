@@ -35,6 +35,12 @@ import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreen;
 import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
 
+import java.util.Calendar;
+import java.util.List;
+
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToSituations;
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
+
 
 public class Main extends FragmentActivity{
 
@@ -283,7 +289,11 @@ public class Main extends FragmentActivity{
     }
 
     public void onBadButtonClick(View view) {
-        Toast.makeText(Main.this, "Click:BadButton", Toast.LENGTH_SHORT).show();
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+        List<String> situations = calToSituations(cal);
+
+        Toast.makeText(Main.this, situations.toString(), Toast.LENGTH_SHORT).show();
     }
 
     public void onPlayButtonClick(View view) {
@@ -291,7 +301,10 @@ public class Main extends FragmentActivity{
     }
 
     public void onGoodButtonClick(View view) {
-        Toast.makeText(Main.this, "Click:GoodButton", Toast.LENGTH_SHORT).show();
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+
+        Toast.makeText(Main.this, calToStr(cal), Toast.LENGTH_SHORT).show();
     }
 
     // サービスから値を受け取ったら動かしたい内容を書く
