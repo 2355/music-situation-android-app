@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by tlabuser on 2017/12/20.
+ * Calender <-> String (Situation)
  */
 
 public class CalendarUtil {
@@ -71,8 +71,8 @@ public class CalendarUtil {
             case 6:
             case 7:
             case 8:
-            case 9:
-            case 10: situations.add("朝"); break;
+            case 9: situations.add("朝"); break;
+            case 10:
             case 11:
             case 12:
             case 13:
