@@ -19,10 +19,9 @@ import com.example.tlabuser.musicapplication.JsonLoader;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Situation;
-import com.example.tlabuser.musicapplication.Model.Track;
 import com.example.tlabuser.musicapplication.R;
 import com.example.tlabuser.musicapplication.SQLOpenHelper;
-import com.example.tlabuser.musicapplication.View.Root.ListTrackAdapter;
+import com.example.tlabuser.musicapplication.Urls;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,16 +38,13 @@ import java.util.List;
 public class SituationDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<JSONObject>{
 
     private Main activity;
-    private static Situation situation_item;
-
-    JSONArray            jsonArray = new JSONArray();
-    List<Track>          trackList;
-    ListTrackAdapter trackListAdapter;
-
     private SQLOpenHelper sqlOpenHelper;
-    private SQLiteDatabase       db;
-    List<ExTrack>        exTracks, internalExTracks;
-    ListExTrackAdapter listExTrackAdapter, listInternalExTrackAdapter;
+    private SQLiteDatabase db;
+
+    private Situation situation_item;
+    private List<ExTrack> exTracks, internalExTracks;
+    private ListExTrackAdapter listExTrackAdapter, listInternalExTrackAdapter;
+    private JSONArray jsonArray = new JSONArray();
 
     private CheckBox checkBox;
     private TextView tv_situation_name;
@@ -103,34 +99,13 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
 
     @Override
     public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-        String head = "https://musicmetadata.herokuapp.com/ds/query?query=";
-        String tail = "&output=json&stylesheet=/xml-to-html.xsl";
-        String urlStr = String.format(
-                        "prefix dc: <http://purl.org/dc/elements/1.1/> \n" +
-                        "prefix foaf: <http://xmlns.com/foaf/0.1/> \n" +
-                        "prefix situation: <http://music.metadata.database.situation/> \n" +
-                        "prefix tag: <http://music.metadata.database.tag/>\n" +
-                        "\n" +
-                        "SELECT ?artist ?title ?tag ?weight\n" +
-                        "WHERE {\n" +
-                        "  ?s foaf:maker ?artist;\n" +
-                        "     dc:title ?title;\n" +
-                        "     situation:blank ?b.\n" +
-                        "  \n" +
-                        "  ?b situation:tag ?tag;\n" +
-                        "      situation:weight ?weight.\n" +
-                        "\n" +
-                        "FILTER( ?tag = tag:%s ) \n" +
-                        "}\n" +
-                        "order by desc(?weight)",
-                    situation_item.name);
-
+        String urlStr = String.format(Urls.SELECT_TRACKS, situation_item.name);
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
             Log.d("SituationDetailFragment","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
-        urlStr = head + urlStr + tail;
+        urlStr = Urls.HEAD + urlStr + Urls.TAIL;
 
         JsonLoader jsonLoader = new JsonLoader(getActivity(), urlStr);
         jsonLoader.forceLoad();

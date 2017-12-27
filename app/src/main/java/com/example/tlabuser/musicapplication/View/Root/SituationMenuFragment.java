@@ -22,6 +22,7 @@ import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
 import com.example.tlabuser.musicapplication.SQLOpenHelper;
+import com.example.tlabuser.musicapplication.Urls;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
 
 import org.json.JSONArray;
@@ -40,11 +41,10 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
     private final String TAG = "SituationMenuFragment";
 
     private Main mainActivity;
-
     private SQLOpenHelper sqlOpenHelper;
     private SQLiteDatabase db;
-    private Calendar cal = Calendar.getInstance();
 
+    private Calendar cal = Calendar.getInstance();
     private List<String> nowSituations;
     private List<Situation> recommendedSituations, situations;
     private JSONArray jsonArray = new JSONArray();
@@ -112,23 +112,13 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-        String head = "https://musicmetadata.herokuapp.com/ds/query?query=";
-        String tail = "&output=json&stylesheet=/xml-to-html.xsl";
-        String urlStr =
-                "prefix situation: <http://music.metadata.database.situation/> \n" +
-                        "\n" +
-                        "SELECT distinct ?tag\n" +
-                        "WHERE {\n" +
-                        "  ?b situation:tag ?tag;\n" +
-                        "      situation:weight ?weight.\n" +
-                        "}\n" +
-                        "order by (?tag)";
+        String urlStr = Urls.SELECT_SITUATIONS;
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
             Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
-        urlStr = head + urlStr + tail;
+        urlStr = Urls.HEAD + urlStr + Urls.TAIL;
 
         JsonLoader jsonLoader = new JsonLoader(getActivity(), urlStr);
         jsonLoader.forceLoad();
