@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 
 /**
  * This is YoutubePlayScreen class.
- * called by click a SituationTrack.
+ * called by click a ExTrack.
  */
 
 public class YoutubePlayScreen extends FragmentActivity implements LoaderManager.LoaderCallbacks<JSONObject>{
