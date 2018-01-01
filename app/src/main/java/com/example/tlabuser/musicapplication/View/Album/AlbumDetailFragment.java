@@ -13,9 +13,11 @@ import android.widget.TextView;
 import com.example.tlabuser.musicapplication.ImageGetTask;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.Album;
+import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Track;
 import com.example.tlabuser.musicapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,47 +25,46 @@ import java.util.List;
  */
 public class AlbumDetailFragment extends Fragment{
 
-    private static Album album_item;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View partView =inflater.inflate(R.layout.part_album, container, false);
 
         Main activity = (Main)getActivity();
-        album_item = activity.getFocusedAlbum();
+        Album item = activity.getFocusedAlbum();
 
-        TextView album_title  = (TextView) partView.findViewById(R.id.album);
-        TextView album_artist = (TextView) partView.findViewById(R.id.artist);
-        TextView album_tracks = (TextView) partView.findViewById(R.id.tracks);
-        ImageView album_art   = (ImageView) partView.findViewById(R.id.albumart);
+        TextView  tvAlbum    = (TextView)  partView.findViewById(R.id.album);
+        TextView  tvArtist   = (TextView)  partView.findViewById(R.id.artist);
+        TextView  tvTracks   = (TextView)  partView.findViewById(R.id.tracks);
+        ImageView ivAlbumArt = (ImageView) partView.findViewById(R.id.albumart);
 
-        album_title.setText(album_item.album);
-        album_artist.setText(album_item.artist);
-        album_tracks.setText(String.valueOf(album_item.tracks)+"tracks");
+        tvAlbum.setText(item.album);
+        tvArtist.setText(item.artist);
+        tvTracks.setText(String.valueOf(item.tracks)+"tracks");
 
-        String path = album_item.albumArt;
-        album_art.setImageResource(R.drawable.dummy_album_art);
+        String path = item.albumArt;
+        ivAlbumArt.setImageResource(R.drawable.dummy_album_art);
         if(path!=null){
-            album_art.setTag(path);
-            ImageGetTask task = new ImageGetTask(album_art);
+            ivAlbumArt.setTag(path);
+            ImageGetTask task = new ImageGetTask(ivAlbumArt);
             task.execute(path);
         }
 
-        /*
-        partView.findViewById(R.id.album_info).setOnClickListener(new View.OnClickListener()
-        {@Override public void onClick(View v) {}});
-        partView.findViewById(R.id.tracktitle).setOnClickListener(new View.OnClickListener()
-        {@Override public void onClick(View v) {}});
-        */
+        List<Track> tracks = Track.getItemsByAlbum(getActivity(), item.albumId);
+        List<ExTrack> exTracks = new ArrayList<>();
 
-        List<Track> tracks  = Track.getItemsByAlbum(getActivity(), album_item.albumId);
+        for (int i = 0; i < tracks.size(); i++){
+            ExTrack exTrack = new ExTrack();
+            exTrack = ExTrack.trackToExTrack(exTrack, tracks.get(i));
+            exTrack.internal = 1;
+            exTracks.add(exTrack);
+        }
 
-        ListView trackList = (ListView) partView.findViewById(R.id.track_list);
-        ListTrackAdapter2 adapter = new ListTrackAdapter2(activity, tracks);
-        trackList.setAdapter(adapter);
+        ListView exTrackList = (ListView) partView.findViewById(R.id.track_list);
+        ListExTrackAlbumAdapter adapter = new ListExTrackAlbumAdapter(activity, exTracks);
+        exTrackList.setAdapter(adapter);
 
-        trackList.setOnItemClickListener(activity.TrackClickListener);
-        trackList.setOnItemLongClickListener(activity.TrackLongClickListener);
+        exTrackList.setOnItemClickListener(activity.internalExTrackClickListener);
+        exTrackList.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
 
         return partView;
     }

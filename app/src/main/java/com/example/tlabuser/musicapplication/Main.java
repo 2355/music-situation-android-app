@@ -27,7 +27,6 @@ import com.example.tlabuser.musicapplication.Model.Album;
 import com.example.tlabuser.musicapplication.Model.Artist;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Situation;
-import com.example.tlabuser.musicapplication.Model.Track;
 import com.example.tlabuser.musicapplication.View.Album.AlbumDetailFragment;
 import com.example.tlabuser.musicapplication.View.Artist.ArtistDetailFragment;
 import com.example.tlabuser.musicapplication.View.Player.PlayScreen;
@@ -44,12 +43,12 @@ import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
 
 public class Main extends FragmentActivity{
 
-    private enum FrgmType { fRoot, fSituation, fAlbum, fArtist}
+    private enum FrgmType { fRoot, fSituation, fAlbum, fArtist }
     private FrgmType fTop;
 
-    private Situation focusedSituaion;
-    public  void      focusSituation(Situation item) {if(item != null) focusedSituaion = item;}
-    public  Situation getFocusedSituaion() {return focusedSituaion ;}
+    private Situation focusedSituation;
+    public  void      focusSituation(Situation item) {if(item != null) focusedSituation = item;}
+    public  Situation getFocusedSituation() {return focusedSituation;}
 
     private Album focusedAlbum;
     public  void  focusAlbum(Album item) {if(item != null) focusedAlbum = item;}
@@ -58,10 +57,6 @@ public class Main extends FragmentActivity{
     private Artist focusedArtist;
     public  void   focusArtist(Artist item) {if(item != null) focusedArtist = item;}
     public  Artist getFocusedArtist() {return focusedArtist ;}
-
-    private static Track focusedTrack;
-    public  void   focusTrack(Track item) {if(item != null) focusedTrack = item;}
-    public  static Track getFocusedTrack() {return focusedTrack ;}
 
     private static ExTrack focusedExTrack;
     public  void   focusExTrack(ExTrack item) {if(item != null) focusedExTrack = item;}
@@ -211,23 +206,6 @@ public class Main extends FragmentActivity{
         ListView lv = (ListView)parent;
         Artist item = (Artist)lv.getItemAtPosition(position);
         Toast.makeText(Main.this, "LongClick:"+item.artist, Toast.LENGTH_LONG).show();
-        return true;
-    };
-
-    public AdapterView.OnItemClickListener  TrackClickListener = (parent, view, position, id) -> {
-        ListView lv = (ListView)parent;
-        focusTrack( (Track) lv.getItemAtPosition(position) );
-
-        Intent intent = new Intent(getApplication(), PlayScreen.class);
-        intent.putExtra("from", "fromTrackList");
-        intent.putExtra("state", "Stop");
-        startActivity(intent);
-    };
-
-    public AdapterView.OnItemLongClickListener TrackLongClickListener = (parent, view, position, id) -> {
-        ListView lv = (ListView)parent;
-        Track item = (Track) lv.getItemAtPosition(position);
-        Toast.makeText(Main.this, "LongClick:"+item.title, Toast.LENGTH_LONG).show();
         return true;
     };
 

@@ -8,6 +8,7 @@ public class SQLOpenHelper extends SQLiteOpenHelper {
     private static final int    DB_VERSION = 1;
     private static final String DB_NAME = "situation_track";
     public static final String EXTRACK_TABLE = "extrack";
+    public static final String EXTRACK_SITUATION_TABLE = "extrack_situation";
     public static final String SITUATION_TABLE = "situation";
 
     public SQLOpenHelper(Context context) {

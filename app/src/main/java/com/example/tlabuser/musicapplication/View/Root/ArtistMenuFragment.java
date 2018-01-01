@@ -22,7 +22,7 @@ public class ArtistMenuFragment extends Fragment {
         Main activity = (Main)getActivity();
         List<Artist> artists = Artist.getItems(activity);
 
-        View v = inflater.inflate(R.layout.menu_artists,container,false);
+        View v = inflater.inflate(R.layout.fragment_artists_menu,container,false);
         ListView artistList = (ListView) v.findViewById(R.id.artist_list);
         ListArtistAdapter adapter = new ListArtistAdapter(activity, artists);
         artistList.setAdapter(adapter);

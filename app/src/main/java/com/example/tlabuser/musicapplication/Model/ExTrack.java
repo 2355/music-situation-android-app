@@ -24,7 +24,6 @@ import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_TABLE;
  * Extend Track class
  */
 
-
 public class ExTrack {
     public long     id;          // コンテントプロバイダに登録されたID
     public String   path;        // 実データのPATH
@@ -134,7 +133,7 @@ public class ExTrack {
     }
 
     // add Track data to ExTrack
-    private static ExTrack trackToExTrack(ExTrack exTrack, Track track){
+    public static ExTrack trackToExTrack(ExTrack exTrack, Track track){
         exTrack.id       = track.id;
         exTrack.path     = track.path;
         exTrack.title    = track.title;
@@ -190,6 +189,15 @@ public class ExTrack {
         values.put("internal",    exTrack.internal);
 
         return values;
+    }
+
+    // insert ExTrack to SQL
+    public static void insertRow(SQLiteDatabase db, ExTrack exTrack){
+        ContentValues values = setValues(exTrack);
+        long id = db.insert(EXTRACK_TABLE, null, values);
+        if (id < 0) {
+            //error handling
+        }
     }
 
     // insert ExTracks to SQL

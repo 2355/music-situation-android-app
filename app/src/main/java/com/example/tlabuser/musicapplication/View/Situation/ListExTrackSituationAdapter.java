@@ -16,12 +16,12 @@ import java.util.List;
  * Created by tlabuser on 2017/07/12.
  */
 
-public class ListExTrackAdapter extends ArrayAdapter<ExTrack> {
+public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
 
     LayoutInflater mInflater;
     int tracks;
 
-    public ListExTrackAdapter(Context context, List<ExTrack> exTracks){
+    public ListExTrackSituationAdapter(Context context, List<ExTrack> exTracks){
         super(context, 0, exTracks);
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
@@ -35,7 +35,7 @@ public class ListExTrackAdapter extends ArrayAdapter<ExTrack> {
         ViewHolder holder;
 
         if(convertView==null){
-            convertView = mInflater.inflate(R.layout.item_track3, null);
+            convertView = mInflater.inflate(R.layout.item_extrack_situation, null);
             holder = new ViewHolder();
             holder.trackTextView  = (TextView)convertView.findViewById(R.id.title);
             holder.artistTextView = (TextView)convertView.findViewById(R.id.artist);

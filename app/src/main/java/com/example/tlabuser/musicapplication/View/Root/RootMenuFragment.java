@@ -49,7 +49,7 @@ public class RootMenuFragment extends Fragment{
             Fragment fragment = null;
             switch(position){
                 case 0: fragment = new SituationMenuFragment(); break;
-                case 1: fragment = new TrackMenuFragment();     break;
+                case 1: fragment = new ExTrackMenuFragment();   break;
                 case 2: fragment = new AlbumMenuFragment();     break;
                 case 3: fragment = new ArtistMenuFragment();    break;
             }

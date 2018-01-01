@@ -78,7 +78,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        View v = inflater.inflate(R.layout.fragment_situation_menu,container,false);
+        View v = inflater.inflate(R.layout.fragment_situations_menu,container,false);
 
         // show SituationList
         rvSituations = (RecyclerView) v.findViewById(R.id.rv_situations);

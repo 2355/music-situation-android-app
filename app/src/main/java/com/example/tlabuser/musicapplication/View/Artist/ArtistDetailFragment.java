@@ -39,13 +39,6 @@ public class ArtistDetailFragment extends Fragment{
         artist_albums.setText(String.valueOf(artist_item.albums)+"albums");
         album_tracks.setText( String.valueOf(artist_item.tracks)+"tracks");
 
-        /*
-        partView.findViewById(R.id.artist_info).setOnClickListener(new View.OnClickListener()
-        {@Override public void onClick(View v) {}});
-        partView.findViewById(R.id.albumtitle).setOnClickListener(new View.OnClickListener()
-        {@Override public void onClick(View v) {}});
-        */
-
         List<Album> albums  = Album.getItemsByArtist(getActivity(), artist_item.artist);
 
         ListView albumList = (ListView) partView.findViewById(R.id.album_list);
@@ -54,7 +47,6 @@ public class ArtistDetailFragment extends Fragment{
 
         albumList.setOnItemClickListener(activity.AlbumClickListener);
         albumList.setOnItemLongClickListener(activity.AlbumLongClickListener);
-
 
         return partView;
     }

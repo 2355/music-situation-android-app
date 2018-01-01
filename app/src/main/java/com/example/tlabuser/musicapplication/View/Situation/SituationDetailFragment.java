@@ -43,7 +43,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
 
     private Situation situation_item;
     private List<ExTrack> exTracks, internalExTracks;
-    private ListExTrackAdapter listExTrackAdapter, listInternalExTrackAdapter;
+    private ListExTrackSituationAdapter listExTrackAdapter, listInternalExTrackAdapter;
     private JSONArray jsonArray = new JSONArray();
 
     private CheckBox checkBox;
@@ -61,7 +61,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
         db = sqlOpenHelper.getReadableDatabase();
 
         // 選択されたSituationを取得
-        situation_item = activity.getFocusedSituaion();
+        situation_item = activity.getFocusedSituation();
 
         exTracks = ExTrack.getExTracksBySituation(db, situation_item.name);
 
@@ -84,7 +84,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
         checkBox.setOnClickListener(CheckboxClickListener);
         tv_situation_name.setText(situation_item.name);
 
-        listExTrackAdapter = new ListExTrackAdapter(activity, exTracks);
+        listExTrackAdapter = new ListExTrackSituationAdapter(activity, exTracks);
         lv_track_list.setAdapter(listExTrackAdapter);
         lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
         lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
@@ -92,7 +92,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
 
         // 端末内のみリスト
         internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
-        listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
+        listInternalExTrackAdapter = new ListExTrackSituationAdapter(activity, internalExTracks);
 
         return partView;
     }
@@ -122,7 +122,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                     exTracks = ExTrack.getExTracksFromJson(activity, jsonArray);
                     ExTrack.insertRows(db, exTracks);
 
-                    listExTrackAdapter = new ListExTrackAdapter(activity, exTracks);
+                    listExTrackAdapter = new ListExTrackSituationAdapter(activity, exTracks);
                     lv_track_list.setAdapter(listExTrackAdapter);
                     lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
                     lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
@@ -130,7 +130,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
 
                     // 端末内のみリスト
                     internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
-                    listInternalExTrackAdapter = new ListExTrackAdapter(activity, internalExTracks);
+                    listInternalExTrackAdapter = new ListExTrackSituationAdapter(activity, internalExTracks);
 
                 }else{
                     Log.d("SituationDetailFragment", "No Tracks!");
