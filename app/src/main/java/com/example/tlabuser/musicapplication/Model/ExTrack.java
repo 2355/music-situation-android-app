@@ -14,10 +14,13 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
 import static com.example.tlabuser.musicapplication.CalendarUtil.strToCal;
+import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_SITUATION_TABLE;
 import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_TABLE;
 
 /**
@@ -25,6 +28,8 @@ import static com.example.tlabuser.musicapplication.SQLOpenHelper.EXTRACK_TABLE;
  */
 
 public class ExTrack {
+    public static final String TAG = "ExTrack";
+
     public long     id;          // コンテントプロバイダに登録されたID
     public String   path;        // 実データのPATH
     public String   title;       // トラックタイトル
@@ -41,41 +46,17 @@ public class ExTrack {
     public String   albumArt;
     public int      albumYear;
 
-    public String   situation;    // situation name
-    public int      weight;       // situation weight (weight_d + weight_u)
-    public int      weight_d;     // situation weight (default by server)
-    public int      weight_u;     // situation weight (feedback by user)
-    public int      fav;          // favorite +1 by good button, -1 by bad button
+    public int      fav;         // favorite +1 by good button, -1 by bad button
     public Calendar lastPlayed;
     public int      playCount;
     public int      skipCount;
-    public int      internal;     // 1 means the song is internal storage
+    public int      internal;    // 1 means the song is internal storage
 
+    public int      musicId;     // unique ID
+    public Map<String, ExTrackSituation> situationMap = new HashMap<>();
 
-    public ExTrack(){
-        id         = 0;
-        path       = "";
-        title      = "";
-        album      = "";
-        albumId    = 0;
-        artist     = "";
-        artistId   = 0;
-        duration   = 0;
-        trackNo    = 0;
-        bookmark   = "";
-        year       = "";
-        uri        = null;
-        albumArt   = "";
-        albumYear  = 0;
-        situation  = "";
-        weight     = 0;
-        weight_d   = 0;
-        weight_u   = 0;
-        fav        = 0;
-        lastPlayed = null;
-        playCount  = 0;
-        skipCount  = 0;
-        internal   = 0;
+    public ExTrack() {
+
     }
 
     /***********************************************************************************************
@@ -83,19 +64,59 @@ public class ExTrack {
      **********************************************************************************************/
     // called at SituationDetailFragment.onLoadFinished()
     // get ExTracks from server
-    public static List<ExTrack> getExTracksFromJson(Context context, JSONArray jsonArray){
-        List<ExTrack> exTracks = new ArrayList<ExTrack>();
+    public static List<ExTrack> getExTracksFromJson(SQLiteDatabase db, Context context, JSONArray jsonArray){
+        List<ExTrack> exTracks = new ArrayList<>();
 
         try{
-            for(int i=0; i<jsonArray.length(); i++){
-                ExTrack exTrack = new ExTrack();
-                exTrack.situation = jsonArray.getJSONObject(i).getJSONObject("tag").getString("value").replace("http://music.metadata.database.tag/", "");
-                exTrack.artist    = jsonArray.getJSONObject(i).getJSONObject("artist").getString("value");
-                exTrack.title     = jsonArray.getJSONObject(i).getJSONObject("title" ).getString("value");
-                exTrack.weight_d  = jsonArray.getJSONObject(i).getJSONObject("weight").getInt("value");
+            for (int i=0; i<jsonArray.length(); i++) {
+                String situation = jsonArray.getJSONObject(i).getJSONObject("tag").getString("value").replace("http://music.metadata.database.tag/", "");
+                String artist    = jsonArray.getJSONObject(i).getJSONObject("artist").getString("value");
+                String title     = jsonArray.getJSONObject(i).getJSONObject("title" ).getString("value");
+                int    weight_d  = jsonArray.getJSONObject(i).getJSONObject("weight").getInt("value");
 
-                exTrack = addTrackDataByArtistTitle(context, exTrack);
-                exTracks.add(exTrack);
+                List<ExTrack> exTracksFromSQL = getExTracksByArtistTitle(db, artist, title);
+
+                if (exTracksFromSQL.isEmpty()) {
+                    ExTrack exTrack = new ExTrack();
+                    exTrack.artist = artist;
+                    exTrack.title = title;
+                    exTrack = addTrackDataByArtistTitle(context, exTrack);
+
+                    ExTrackSituation es = new ExTrackSituation();
+                    es.situation = situation;
+                    es.weight    = 0;
+                    es.weight_d  = weight_d;
+                    es.weight_u  = 0;
+                    exTrack.situationMap.put(situation, es);
+
+                    insertExTrack(db, exTrack);
+
+                    exTracks.add(exTrack);
+
+                } else {
+                    for (int j=0; j<exTracksFromSQL.size(); j++) {
+                        ExTrack exTrack = exTracksFromSQL.get(j);
+
+                        if (exTrack.situationMap.containsKey(situation)){
+                            exTrack.situationMap.get(situation).weight_d = weight_d;
+
+                            updateExTrackSituation(db, exTrack.musicId, exTrack.situationMap.get(situation));
+
+                        } else {
+                            ExTrackSituation es = new ExTrackSituation();
+                            es.situation = situation;
+                            es.weight    = 0;
+                            es.weight_d  = weight_d;
+                            es.weight_u  = 0;
+                            exTrack.situationMap.put(situation, es);
+
+                            insertExTrackSituation(db, exTrack.musicId, exTrack.situationMap.get(situation));
+                        }
+
+                        exTracks.add(exTrack);
+                    }
+                }
+
             }
 
         } catch (JSONException e) {
@@ -105,7 +126,7 @@ public class ExTrack {
         return exTracks;
     }
 
-    // add Track data to ExTrack by artist, title
+    // add Track data to ExTrack by artist and title if you have the song
     private static ExTrack addTrackDataByArtistTitle(Context context, ExTrack exTrack) {
         ContentResolver resolver = context.getContentResolver();
         String[] SELECTION_ARG = {exTrack.artist, exTrack.title};
@@ -119,13 +140,14 @@ public class ExTrack {
 
         boolean move = cursor.moveToFirst();
         while(move){
-            if(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)) > 3000){
+            if (cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)) > 3000){
                 Track track = new Track();
                 track.setTrack(cursor);
-                exTrack = trackToExTrack(exTrack, track);
+
+                exTrack.addTrackDataToExTrack(track);
                 return exTrack;
 
-            }else{ move = cursor.moveToNext(); }
+            } else { move = cursor.moveToNext(); }
 
         }
         cursor.close();
@@ -133,33 +155,26 @@ public class ExTrack {
     }
 
     // add Track data to ExTrack
-    public static ExTrack trackToExTrack(ExTrack exTrack, Track track){
-        exTrack.id       = track.id;
-        exTrack.path     = track.path;
-        exTrack.title    = track.title;
-        exTrack.album    = track.album;
-        exTrack.albumId  = track.albumId;
-        exTrack.artist   = track.artist;
-        exTrack.artistId = track.artistId;
-        exTrack.duration = track.duration;
-        exTrack.trackNo  = track.trackNo;
+    public void addTrackDataToExTrack(Track track){
+        this.id       = track.id;
+        this.path     = track.path;
+        this.title    = track.title;
+        this.album    = track.album;
+        this.albumId  = track.albumId;
+        this.artist   = track.artist;
+        this.artistId = track.artistId;
+        this.duration = track.duration;
+        this.trackNo  = track.trackNo;
         if(track.bookmark != null){
-            exTrack.bookmark = track.bookmark;
+            this.bookmark = track.bookmark;
         }
-        exTrack.year     = track.year;
-        exTrack.uri      = track.uri;
-        exTrack.internal = 1;
-
-        return exTrack;
+        this.year     = track.year;
+        this.uri      = track.uri;
+        this.internal = 1;
     }
 
-
-    // convert ExTrack to ContentValues
-    private static ContentValues setValues(ExTrack exTrack){
-        exTrack.weight = exTrack.weight_d + exTrack.weight_u;
-
+    public static void insertExTrack(SQLiteDatabase db, ExTrack exTrack) {
         ContentValues values = new ContentValues();
-
         values.put("id",          exTrack.id);
         values.put("path",        exTrack.path);
         values.put("title",       exTrack.title);
@@ -171,53 +186,65 @@ public class ExTrack {
         values.put("track_no",    exTrack.trackNo);
         values.put("bookmark",    exTrack.bookmark);
         values.put("year",        exTrack.year);
-        if (exTrack.uri != null){
-            values.put("uri",         exTrack.uri.toString());
+        if (exTrack.uri != null) {
+            values.put("uri",     exTrack.uri.toString());
         }
         values.put("album_art",   exTrack.albumArt);
         values.put("album_year",  exTrack.albumYear);
-        values.put("situation",   exTrack.situation);
-        values.put("weight",      exTrack.weight);
-        values.put("weight_d",    exTrack.weight_d);
-        values.put("weight_u",    exTrack.weight_u);
         values.put("fav",         exTrack.fav);
-        if (exTrack.lastPlayed != null){
+        if (exTrack.lastPlayed != null) {
             values.put("last_played", calToStr(exTrack.lastPlayed));
         }
         values.put("play_count",  exTrack.playCount);
         values.put("skip_count",  exTrack.skipCount);
         values.put("internal",    exTrack.internal);
 
-        return values;
-    }
-
-    // insert ExTrack to SQL
-    public static void insertRow(SQLiteDatabase db, ExTrack exTrack){
-        ContentValues values = setValues(exTrack);
         long id = db.insert(EXTRACK_TABLE, null, values);
         if (id < 0) {
             //error handling
+            Log.d(TAG, "insert ExTrack error");
+        }
+
+        exTrack.musicId = getMusicIdFromSQL(db, exTrack);
+        for (Map.Entry<String, ExTrackSituation> esEntry : exTrack.situationMap.entrySet()) {
+            insertExTrackSituation(db, exTrack.musicId, esEntry.getValue());
         }
     }
 
-    // insert ExTracks to SQL
-    public static void insertRows(SQLiteDatabase db, List<ExTrack> exTracks){
-        for (int i=0; i<exTracks.size(); i++){
-            ExTrack exTrack = exTracks.get(i);
+    public static void insertExTrackSituation(SQLiteDatabase db, int musicId, ExTrackSituation es){
+        es.weight = es.weight_d + es.weight_u;
 
-            ContentValues values = setValues(exTrack);
-            long id = db.insert(EXTRACK_TABLE, null, values);
-            if (id < 0) {
-                //error handling
-            }
+        ContentValues values = new ContentValues();
+        values.put("music_id",  musicId);
+        values.put("situation", es.situation);
+        values.put("weight",    es.weight);
+        values.put("weight_d",  es.weight_d);
+        values.put("weight_u",  es.weight_u);
+
+        long id = db.insert(EXTRACK_SITUATION_TABLE, null, values);
+        if (id < 0) {
+            //error handling
+            Log.d(TAG, "insert ExTrackSituation error");
         }
     }
 
-    public static void updateRow(SQLiteDatabase db, ExTrack exTrack, String where, String[] params){
-        ContentValues values = setValues(exTrack);
-        db.update(EXTRACK_TABLE, values, where, params);
+    public static void updateExTrackSituation(SQLiteDatabase db, int musicId, ExTrackSituation es) {
+        String   where = "music_id = ? AND situation = ?";
+        String[] params = new String[]{String.valueOf(musicId), es.situation};
+
+        es.weight = es.weight_d + es.weight_u;
+
+        ContentValues values = new ContentValues();
+        values.put("music_id",  musicId);
+        values.put("situation", es.situation);
+        values.put("weight",    es.weight);
+        values.put("weight_d",  es.weight_d);
+        values.put("weight_u",  es.weight_u);
+
+        db.update(EXTRACK_SITUATION_TABLE, values, where, params);
     }
 
+    // not use
     public void deleteRow(SQLiteDatabase db, String where, String[] params){
         db.delete(EXTRACK_TABLE, where, params);
     }
@@ -226,48 +253,90 @@ public class ExTrack {
     /***********************************************************************************************
      * from SQL
      **********************************************************************************************/
-    // call at SituationDetailFragment.onCreate()
-    public static List<ExTrack> getExTracksBySituation(SQLiteDatabase db, String situation){
-        String   where = "situation = ?";
-        String[] params = new String[]{situation};
-        String   orderBy = "weight DESC";
 
-        Cursor cursor = selectRows(db, where, params, orderBy);
+    public static int getMusicIdFromSQL(SQLiteDatabase db, ExTrack exTrack){
+        String where = "id = ? AND artist = ? AND title = ?";
+        String[] params = new String[]{String.valueOf(exTrack.id), exTrack.artist, exTrack.title};
 
-        return setExTracksFromSQL(cursor);
-    }
+        Cursor cursor = db.query(EXTRACK_TABLE, null, where, params, null, null, null, null);
 
-    public static List<ExTrack> getInternalExTracksBySituation(SQLiteDatabase db, String situation){
-        String   where = "situation = ? AND internal = 1";
-        String[] params = new String[]{situation};
-        String   orderBy = "weight DESC";
+        List<ExTrack> exTracks = setExTracksFromSQL(db, cursor);
+        if (exTracks.size() == 1) {
+            return exTracks.get(0).musicId;
 
-        Cursor cursor = selectRows(db, where, params, orderBy);
-
-        return setExTracksFromSQL(cursor);
+        } else {
+            // error handling
+            Log.d(TAG, "getExTrackByMusicId: " + String.valueOf(exTracks.size()));
+            return -1;
+        }
     }
 
     public static List<ExTrack> getExTracksByArtistTitle(SQLiteDatabase db, String artist, String title){
-        String   where = "artist = ? AND title = ?";
+        String where = "artist = ? AND title = ?";
         String[] params = new String[]{artist, title};
 
-        Cursor cursor = selectRows(db, where, params);
+        Cursor cursor = db.query(EXTRACK_TABLE, null, where, params, null, null, null, null);
 
-        return setExTracksFromSQL(cursor);
+        return setExTracksFromSQL(db, cursor);
     }
 
-    public static List<ExTrack> getExTracksById(SQLiteDatabase db, String id){
-        String   where = "id = ?";
-        String[] params = new String[]{id};
+    // step1: Get music_id from EXTRACK_SITUATION_TABLE where situation = situation
+    // step2: Get ExTrack from EXTRACK_TABLE where music_id = musicId
+    // step3: Set ExTrackSituation from EXTRACK_SITUATION_TABLE where music_id = musicId
+    public static List<ExTrack> getExTracksBySituation(SQLiteDatabase db, String situation){
+        List<ExTrack> exTracks = new ArrayList<>();
 
-        Cursor cursor = selectRows(db, where, params);
+        String where = "situation = ?";
+        String[] params = new String[]{situation};
+        String orderBy = "weight DESC";
 
-        return setExTracksFromSQL(cursor);
+        Cursor cursor = db.query(EXTRACK_SITUATION_TABLE, null, where, params, null, null, orderBy, null);
+
+        boolean move = cursor.moveToFirst();
+        while (move) {
+            int musicId = cursor.getInt(cursor.getColumnIndex("music_id"));
+            ExTrack exTrack = getExTrackByMusicId(db, musicId);
+
+            if (exTrack != null) {
+                exTracks.add(exTrack);
+            }
+            move = cursor.moveToNext();
+        }
+        cursor.close();
+
+        return exTracks;
     }
 
+    public static ExTrack getExTrackByMusicId(SQLiteDatabase db, int musicId){
+        String where = "music_id = ?";
+        String[] params = new String[]{String.valueOf(musicId)};
+
+        Cursor cursor = db.query(EXTRACK_TABLE, null, where, params, null, null, null, null);
+
+        List<ExTrack> exTracks = setExTracksFromSQL(db, cursor);
+        if (exTracks.size() == 1) {
+            return exTracks.get(0);
+
+        } else {
+            // error handling
+            Log.d(TAG, "getExTrackByMusicId: " + String.valueOf(exTracks.size()));
+            return null;
+        }
+    }
+
+    public static List<ExTrack> getInternalExTracks(List<ExTrack> exTracks) {
+        List<ExTrack> internalExTracks = new ArrayList<>();
+        for (ExTrack exTrack : exTracks) {
+            if (exTrack.internal == 1) {
+                internalExTracks.add(exTrack);
+            }
+        }
+
+        return internalExTracks;
+    }
 
     // set from sql
-    private static List<ExTrack> setExTracksFromSQL(Cursor cursor){
+    private static List<ExTrack> setExTracksFromSQL(SQLiteDatabase db, Cursor cursor){
         List<ExTrack> exTracks = new ArrayList<ExTrack>();
 
         boolean move = cursor.moveToFirst();
@@ -287,15 +356,14 @@ public class ExTrack {
             exTrack.uri        = Uri.parse(cursor.getString(cursor.getColumnIndex("uri")));
             exTrack.albumArt   = cursor.getString(cursor.getColumnIndex("album_art"));
             exTrack.albumYear  = cursor.getInt(cursor.getColumnIndex("album_year"));
-            exTrack.situation  = cursor.getString(cursor.getColumnIndex("situation"));
-            exTrack.weight     = cursor.getInt(cursor.getColumnIndex("weight"));
-            exTrack.weight_d   = cursor.getInt(cursor.getColumnIndex("weight_d"));
-            exTrack.weight_u   = cursor.getInt(cursor.getColumnIndex("weight_u"));
             exTrack.fav        = cursor.getInt(cursor.getColumnIndex("fav"));
             exTrack.lastPlayed = strToCal(cursor.getString(cursor.getColumnIndex("last_played")));
             exTrack.playCount  = cursor.getInt(cursor.getColumnIndex("play_count"));
             exTrack.skipCount  = cursor.getInt(cursor.getColumnIndex("skip_count"));
             exTrack.internal   = cursor.getInt(cursor.getColumnIndex("internal"));
+            exTrack.musicId    = cursor.getInt(cursor.getColumnIndex("music_id"));
+
+            setExTrackSituationFromSQL(db, exTrack);
 
             exTracks.add(exTrack);
             move = cursor.moveToNext();
@@ -305,13 +373,25 @@ public class ExTrack {
         return exTracks;
     }
 
-    private static Cursor selectRows(SQLiteDatabase db, String where, String[] params) {
-        return selectRows(db, where, params, null);
-    }
+    // add ExTrackSituations to ExTracks
+    public static void setExTrackSituationFromSQL(SQLiteDatabase db, ExTrack exTrack) {
+        String where = "music_id = ?";
+        String[] params = new String[]{String.valueOf(exTrack.musicId)};
 
-    private static Cursor selectRows(SQLiteDatabase db, String where, String[] params, String orderBy){
-        // query(tableName, selectColumns, whereClause, whereArgs, groupBy, having, orderBy, limit);
-        return db.query(EXTRACK_TABLE, null, where, params, null, null, orderBy, null);
+        Cursor cursor = db.query(EXTRACK_SITUATION_TABLE, null, where, params, null, null, null, null);
+
+        boolean move = cursor.moveToFirst();
+        while (move) {
+            ExTrackSituation es = new ExTrackSituation();
+            es.situation = cursor.getString(cursor.getColumnIndex("situation"));
+            es.weight    = cursor.getInt(cursor.getColumnIndex("weight"));
+            es.weight_d  = cursor.getInt(cursor.getColumnIndex("weight_d"));
+            es.weight_u  = cursor.getInt(cursor.getColumnIndex("weight_u"));
+
+            exTrack.situationMap.put(es.situation, es);
+            move = cursor.moveToNext();
+        }
+        cursor.close();
     }
 
 }

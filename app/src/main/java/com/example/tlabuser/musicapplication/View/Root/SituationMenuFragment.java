@@ -66,7 +66,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
         nowSituations = calToSituations(cal);
         recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
 
-        if(situations.isEmpty()){
+        if(situations.isEmpty()) {
             // JSONの取得
             Log.d(TAG, "situations.isEmpty()");
             getLoaderManager().restartLoader(1, null, this);
@@ -132,10 +132,15 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
             try {
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                 if (jsonArray.getJSONObject(0).has("tag")) {
-                    situations = Situation.getSituationsFromJson(jsonArray);
-                    Situation.insertRows(db, situations);
+                    situations = Situation.getSituationsFromJson(db, jsonArray);
 
                     situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, situations);
+                    situationsRecyclerAdapter.setItemClickedListener(situation -> {
+                        mainActivity.focusSituation(situation);
+                        FragmentManager fm = mainActivity.getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
+                    });
                     rvSituations.setAdapter(situationsRecyclerAdapter);
 
                     cal.getTime();
@@ -143,6 +148,12 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
                     recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
 
                     situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
+                    situationsRecyclerAdapter.setItemClickedListener(situation -> {
+                        mainActivity.focusSituation(situation);
+                        FragmentManager fm = mainActivity.getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
+                    });
                     rvRecommendedSituations.setAdapter(situationsRecyclerAdapter);
                 }
 

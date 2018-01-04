@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.tlabuser.musicapplication.Model.ExTrack;
+import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
 
 import java.util.List;
@@ -18,14 +19,17 @@ import java.util.List;
 
 public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
 
-    LayoutInflater mInflater;
-    int tracks;
+    private LayoutInflater mInflater;
+    private String situationName;
+    private int tracks;
 
-    public ListExTrackSituationAdapter(Context context, List<ExTrack> exTracks){
+    public ListExTrackSituationAdapter(Context context, Situation situation, List<ExTrack> exTracks){
         super(context, 0, exTracks);
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
-        tracks = exTracks.size();
+        this.situationName = situation.name;
+        this.tracks = situation.tracks;
+        this.tracks = exTracks.size();
     }
 
     @Override
@@ -37,25 +41,25 @@ public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
         if(convertView==null){
             convertView = mInflater.inflate(R.layout.item_extrack_situation, null);
             holder = new ViewHolder();
-            holder.trackTextView  = (TextView)convertView.findViewById(R.id.title);
-            holder.artistTextView = (TextView)convertView.findViewById(R.id.artist);
-            holder.weightTextView = (TextView)convertView.findViewById(R.id.weight);
+            holder.tvTitle = (TextView)convertView.findViewById(R.id.title);
+            holder.tvArtist = (TextView)convertView.findViewById(R.id.artist);
+            holder.tvWeight = (TextView)convertView.findViewById(R.id.weight);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.trackTextView.setText(exTrack.title);
-        holder.artistTextView.setText(exTrack.artist);
-        holder.weightTextView.setText(String.valueOf(exTrack.weight));
+        holder.tvTitle.setText(exTrack.title);
+        holder.tvArtist.setText(exTrack.artist);
+        holder.tvWeight.setText(String.valueOf(exTrack.situationMap.get(situationName).weight));
 
         return convertView;
     }
 
     static class ViewHolder{
-        TextView  trackTextView;
-        TextView  artistTextView;
-        TextView  weightTextView;
+        TextView tvTitle;
+        TextView tvArtist;
+        TextView tvWeight;
     }
 
     public int getTracks(){ return tracks; }

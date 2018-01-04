@@ -18,6 +18,7 @@ import static com.example.tlabuser.musicapplication.SQLOpenHelper.SITUATION_TABL
  */
 
 public class Situation{
+    private static final String TAG = "Situation";
 
     public String name;
     public int    tracks;
@@ -31,7 +32,7 @@ public class Situation{
      * to SQL
      **********************************************************************************************/
 
-    public static List<Situation> getSituationsFromJson(JSONArray jsonArray) {
+    public static List<Situation> getSituationsFromJson(SQLiteDatabase db, JSONArray jsonArray) {
         List<Situation> situations = new ArrayList<Situation>();
 
         try{
@@ -40,8 +41,14 @@ public class Situation{
                 situation.name   = jsonArray.getJSONObject(i).getJSONObject("tag").getString("value").replace("http://music.metadata.database.tag/", "");
                 situation.tracks = 0;
                 situations.add(situation);
-            }
 
+                ContentValues values = setValues(situation);
+                long id = db.insert(SITUATION_TABLE, null, values);
+                if (id < 0) {
+                    //error handling
+                    Log.d(TAG, "insert SITUATION_TABLE error");
+                }
+            }
 
         } catch (JSONException e) {
             Log.d("Situation","JSONのパースに失敗しました。 JSONException=" + e);
@@ -60,18 +67,6 @@ public class Situation{
         return values;
     }
 
-    // insert Situations to SQL
-    public static void insertRows(SQLiteDatabase db, List<Situation> situations){
-        for (int i=0; i<situations.size(); i++){
-            Situation situation = situations.get(i);
-
-            ContentValues values = setValues(situation);
-            long id = db.insert(SITUATION_TABLE, null, values);
-            if (id < 0) {
-                //error handling
-            }
-        }
-    }
 
     /***********************************************************************************************
      * from SQL
@@ -104,7 +99,7 @@ public class Situation{
     }
 
     private static List<Situation> setSituationsFromSQL(Cursor cursor){
-        List<Situation> situations = new ArrayList<Situation>();
+        List<Situation> situations = new ArrayList<>();
 
         boolean move = cursor.moveToFirst();
         while (move) {

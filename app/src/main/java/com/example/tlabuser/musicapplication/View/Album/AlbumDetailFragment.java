@@ -54,8 +54,7 @@ public class AlbumDetailFragment extends Fragment{
 
         for (int i = 0; i < tracks.size(); i++){
             ExTrack exTrack = new ExTrack();
-            exTrack = ExTrack.trackToExTrack(exTrack, tracks.get(i));
-            exTrack.internal = 1;
+            exTrack.addTrackDataToExTrack(tracks.get(i));
             exTracks.add(exTrack);
         }
 

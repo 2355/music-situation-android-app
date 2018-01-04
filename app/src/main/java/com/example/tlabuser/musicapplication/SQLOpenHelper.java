@@ -26,38 +26,45 @@ public class SQLOpenHelper extends SQLiteOpenHelper {
     private void createTables(SQLiteDatabase db){
         String createExTrackTable =
                 "CREATE TABLE " + EXTRACK_TABLE + "(" +
-                        "id "          + "integer " + "NOT NULL DEFAULT 0, " +
-                        "path "        + "text "    + "NOT NULL DEFAULT '', " +
-                        "title "       + "text "    + "NOT NULL DEFAULT '', " +
-                        "album "       + "text "    + "NOT NULL DEFAULT '', " +
-                        "album_id "    + "integer " + "NOT NULL DEFAULT 0, " +
-                        "artist "      + "text "    + "NOT NULL DEFAULT '', " +
-                        "artist_id "   + "integer " + "NOT NULL DEFAULT 0, " +
-                        "duration "    + "integer " + "NOT NULL DEFAULT 0, " +
-                        "track_no "    + "integer " + "NOT NULL DEFAULT 0, " +
-                        "bookmark "    + "text "    + "NOT NULL DEFAULT '', " +
-                        "year "        + "text "    + "NOT NULL DEFAULT '', " +
-                        "uri "         + "text "    + "NOT NULL DEFAULT '', " +
-                        "album_art "   + "text "    + "NOT NULL DEFAULT '', " +
-                        "album_year "  + "integer " + "NOT NULL DEFAULT 0, " +
-                        "situation "   + "text "    + "NOT NULL DEFAULT '', " +
-                        "weight "      + "integer " + "NOT NULL DEFAULT 0, " +
-                        "weight_d "    + "integer " + "NOT NULL DEFAULT 0, " +
-                        "weight_u "    + "integer " + "NOT NULL DEFAULT 0, " +
-                        "fav "         + "integer " + "NOT NULL DEFAULT 0, " +
-                        "last_played " + "text "    + "NOT NULL DEFAULT '', " +
-                        "play_count "  + "integer " + "NOT NULL DEFAULT 0, " +
-                        "skip_count "  + "integer " + "NOT NULL DEFAULT 0, " +
-                        "internal "    + "integer " + "NOT NULL DEFAULT 0" +
+                        "music_id "    + "integer " + "NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "id "          + "integer " + "DEFAULT 0, " +
+                        "path "        + "text "    + "DEFAULT '', " +
+                        "title "       + "text "    + "DEFAULT '', " +
+                        "album "       + "text "    + "DEFAULT '', " +
+                        "album_id "    + "integer " + "DEFAULT 0, " +
+                        "artist "      + "text "    + "DEFAULT '', " +
+                        "artist_id "   + "integer " + "DEFAULT 0, " +
+                        "duration "    + "integer " + "DEFAULT 0, " +
+                        "track_no "    + "integer " + "DEFAULT 0, " +
+                        "bookmark "    + "text "    + "DEFAULT '', " +
+                        "year "        + "text "    + "DEFAULT '', " +
+                        "uri "         + "text "    + "DEFAULT '', " +
+                        "album_art "   + "text "    + "DEFAULT '', " +
+                        "album_year "  + "integer " + "DEFAULT 0, " +
+                        "fav "         + "integer " + "DEFAULT 0, " +
+                        "last_played " + "text "    + "DEFAULT '', " +
+                        "play_count "  + "integer " + "DEFAULT 0, " +
+                        "skip_count "  + "integer " + "DEFAULT 0, " +
+                        "internal "    + "integer " + "DEFAULT 0" +
+                        ");";
+
+        String createExTrackSituationTable =
+                "CREATE TABLE " + EXTRACK_SITUATION_TABLE + "(" +
+                        "music_id "    + "integer " + "NOT NULL DEFAULT 0, " +
+                        "situation "   + "text "    + "DEFAULT '', " +
+                        "weight "      + "integer " + "DEFAULT 0, " +
+                        "weight_d "    + "integer " + "DEFAULT 0, " +
+                        "weight_u "    + "integer " + "DEFAULT 0" +
                         ");";
 
         String createSituationTable =
                 "CREATE TABLE " + SITUATION_TABLE + "(" +
-                        "name "   + "text "    + "NOT NULL DEFAULT '', " +
-                        "tracks " + "integer " + "NOT NULL DEFAULT 0" +
+                        "name "        + "text "    + "DEFAULT '', " +
+                        "tracks "      + "integer " + "DEFAULT 0" +
                         ");";
 
         db.execSQL(createExTrackTable);
+        db.execSQL(createExTrackSituationTable);
         db.execSQL(createSituationTable);
     }
 

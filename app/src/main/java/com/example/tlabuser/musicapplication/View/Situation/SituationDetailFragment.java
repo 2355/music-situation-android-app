@@ -36,39 +36,44 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class SituationDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<JSONObject>{
+    private static final String TAG = "SituationDetailFragment";
 
-    private Main activity;
+    private Main mainActivity;
     private SQLOpenHelper sqlOpenHelper;
     private SQLiteDatabase db;
 
-    private Situation situation_item;
+    private Situation situation;
     private List<ExTrack> exTracks, internalExTracks;
     private ListExTrackSituationAdapter listExTrackAdapter, listInternalExTrackAdapter;
     private JSONArray jsonArray = new JSONArray();
 
     private CheckBox checkBox;
-    private TextView tv_situation_name;
-    private TextView tv_tracks;
-    private ListView lv_track_list;
+    private TextView tvSituationName;
+    private TextView tvTracks;
+    private ListView lvTrackList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (Main)getActivity();
+        mainActivity = (Main)getActivity();
 
-        sqlOpenHelper = new SQLOpenHelper(activity);
+        sqlOpenHelper = new SQLOpenHelper(mainActivity);
         db = sqlOpenHelper.getReadableDatabase();
 
         // 選択されたSituationを取得
-        situation_item = activity.getFocusedSituation();
+        situation = mainActivity.getFocusedSituation();
 
-        exTracks = ExTrack.getExTracksBySituation(db, situation_item.name);
+        exTracks = ExTrack.getExTracksBySituation(db, situation.name);
+        listExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, exTracks);
 
         if(exTracks.isEmpty()) {
             // JSONの取得
             getLoaderManager().restartLoader(2, null, this);
-            Toast.makeText(activity, "SituationTrackListを取得しています。\nこれには30秒ほどかかる場合があります。", Toast.LENGTH_LONG).show();
+            Toast.makeText(mainActivity, "SituationTrackListを取得しています。\nこれには30秒ほどかかる場合があります。", Toast.LENGTH_LONG).show();
+        } else {
+            internalExTracks = ExTrack.getInternalExTracks(exTracks);
+            listInternalExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, internalExTracks);
         }
     }
 
@@ -76,34 +81,29 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View partView =inflater.inflate(R.layout.part_situation, container, false);
 
-        checkBox          = (CheckBox) partView.findViewById(R.id.checkbox);
-        tv_situation_name = (TextView) partView.findViewById(R.id.situation);
-        tv_tracks         = (TextView) partView.findViewById(R.id.tracks);
-        lv_track_list     = (ListView) partView.findViewById(R.id.track_list);
+        checkBox        = (CheckBox) partView.findViewById(R.id.checkbox);
+        tvSituationName = (TextView) partView.findViewById(R.id.situation);
+        tvTracks        = (TextView) partView.findViewById(R.id.tracks);
+        lvTrackList     = (ListView) partView.findViewById(R.id.track_list);
 
         checkBox.setOnClickListener(CheckboxClickListener);
-        tv_situation_name.setText(situation_item.name);
+        tvSituationName.setText(situation.name);
 
-        listExTrackAdapter = new ListExTrackSituationAdapter(activity, exTracks);
-        lv_track_list.setAdapter(listExTrackAdapter);
-        lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
-        lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
-        tv_tracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
-
-        // 端末内のみリスト
-        internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
-        listInternalExTrackAdapter = new ListExTrackSituationAdapter(activity, internalExTracks);
+        lvTrackList.setAdapter(listExTrackAdapter);
+        lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
+        lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
+        tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
 
         return partView;
     }
 
     @Override
     public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-        String urlStr = String.format(Urls.SELECT_TRACKS, situation_item.name);
+        String urlStr = String.format(Urls.SELECT_TRACKS, situation.name);
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         }catch (UnsupportedEncodingException e){
-            Log.d("SituationDetailFragment","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+            Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         urlStr = Urls.HEAD + urlStr + Urls.TAIL;
 
@@ -119,29 +119,28 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
                 if (jsonArray.getJSONObject(0).has("artist")) {
 
-                    exTracks = ExTrack.getExTracksFromJson(activity, jsonArray);
-                    ExTrack.insertRows(db, exTracks);
+                    exTracks = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
 
-                    listExTrackAdapter = new ListExTrackSituationAdapter(activity, exTracks);
-                    lv_track_list.setAdapter(listExTrackAdapter);
-                    lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
-                    lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
-                    tv_tracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
+                    listExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, exTracks);
+                    lvTrackList.setAdapter(listExTrackAdapter);
+                    lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
+                    lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
+                    tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
 
                     // 端末内のみリスト
-                    internalExTracks = ExTrack.getInternalExTracksBySituation(db, situation_item.name);
-                    listInternalExTrackAdapter = new ListExTrackSituationAdapter(activity, internalExTracks);
+                    internalExTracks = ExTrack.getInternalExTracks(exTracks);
+                    listInternalExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, internalExTracks);
 
                 }else{
-                    Log.d("SituationDetailFragment", "No Tracks!");
+                    Log.d(TAG, "No Tracks!");
                 }
 
             } catch (JSONException e) {
-                Log.d("SituationDetailFragment","JSONのパースに失敗しました。 JSONException=" + e);
+                Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
             }
 
         }else{
-            Log.d("SituationDetailFragment", "onLoadFinished error!");
+            Log.d(TAG, "onLoadFinished error!");
         }
     }
 
@@ -158,18 +157,18 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
             if (checked) {
                 // チェックボックスがチェックされる
                 if (internalExTracks.size() == 0){
-                    Toast.makeText(activity, "端末内に該当楽曲がありません", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mainActivity, "端末内に該当楽曲がありません", Toast.LENGTH_LONG).show();
                 }
-                lv_track_list.setAdapter(listInternalExTrackAdapter);
-                lv_track_list.setOnItemClickListener(activity.internalExTrackClickListener);
-                lv_track_list.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
-                tv_tracks.setText(String.valueOf(listInternalExTrackAdapter.getTracks())+"tracks");
+                lvTrackList.setAdapter(listInternalExTrackAdapter);
+                lvTrackList.setOnItemClickListener(mainActivity.internalExTrackClickListener);
+                lvTrackList.setOnItemLongClickListener(mainActivity.internalExTrackLongClickListener);
+                tvTracks.setText(String.valueOf(listInternalExTrackAdapter.getTracks())+"tracks");
             } else {
                 // チェックボックスのチェックが外される
-                lv_track_list.setAdapter(listExTrackAdapter);
-                lv_track_list.setOnItemClickListener(activity.ExTrackClickListener);
-                lv_track_list.setOnItemLongClickListener(activity.ExTrackLongClickListener);
-                tv_tracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
+                lvTrackList.setAdapter(listExTrackAdapter);
+                lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
+                lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
+                tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
             }
         }
 
