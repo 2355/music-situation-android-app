@@ -93,6 +93,15 @@ public class Main extends FragmentActivity{
     }
 
     @Override
+    protected void onStop() {
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        super.onStop();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 

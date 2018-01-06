@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,7 +81,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
 
         // show SituationList
         rvSituations = (RecyclerView) v.findViewById(R.id.rv_situations);
-        rvSituations.setLayoutManager(new LinearLayoutManager(mainActivity));
+        rvSituations.setLayoutManager(new GridLayoutManager(mainActivity, 2));
         rvSituations.setNestedScrollingEnabled(false);
         situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, situations);
         situationsRecyclerAdapter.setItemClickedListener(situation -> {

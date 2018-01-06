@@ -32,7 +32,7 @@ import java.net.URLEncoder;
 
 public class YoutubePlayScreen extends FragmentActivity implements LoaderManager.LoaderCallbacks<JSONObject>{
     // API キー
-    private static final String API_KEY = Keys.YT_KEY;
+    private static final String API_KEY = Keys.YOUTUBE_KEY;
     // YouTubeのビデオID
     private static String videoId;
     // 検索クエリ
