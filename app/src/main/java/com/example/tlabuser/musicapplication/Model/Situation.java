@@ -42,7 +42,10 @@ public class Situation{
                 situation.tracks = 0;
                 situations.add(situation);
 
-                ContentValues values = setValues(situation);
+                ContentValues values = new ContentValues();
+                values.put("name",   situation.name);
+                values.put("tracks", situation.tracks);
+
                 long id = db.insert(SITUATION_TABLE, null, values);
                 if (id < 0) {
                     //error handling
@@ -57,14 +60,16 @@ public class Situation{
         return situations;
     }
 
-    // convert Situation to ContentValues
-    private static ContentValues setValues(Situation situation){
+    public void setTracks(SQLiteDatabase db, int tracks) {
+        this.tracks = tracks;
+        String   where = "name = ?";
+        String[] params = new String[]{this.name};
+
         ContentValues values = new ContentValues();
+        values.put("name",   this.name);
+        values.put("tracks", this.tracks);
 
-        values.put("name",   situation.name);
-        values.put("tracks", situation.tracks);
-
-        return values;
+        db.update(SITUATION_TABLE, values, where, params);
     }
 
 

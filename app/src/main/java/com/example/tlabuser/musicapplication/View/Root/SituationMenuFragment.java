@@ -126,11 +126,10 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-        if (data != null && situations.isEmpty()) {
-
+        if (data != null) {
             try {
                 jsonArray = data.getJSONObject("results").getJSONArray("bindings");
-                if (jsonArray.getJSONObject(0).has("tag")) {
+                if (jsonArray.getJSONObject(0).has("tag")  && situations.isEmpty()) {
                     situations = Situation.getSituationsFromJson(db, jsonArray);
 
                     situationsRecyclerAdapter = new SituationsRecyclerAdapter(mainActivity, situations);
@@ -159,6 +158,7 @@ public class SituationMenuFragment extends Fragment implements LoaderManager.Loa
             } catch (JSONException e) {
                 Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
             }
+
         }else{
             Log.d(TAG, "onLoadFinished error!");
         }
