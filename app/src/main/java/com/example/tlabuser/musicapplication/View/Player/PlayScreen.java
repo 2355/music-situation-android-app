@@ -26,14 +26,16 @@ import com.example.tlabuser.musicapplication.R;
  */
 public class PlayScreen extends FragmentActivity{
 
+    private final String TAG = "PlayScreen";
+
     private static ExTrack exTrack;
 
     PlayerBroadcastReceiver receiver;
     IntentFilter            intentFilter;
 
-    ImageButton btBack;
-    ImageButton btPlay;
-    ImageButton btSkip;
+    private ImageButton btBack;
+    private ImageButton btPlay;
+    private ImageButton btSkip;
 
     String nowState;
 
@@ -66,8 +68,8 @@ public class PlayScreen extends FragmentActivity{
         Intent fromIntent = getIntent();
         String from = fromIntent.getStringExtra("from");
         String state = fromIntent.getStringExtra("state");
-        Log.d("PlayScreen", "onCreate from:" + from);
-        Log.d("PlayScreen", "onCreate state:" + state);
+        Log.d(TAG, "onCreate from:" + from);
+        Log.d(TAG, "onCreate state:" + state);
         switch (from){
             case "fromTrackList":
                 Intent intent = new Intent(PlayScreen.this, MediaPlayerService.class);
