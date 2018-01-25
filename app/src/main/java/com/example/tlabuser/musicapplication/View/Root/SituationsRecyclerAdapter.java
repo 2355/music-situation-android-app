@@ -40,7 +40,10 @@ public class SituationsRecyclerAdapter extends RecyclerView.Adapter<SituationsRe
         final Situation situation = situations.get(position);
 
         viewHolder.tvSituation.setText(situation.name);
-        viewHolder.tvTracks.setText(String.format("%d tracks", situation.tracks));
+        viewHolder.tvTracks.setText(String.valueOf(situation.tracks)+" tracks");
+        if (situation.tracks != 0) {
+            viewHolder.tvTracks.setVisibility(View.VISIBLE);
+        }
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

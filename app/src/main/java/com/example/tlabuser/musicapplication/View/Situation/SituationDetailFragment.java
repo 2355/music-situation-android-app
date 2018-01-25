@@ -92,7 +92,7 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
         lvTrackList.setAdapter(listExTrackAdapter);
         lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
         lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
-        tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
+        tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+" tracks");
 
         return partView;
     }
@@ -120,12 +120,13 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                 if (jsonArray.getJSONObject(0).has("artist")) {
 
                     exTracks = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
+                    situation.setTracks(db, exTracks.size());
 
                     listExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, exTracks);
                     lvTrackList.setAdapter(listExTrackAdapter);
                     lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
                     lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
-                    tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
+                    tvTracks.setText(String.valueOf(situation.tracks)+" tracks");
 
                     // 端末内のみリスト
                     internalExTracks = ExTrack.getInternalExTracks(exTracks);
@@ -162,13 +163,13 @@ public class SituationDetailFragment extends Fragment implements LoaderManager.L
                 lvTrackList.setAdapter(listInternalExTrackAdapter);
                 lvTrackList.setOnItemClickListener(mainActivity.internalExTrackClickListener);
                 lvTrackList.setOnItemLongClickListener(mainActivity.internalExTrackLongClickListener);
-                tvTracks.setText(String.valueOf(listInternalExTrackAdapter.getTracks())+"tracks");
+                tvTracks.setText(String.valueOf(listInternalExTrackAdapter.getTracks())+" tracks");
             } else {
                 // チェックボックスのチェックが外される
                 lvTrackList.setAdapter(listExTrackAdapter);
                 lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
                 lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
-                tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+"tracks");
+                tvTracks.setText(String.valueOf(listExTrackAdapter.getTracks())+" tracks");
             }
         }
 

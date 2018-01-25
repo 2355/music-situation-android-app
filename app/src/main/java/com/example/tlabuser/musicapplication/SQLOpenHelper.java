@@ -59,7 +59,7 @@ public class SQLOpenHelper extends SQLiteOpenHelper {
 
         String createSituationTable =
                 "CREATE TABLE " + SITUATION_TABLE + "(" +
-                        "name "        + "text "    + "DEFAULT '', " +
+                        "name "        + "text "    + "UNIQUE DEFAULT '', " +
                         "tracks "      + "integer " + "DEFAULT 0" +
                         ");";
 
