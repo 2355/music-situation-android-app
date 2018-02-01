@@ -38,7 +38,7 @@
                 android:id="@+id/tracks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="tracks"
+                android:text="取得中…"
                 android:textSize="15sp"
                 android:textColor="#FFF"/>
 

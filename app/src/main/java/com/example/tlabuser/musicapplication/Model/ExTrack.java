@@ -145,6 +145,7 @@ public class ExTrack {
                 track.setTrack(cursor);
 
                 exTrack.addTrackDataToExTrack(track);
+                cursor.close();
                 return exTrack;
 
             } else { move = cursor.moveToNext(); }

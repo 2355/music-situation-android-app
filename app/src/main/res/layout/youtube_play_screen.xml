@@ -51,23 +51,29 @@
         android:gravity="center"
         android:background="@color/gray_light">
 
-        <Button
-            android:id="@+id/btBack"
-            android:text="＜"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/btBad"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/button_overlay"
+            android:onClick="onBadButtonClick"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:layout_margin="10dp"
+            android:src="@drawable/icon_bad" />
 
-        <Button
-            android:id="@+id/btSt"
-            android:text="■"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/BtSkip"
-            android:text="＞"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <ImageButton
+            android:id="@+id/btGood"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/button_overlay"
+            android:onClick="onGoodButtonClick"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:layout_margin="10dp"
+            android:src="@drawable/icon_good" />
 
     </LinearLayout>
 

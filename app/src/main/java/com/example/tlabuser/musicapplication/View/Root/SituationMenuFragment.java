@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.tlabuser.musicapplication.JsonUtil;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
@@ -34,13 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +58,7 @@ public class SituationMenuFragment extends Fragment{
     private List<String> nowSituations;
     private List<Situation> situations;
 
-    private RecyclerView rvRecommendedSituations, rvSituations;
+    private RecyclerView rvSituations, rvRecommendedSituations;
 
 
     @Override
@@ -92,15 +87,15 @@ public class SituationMenuFragment extends Fragment{
 
         situations = Situation.getAllSituations(db);
 
-        if(situations.isEmpty()) {
+        if (situations.isEmpty()) {
             Log.d(TAG, "situations is empty");
             Toast.makeText(mainActivity, "SituationListを取得しています。\nこれには30秒ほどかかる場合があります。", Toast.LENGTH_LONG).show();
 
             // Get JSON from server
-            Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(SituationMenuFragment.this.networkRequest()))
+            Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(SituationMenuFragment.this::render);
+                    .subscribe(this::onGetJson);
         } else {
             initializeRecyclerView();
         }
@@ -109,56 +104,19 @@ public class SituationMenuFragment extends Fragment{
     }
 
     @Nullable
-    private JSONObject networkRequest() {
+    private JSONObject requestJson() {
         String urlStr = Urls.SELECT_SITUATIONS;
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
-        }catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e){
             Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         urlStr = Urls.HEAD + urlStr + Urls.TAIL;
 
-
-        HttpURLConnection connection = null;
-
-        try{
-            URL url = new URL(urlStr);
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-        }
-        catch (MalformedURLException exception){
-            // 処理なし
-        }
-        catch (IOException exception){
-            // 処理なし
-        }
-
-        try {
-            BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                if (length > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-            }
-
-            JSONObject json = new JSONObject(new String(outputStream.toByteArray()));
-            return json;
-        }
-        catch (IOException exception){
-            // 処理なし
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return JsonUtil.getJson(urlStr);
     }
 
-    private void render(JSONObject json) {
+    private void onGetJson(JSONObject json) {
         if (json != null) {
             try {
                 JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
@@ -171,7 +129,7 @@ public class SituationMenuFragment extends Fragment{
                 Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
             }
 
-        }else{
+        } else {
             Log.d(TAG, "JSONObject is null");
         }
     }
@@ -194,6 +152,7 @@ public class SituationMenuFragment extends Fragment{
         cal.getTime();
         nowSituations = calToSituations(cal);
         Log.d(TAG, "Time " + String.valueOf(nowSituations));
+        setRecommendedSituations();
 
         getWeather();
         getPlaces();

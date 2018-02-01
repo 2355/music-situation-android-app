@@ -1,7 +1,6 @@
 package com.example.tlabuser.musicapplication;
 
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,38 +12,38 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class JsonLoader extends AsyncTaskLoader<JSONObject> {
-    private String urlText;
+/**
+ * JSON Utility class.
+ * Get JSON from server
+ */
 
-    public JsonLoader(Context context, String urlText){
-        super(context);
-        this.urlText = urlText;
-    }
+public class JsonUtil {
 
-    @Override
-    public JSONObject loadInBackground(){
+    @Nullable
+    public static JSONObject getJson(String urlStr) {
+
         HttpURLConnection connection = null;
 
         try{
-            URL url = new URL(urlText);
+            URL url = new URL(urlStr);
             connection = (HttpURLConnection)url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
         }
         catch (MalformedURLException exception){
-            // 処理なし
+            // NO-OP
         }
         catch (IOException exception){
-            // 処理なし
+            // NO-OP
         }
 
-        try{
+        try {
             BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
             int length;
-            while ((length = inputStream.read(buffer)) != -1){
-                if (length > 0){
+            while ((length = inputStream.read(buffer)) != -1) {
+                if (length > 0) {
                     outputStream.write(buffer, 0, length);
                 }
             }
@@ -53,11 +52,12 @@ public class JsonLoader extends AsyncTaskLoader<JSONObject> {
             return json;
         }
         catch (IOException exception){
-            // 処理なし
+            // NO-OP
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 }

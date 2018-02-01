@@ -28,7 +28,6 @@ public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
         this.situationName = situation.name;
-        this.tracks = situation.tracks;
         this.tracks = exTracks.size();
     }
 
