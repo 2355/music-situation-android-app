@@ -59,6 +59,33 @@ public class ExTrack {
 
     }
 
+    public static ExTrack setDummyData() {
+        ExTrack exTrack = new ExTrack();
+
+        exTrack.id         = 0;
+        exTrack.path       = "";
+        exTrack.title      = "-";
+        exTrack.album      = "-";
+        exTrack.albumId    = 0;
+        exTrack.artist     = "-";
+        exTrack.artistId   = 0;
+        exTrack.duration   = 0;
+        exTrack.trackNo    = 0;
+        exTrack.bookmark   = "";
+        exTrack.year       = "";
+        exTrack.uri        = null;
+        exTrack.albumArt   = "";
+        exTrack.albumYear  = 0;
+        exTrack.fav        = 0;
+        exTrack.lastPlayed = null;
+        exTrack.playCount  = 0;
+        exTrack.skipCount  = 0;
+        exTrack.internal   = 0;
+        exTrack.musicId    = 0;
+
+        return exTrack;
+    }
+
     /***********************************************************************************************
      * to SQL
      **********************************************************************************************/

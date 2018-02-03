@@ -3,12 +3,9 @@ package com.example.tlabuser.musicapplication;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -31,7 +28,7 @@ import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.View.Album.AlbumDetailFragment;
 import com.example.tlabuser.musicapplication.View.Artist.ArtistDetailFragment;
-import com.example.tlabuser.musicapplication.View.Player.PlayScreen;
+import com.example.tlabuser.musicapplication.View.Player.PlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreen;
 import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
@@ -53,6 +50,10 @@ import java.util.List;
 
 import static com.example.tlabuser.musicapplication.CalendarUtil.calToSituations;
 import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.State.pause;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.State.playing;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.State.stop;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.setMainListener;
 
 
 public class Main extends FragmentActivity{
@@ -78,9 +79,6 @@ public class Main extends FragmentActivity{
     public  void   focusExTrack(ExTrack item) {if(item != null) focusedExTrack = item;}
     public  static ExTrack getFocusedExTrack() {return focusedExTrack ;}
 
-    PlayerBroadcastReceiver receiver;
-    IntentFilter            intentFilter;
-
     private ImageView   ivAlbumArt;
     private TextView    tvTitle;
     private TextView    tvArtist;
@@ -88,7 +86,9 @@ public class Main extends FragmentActivity{
     private ImageButton btPlay;
     private ImageButton btSkip;
 
-    String nowState;
+    private MediaPlayerService.State state = stop;
+
+    public static MainLifecycleListener listener;
 
     private final int PERMISSION_INITIAL = 1;
 
@@ -103,14 +103,20 @@ public class Main extends FragmentActivity{
         }else{
             showFragment();
         }
+
+        if (listener != null) {
+            state = listener.getState();
+
+            switch (state) {
+                case stop: btPlay.setImageResource(R.drawable.icon_play); break;
+                case playing: btPlay.setImageResource(R.drawable.icon_pause); break;
+                case pause: btPlay.setImageResource(R.drawable.icon_play); break;
+            }
+        }
     }
 
     @Override
     protected void onStop() {
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
-        }
         super.onStop();
     }
 
@@ -309,12 +315,6 @@ public class Main extends FragmentActivity{
         ft.replace(R.id.root, new RootMenuFragment(),"Root");
         ft.commit();
 
-        receiver     = new PlayerBroadcastReceiver();
-        intentFilter = new IntentFilter();
-        intentFilter.addAction("PLAYER_ACTION");
-        registerReceiver(receiver, intentFilter);
-        receiver.registerHandler(MPStateHandler);
-
         setContentView(R.layout.main);
 
         tvTitle    = (TextView)    findViewById(R.id.title);
@@ -324,6 +324,32 @@ public class Main extends FragmentActivity{
         btPlay     = (ImageButton) findViewById(R.id.btPlay);
         btSkip     = (ImageButton) findViewById(R.id.btSkip);
 
+        // Activityを再起動すると state=stop になってしまう
+        updatePanel();
+
+        setMainListener(new MediaPlayerService.PlayerStateListener() {
+            @Override
+            public void onStop() {
+                Main.this.state = stop;
+                btPlay.setImageResource(R.drawable.icon_play);
+                Log.d(TAG, "onStop");
+            }
+
+            @Override
+            public void onPlaying() {
+                Main.this.state = playing;
+                btPlay.setImageResource(R.drawable.icon_pause);
+                updatePanel();
+                Log.d(TAG, "onPlaying");
+            }
+
+            @Override
+            public void onPause() {
+                Main.this.state = pause;
+                btPlay.setImageResource(R.drawable.icon_play);
+                Log.d(TAG, "onPause");
+            }
+        });
     }
 
     public void setNewFragment(FrgmType CallFragment){
@@ -351,11 +377,16 @@ public class Main extends FragmentActivity{
 
     public void updatePanel(){
         ExTrack exTrack = getFocusedExTrack();
-        Log.d(TAG, "updatePanel:" + exTrack.title);
+        if (exTrack != null) {
+            Log.d(TAG, "updatePanel");
 
-        tvTitle.setText(exTrack.title);
-        tvArtist.setText(exTrack.artist);
-        ivAlbumArt.setImageResource(R.drawable.icon_album);
+            tvTitle.setText(exTrack.title);
+            tvArtist.setText(exTrack.artist);
+            // ivAlbumArt.setImageResource(exTrack.albumArt);
+            ivAlbumArt.setImageResource(R.drawable.icon_album);
+        } else {
+            Log.d(TAG, "updatePanel error");
+        }
     }
 
     public AdapterView.OnItemClickListener  SituationClickListener = new AdapterView.OnItemClickListener() {
@@ -422,10 +453,13 @@ public class Main extends FragmentActivity{
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        Intent intent = new Intent(getApplication(), PlayScreen.class);
-        intent.putExtra("from", "fromTrackList");
-        intent.putExtra("state", "Stop");
-        startActivity(intent);
+        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, state);
+
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.fl_container, fragment, PlayScreenFragment.TAG)
+                .addToBackStack(PlayScreenFragment.TAG)
+                .commit();
     };
 
     public AdapterView.OnItemLongClickListener internalExTrackLongClickListener = (parent, view, position, id) -> {
@@ -436,10 +470,13 @@ public class Main extends FragmentActivity{
     };
 
     public void onPlayPanelClick(View view) {
-        Intent intent = new Intent(getApplication(), PlayScreen.class);
-        intent.putExtra("from", "fromPlayPanel");
-        intent.putExtra("state", nowState);
-        startActivity(intent);
+        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.panel, state);
+
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.fl_container, fragment, PlayScreenFragment.TAG)
+                .addToBackStack(PlayScreenFragment.TAG)
+                .commit();
 
     }
 
@@ -461,35 +498,11 @@ public class Main extends FragmentActivity{
         Toast.makeText(Main.this, calToStr(cal)  + "\n" + situations.toString(), Toast.LENGTH_SHORT).show();
     }
 
-    // サービスから値を受け取ったら動かしたい内容を書く
-    private Handler MPStateHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
+    public interface MainLifecycleListener {
+        MediaPlayerService.State getState();
+    }
 
-            Bundle bundle = msg.getData();
-            String message = bundle.getString("message");
-
-            Log.d(TAG, "get massage from MPService: " + message);
-            Toast.makeText(Main.this, "send message: " + message, Toast.LENGTH_SHORT).show();
-
-            switch (message){
-                case "Stop":
-                    nowState = "Stop";
-                    btPlay.setImageResource(R.drawable.icon_play);
-                    break;
-
-                case "Playing":
-                    nowState = "Playing";
-                    btPlay.setImageResource(R.drawable.icon_pause);
-                    updatePanel();
-                    break;
-
-                case "Pause":
-                    nowState = "Pause";
-                    btPlay.setImageResource(R.drawable.icon_play);
-                    break;
-            }
-        }
-    };
-
+    public static void setMainLifecycleListener(MainLifecycleListener l) {
+        listener = l;
+    }
 }

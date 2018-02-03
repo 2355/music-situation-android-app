@@ -23,7 +23,7 @@ public class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
     protected Bitmap doInBackground(String... params) {
         Bitmap bitmap = ImageCache.getImage(params[0]);
         if(bitmap==null){
-            bitmap = decodeBitmap(params[0],72,72);
+            bitmap = decodeBitmap(params[0],256,256);
             ImageCache.setImage(params[0], bitmap);
         }
         return bitmap;
@@ -35,7 +35,7 @@ public class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
     }
 
 
-    public static Bitmap decodeBitmap(String path, int width, int height){
+    private static Bitmap decodeBitmap(String path, int width, int height){
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
@@ -44,7 +44,7 @@ public class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
         return BitmapFactory.decodeFile(path, options);
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
 
         final int height = options.outHeight;
         final int width = options.outWidth;

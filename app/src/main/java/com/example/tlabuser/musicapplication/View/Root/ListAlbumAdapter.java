@@ -23,13 +23,13 @@ import java.util.List;
 
 public class ListAlbumAdapter extends ArrayAdapter<Album> {
 
-    LayoutInflater mInflater;
-    static Context Mcontext;
+    private LayoutInflater inflater;
+    private Context context;
 
     public ListAlbumAdapter(Context context, List<Album> item){
         super(context, 0, item);
-        mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        Mcontext = context;
+        this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        this.context = context;
     }
 
     @Override
@@ -38,15 +38,15 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
         Album item = getItem(position);
         ViewHolder holder;
 
-        if(convertView==null){
-            convertView = mInflater.inflate(R.layout.item_album, null);
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.item_album, null);
             holder = new ViewHolder();
             holder.tvAlbum  = (TextView)convertView.findViewById(R.id.album);
             holder.tvArtist = (TextView)convertView.findViewById(R.id.artist);
             holder.tvTracks = (TextView)convertView.findViewById(R.id.tracks);
             holder.ivAlbumArt = (ImageView)convertView.findViewById(R.id.albumart);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -56,11 +56,11 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
 
         String path = item.albumArt;
         holder.ivAlbumArt.setImageResource(R.drawable.icon_album);
-        if(path==null){
+        if (path == null) {
             path = String.valueOf(R.drawable.icon_album);
             Bitmap bitmap = ImageCache.getImage(path);
-            if(bitmap==null){
-                bitmap = BitmapFactory.decodeResource(Mcontext.getResources(),R.drawable.icon_album);
+            if (bitmap == null) {
+                bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.icon_album);
                 ImageCache.setImage(path, bitmap);
             }
         }
@@ -71,7 +71,7 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
         return convertView;
     }
 
-    static class ViewHolder{
+    static class ViewHolder {
         TextView tvAlbum;
         TextView tvArtist;
         TextView tvTracks;

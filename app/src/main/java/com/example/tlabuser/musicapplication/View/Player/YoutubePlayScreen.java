@@ -106,9 +106,9 @@ public class YoutubePlayScreen extends FragmentActivity{
 
                     @Override
                     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error) {
-                        // YouTube error
+                        // error
                         String errorMessage = error.toString();
-                        Toast.makeText(YoutubePlayScreen.this, errorMessage, Toast.LENGTH_LONG).show();
+                        Toast.makeText(YoutubePlayScreen.this, "読み込みエラーが発生しました。", Toast.LENGTH_LONG).show();
                         Log.d(TAG, errorMessage);
                     }
                 });
@@ -119,6 +119,7 @@ public class YoutubePlayScreen extends FragmentActivity{
 
         } else {
             Log.d(TAG, "JSONObject is null");
+            Toast.makeText(this, "読み込みエラーが発生しました。", Toast.LENGTH_SHORT).show();
         }
     }
 

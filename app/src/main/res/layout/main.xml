@@ -1,105 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/root"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </FrameLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ff808080" />
-
     <LinearLayout
-        android:id="@+id/playPanel"
+        android:id="@+id/ll_main"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/albumart"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="start"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_album"
-            android:onClick="onPlayPanelClick"/>
+        <FrameLayout
+            android:id="@+id/root"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff808080" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:id="@+id/playPanel"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="title"
-                android:textSize="17sp"
-                android:clickable="true"
+            <ImageView
+                android:id="@+id/albumart"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="start"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_album"
                 android:onClick="onPlayPanelClick"/>
 
-            <TextView
-                android:id="@+id/artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="artist"
-                android:textColor="@color/gray_dark"
-                android:textSize="14sp"
-                android:clickable="true"
-                android:onClick="onPlayPanelClick"/>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="title"
+                    android:textSize="17sp"
+                    android:clickable="true"
+                    android:onClick="onPlayPanelClick"/>
+
+                <TextView
+                    android:id="@+id/artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="artist"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:onClick="onPlayPanelClick"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btBad"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                android:padding="4dp"
+                android:background="@drawable/button_overlay"
+                android:src="@drawable/icon_bad"
+                android:onClick="onBadButtonClick"/>
+
+            <ImageButton
+                android:id="@+id/btPlay"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                android:padding="2dp"
+                android:background="@drawable/button_overlay"
+                android:src="@drawable/icon_play"
+                android:onClick="onPlayButtonClick"/>
+
+            <ImageButton
+                android:id="@+id/btGood"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                android:padding="4dp"
+                android:background="@drawable/button_overlay"
+                android:src="@drawable/icon_good"
+                android:onClick="onGoodButtonClick"/>
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/btBad"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:padding="4dp"
-            android:background="@drawable/button_overlay"
-            android:src="@drawable/icon_bad"
-            android:onClick="onBadButtonClick"/>
-
-        <ImageButton
-            android:id="@+id/btPlay"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:padding="2dp"
-            android:background="@drawable/button_overlay"
-            android:src="@drawable/icon_play"
-            android:onClick="onPlayButtonClick"/>
-
-        <ImageButton
-            android:id="@+id/btGood"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:padding="4dp"
-            android:background="@drawable/button_overlay"
-            android:src="@drawable/icon_good"
-            android:onClick="onGoodButtonClick"/>
-
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

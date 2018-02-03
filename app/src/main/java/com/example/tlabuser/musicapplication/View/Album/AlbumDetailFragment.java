@@ -20,9 +20,6 @@ import com.example.tlabuser.musicapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AlbumDetailFragment extends Fragment{
 
     @Override
@@ -42,8 +39,8 @@ public class AlbumDetailFragment extends Fragment{
         tvTracks.setText(String.valueOf(item.tracks)+"tracks");
 
         String path = item.albumArt;
-        ivAlbumArt.setImageResource(R.drawable.dummy_album_art);
-        if(path!=null){
+        ivAlbumArt.setImageResource(R.drawable.icon_album);
+        if (path != null) {
             ivAlbumArt.setTag(path);
             ImageGetTask task = new ImageGetTask(ivAlbumArt);
             task.execute(path);
@@ -52,7 +49,7 @@ public class AlbumDetailFragment extends Fragment{
         List<Track> tracks = Track.getItemsByAlbum(getActivity(), item.albumId);
         List<ExTrack> exTracks = new ArrayList<>();
 
-        for (int i = 0; i < tracks.size(); i++){
+        for (int i = 0; i < tracks.size(); i++) {
             ExTrack exTrack = new ExTrack();
             exTrack.addTrackDataToExTrack(tracks.get(i));
             exTracks.add(exTrack);

@@ -4,29 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/albumart"
+    <FrameLayout
+        android:id="@+id/fl_player_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:scaleType="fitCenter"
-        android:layout_gravity="center"
-        android:background="@color/gray"
-        android:src="@drawable/icon_album"/>
+        android:background="@color/gray">
+
+        <FrameLayout
+            android:id="@+id/fl_youtube_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_album_art"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_album"/>
+
+    </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/ll_info"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:background="@color/white">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -36,93 +48,88 @@
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/artist"
+            android:id="@+id/tv_artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="artist"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/album"
+            android:id="@+id/tv_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="album"
-            android:textSize="15sp" />
-
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/playPanel"
+        android:id="@+id/ll_controller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="@color/gray_light">
+        android:background="@color/white">
 
         <ImageButton
-            android:id="@+id/btBad"
+            android:id="@+id/bt_bad"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onBadButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
             android:src="@drawable/icon_bad" />
 
         <ImageButton
-            android:id="@+id/btBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/bt_back"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_gravity="center_vertical"
             android:scaleType="fitCenter"
             android:padding="2dp"
             android:background="@drawable/button_overlay"
-            android:src="@drawable/icon_back"
-            android:onClick="onBackButtonClick"/>
+            android:layout_margin="8dp"
+            android:src="@drawable/icon_back" />
 
         <ImageButton
-            android:id="@+id/btPlay"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/bt_play"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onPlayButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
+            android:layout_margin="8dp"
             android:src="@drawable/icon_play" />
 
         <ImageButton
-            android:id="@+id/btSkip"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/bt_skip"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onSkipButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
+            android:layout_margin="8dp"
             android:src="@drawable/icon_skip" />
 
         <ImageButton
-            android:id="@+id/btGood"
+            android:id="@+id/bt_good"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onGoodButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
             android:src="@drawable/icon_good" />
-
     </LinearLayout>
-
 </LinearLayout>
