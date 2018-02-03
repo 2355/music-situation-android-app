@@ -29,7 +29,7 @@ import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.View.Album.AlbumDetailFragment;
 import com.example.tlabuser.musicapplication.View.Artist.ArtistDetailFragment;
 import com.example.tlabuser.musicapplication.View.Player.PlayScreenFragment;
-import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreen;
+import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
 import com.google.android.gms.awareness.Awareness;
@@ -79,12 +79,10 @@ public class Main extends FragmentActivity{
     public  void   focusExTrack(ExTrack item) {if(item != null) focusedExTrack = item;}
     public  static ExTrack getFocusedExTrack() {return focusedExTrack ;}
 
-    private ImageView   ivAlbumArt;
-    private TextView    tvTitle;
-    private TextView    tvArtist;
-    private ImageButton btBack;
+    private ImageView ivAlbumArt;
+    private TextView tvTitle, tvArtist;
     private ImageButton btPlay;
-    private ImageButton btSkip;
+    private ImageButton btGood, btBad; // TODO plan to delete
 
     private MediaPlayerService.State state = stop;
 
@@ -108,16 +106,11 @@ public class Main extends FragmentActivity{
             state = listener.getState();
 
             switch (state) {
-                case stop: btPlay.setImageResource(R.drawable.icon_play); break;
+                case stop:    btPlay.setImageResource(R.drawable.icon_play); break;
                 case playing: btPlay.setImageResource(R.drawable.icon_pause); break;
-                case pause: btPlay.setImageResource(R.drawable.icon_play); break;
+                case pause:   btPlay.setImageResource(R.drawable.icon_play); break;
             }
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -317,14 +310,18 @@ public class Main extends FragmentActivity{
 
         setContentView(R.layout.main);
 
-        tvTitle    = (TextView)    findViewById(R.id.title);
-        tvArtist   = (TextView)    findViewById(R.id.artist);
-        ivAlbumArt = (ImageView)   findViewById(R.id.albumart);
-        btBack     = (ImageButton) findViewById(R.id.btBack);
-        btPlay     = (ImageButton) findViewById(R.id.btPlay);
-        btSkip     = (ImageButton) findViewById(R.id.btSkip);
+        tvTitle    = (TextView)  findViewById(R.id.title);
+        tvArtist   = (TextView)  findViewById(R.id.artist);
+        ivAlbumArt = (ImageView) findViewById(R.id.albumart);
 
-        // Activityを再起動すると state=stop になってしまう
+        btBad  = (ImageButton) findViewById(R.id.btBad);
+        btPlay = (ImageButton) findViewById(R.id.btPlay);
+        btGood = (ImageButton) findViewById(R.id.btGood);
+
+        btPlay.setOnClickListener(this::onPlayButtonClick);
+        btGood.setOnClickListener(this::onGoodButtonClick);
+        btBad.setOnClickListener(this::onBadButtonClick);
+
         updatePanel();
 
         setMainListener(new MediaPlayerService.PlayerStateListener() {
@@ -438,8 +435,16 @@ public class Main extends FragmentActivity{
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        Intent intent = new Intent(getApplication(), YoutubePlayScreen.class);
-        startActivity(intent);
+        // TODO パネルの表示がやばい。パネルから開くとPlayScreenFragmentになる
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        state = stop;
+        stopService(intent);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fl_container, new YoutubePlayScreenFragment(), YoutubePlayScreenFragment.TAG)
+                .addToBackStack(YoutubePlayScreenFragment.TAG)
+                .commit();
     };
 
     public AdapterView.OnItemLongClickListener ExTrackLongClickListener = (parent, view, position, id) -> {

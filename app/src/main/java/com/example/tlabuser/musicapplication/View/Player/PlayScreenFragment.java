@@ -173,11 +173,6 @@ public class PlayScreenFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     private void onPlayButtonClick(View view) {
         Toast.makeText(mainActivity, "PlayButtonClick", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onPlayButtonClick state:" + state);

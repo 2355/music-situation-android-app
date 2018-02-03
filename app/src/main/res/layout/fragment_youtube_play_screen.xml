@@ -5,23 +5,31 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/youtube_layout"
+        android:id="@+id/fl_player_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/gray"/>
+        android:background="@color/gray">
+
+        <FrameLayout
+            android:id="@+id/fl_youtube_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/ll_info"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:background="@color/white">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -31,50 +39,47 @@
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/artist"
+            android:id="@+id/tv_artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="artist"
-            android:textSize="15sp" />
-
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/playPanel"
+        android:id="@+id/ll_controller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="@color/gray_light">
+        android:background="@color/white">
 
         <ImageButton
-            android:id="@+id/btBad"
+            android:id="@+id/bt_bad"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onBadButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
             android:src="@drawable/icon_bad" />
 
         <ImageButton
-            android:id="@+id/btGood"
+            android:id="@+id/bt_good"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
-            android:onClick="onGoodButtonClick"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
             android:src="@drawable/icon_good" />
-
     </LinearLayout>
-
 </LinearLayout>

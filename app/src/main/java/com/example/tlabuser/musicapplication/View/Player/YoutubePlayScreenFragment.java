@@ -2,10 +2,12 @@ package com.example.tlabuser.musicapplication.View.Player;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,39 +32,66 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * This is YoutubePlayScreen class.
- * called by click a ExTrack.
+ * Created by tlabuser on 2018/02/03.
  */
 
-public class YoutubePlayScreen extends FragmentActivity{
+public class YoutubePlayScreenFragment extends Fragment {
 
-    private static final String TAG = "YoutubePlayScreen";
+    public static final String TAG = "YoutubePSFragment";
 
     private static final String API_KEY = Keys.YOUTUBE_KEY;
 
+    private Main mainActivity;
+
+    private ExTrack exTrack;
+    private String title, artist;
+
+    private TextView tvTitle, tvArtist;
+    private ImageButton btGood, btBad;
     private YouTubePlayerSupportFragment player;
 
-    private static ExTrack exTrack;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.youtube_play_screen);
+
+        mainActivity = (Main) getActivity();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_youtube_play_screen, container, false);
+
+        tvTitle  = (TextView) view.findViewById(R.id.tv_title);
+        tvArtist = (TextView) view.findViewById(R.id.tv_artist);
+
+        btGood = (ImageButton) view.findViewById(R.id.bt_good);
+        btBad  = (ImageButton) view.findViewById(R.id.bt_bad);
 
         exTrack = Main.getFocusedExTrack();
+        if (exTrack == null) {
+            title = "-";
+            artist = "-";
+        } else {
+            title = exTrack.title;
+            artist = exTrack.artist;
+        }
 
-        TextView title  = (TextView) findViewById(R.id.title);
-        TextView artist = (TextView) findViewById(R.id.artist);
+        tvTitle.setText(title);
+        tvArtist.setText(artist);
 
-        title.setText(exTrack.title);
-        artist.setText(exTrack.artist);
+        btGood.setOnClickListener(this::onGoodButtonClick);
+        btBad.setOnClickListener(this::onBadButtonClick);
 
         // YouTubeフラグメントインスタンスを取得
         player = YouTubePlayerSupportFragment.newInstance();
 
         // レイアウトにYouTubeフラグメントを追加
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.youtube_layout, player).commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fl_youtube_player, player)
+                .commit();
 
         // Get JSON from server
         Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
@@ -70,7 +99,16 @@ public class YoutubePlayScreen extends FragmentActivity{
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onGetJson);
 
-        Toast.makeText(this, "動画を取得しています。\nしばらくお待ちください。", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mainActivity, "動画を取得しています。\nしばらくお待ちください。", Toast.LENGTH_SHORT).show();
+
+        return view;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        //TODO ここでplaypanelをアップデートする（リスナー）作る
     }
 
     @Nullable
@@ -81,7 +119,7 @@ public class YoutubePlayScreen extends FragmentActivity{
         try {
             query = URLEncoder.encode(query, "UTF-8");
         } catch (UnsupportedEncodingException e){
-            Log.d("onCreateLoader","URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+            Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
         String urlStr = head + API_KEY + params + query;
 
@@ -106,28 +144,28 @@ public class YoutubePlayScreen extends FragmentActivity{
 
                     @Override
                     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error) {
-                        // error
+                        // error handling
                         String errorMessage = error.toString();
-                        Toast.makeText(YoutubePlayScreen.this, "読み込みエラーが発生しました。", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mainActivity, "読み込みエラーが発生しました。", Toast.LENGTH_LONG).show();
                         Log.d(TAG, errorMessage);
                     }
                 });
             } catch (JSONException e) {
                 Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
-                Toast.makeText(this, "動画がありません。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mainActivity, "動画がありません。", Toast.LENGTH_SHORT).show();
             }
 
         } else {
             Log.d(TAG, "JSONObject is null");
-            Toast.makeText(this, "読み込みエラーが発生しました。", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mainActivity, "読み込みエラーが発生しました。", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void onBadButtonClick(View view) {
-        Toast.makeText(this, "BadButtonClick", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mainActivity, "BadButtonClick", Toast.LENGTH_SHORT).show();
     }
 
     public void onGoodButtonClick(View view) {
-        Toast.makeText(this, "GoodButtonClick", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mainActivity, "GoodButtonClick", Toast.LENGTH_SHORT).show();
     }
 }
