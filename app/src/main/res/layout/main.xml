@@ -71,16 +71,6 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/btBad"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/button_overlay"
-                android:padding="4dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_bad" />
-
-            <ImageButton
                 android:id="@+id/btPlay"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
@@ -88,19 +78,9 @@
                 android:background="@drawable/button_overlay"
                 android:padding="2dp"
                 android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
+                android:layout_marginRight="24dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_play" />
-
-            <ImageButton
-                android:id="@+id/btGood"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/button_overlay"
-                android:padding="4dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_good" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

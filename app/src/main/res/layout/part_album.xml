@@ -58,16 +58,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tracktitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:gravity="center_horizontal"
-        android:text="Tracks"
-        android:textColor="#FFF"
-        android:background="@color/colorPrimary" />
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

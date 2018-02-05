@@ -14,14 +14,14 @@ import java.util.List;
 
 public class Album {
 
-    public long             id;
-    public String           album;
-    public String           albumArt;
-    public long             albumId;
-    public String           albumKey;
-    public String           artist;
-    public int              year;
-    public int              tracks;
+    public long   id;
+    public String album;
+    public String albumArt;
+    public long   albumId;
+    public String albumKey;
+    public String artist;
+    public int    year;
+    public int    tracks;
 
     public static final String[] FILLED_PROJECTION = {
             MediaStore.Audio.Albums._ID,
@@ -44,13 +44,13 @@ public class Album {
         tracks   = cursor.getInt(   cursor.getColumnIndex( MediaStore.Audio.Albums.NUMBER_OF_SONGS));
     }
 
-    public static String getAlbumArt(Context activity, long albumID){
+    public static String getAlbumArt(Context context, long albumID){
         String albumArt = "";
-        ContentResolver resolver = activity.getContentResolver();
+        ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Albums.ALBUM_ART},
-                MediaStore.Audio.Media.ALBUM_ID + "= ?",
+                MediaStore.Audio.Media._ID + "= ?",
                 new String[]{String.valueOf(albumID)},
                 "album  ASC"
         );
@@ -62,10 +62,10 @@ public class Album {
     }
 
 
-    public static List<Album> getItems(Context activity) {
+    public static List<Album> getItems(Context context) {
 
         List<Album> albums = new ArrayList<Album>();
-        ContentResolver resolver = activity.getContentResolver();
+        ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 Album.FILLED_PROJECTION,
@@ -82,10 +82,10 @@ public class Album {
     }
 
 
-    public static List<Album> getItemsByArtist(Context activity, String artist) {
+    public static List<Album> getItemsByArtist(Context context, String artist) {
 
         List<Album> albums = new ArrayList<Album>();
-        ContentResolver resolver = activity.getContentResolver();
+        ContentResolver resolver = context.getContentResolver();
         String[] SELECTION_ARG = {""};
         SELECTION_ARG[0] = artist;
         Cursor cursor = resolver.query(

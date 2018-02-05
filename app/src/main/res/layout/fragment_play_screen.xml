@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
 
     <FrameLayout
         android:id="@+id/fl_player_container"
@@ -15,9 +17,9 @@
             android:id="@+id/iv_album_art"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
             android:layout_gravity="center"
-            android:src="@drawable/icon_album"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_album" />
     </FrameLayout>
 
     <LinearLayout

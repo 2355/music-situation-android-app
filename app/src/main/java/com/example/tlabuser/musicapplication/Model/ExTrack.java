@@ -107,7 +107,7 @@ public class ExTrack {
                     ExTrack exTrack = new ExTrack();
                     exTrack.artist = artist;
                     exTrack.title = title;
-                    exTrack = addTrackDataByArtistTitle(context, exTrack);
+                    exTrack.addTrackDataByArtistTitle(context);
 
                     ExTrackSituation es = new ExTrackSituation();
                     es.situation = situation;
@@ -154,9 +154,9 @@ public class ExTrack {
     }
 
     // add Track data to ExTrack by artist and title if you have the song
-    private static ExTrack addTrackDataByArtistTitle(Context context, ExTrack exTrack) {
+    public void addTrackDataByArtistTitle(Context context) {
         ContentResolver resolver = context.getContentResolver();
-        String[] SELECTION_ARG = {exTrack.artist, exTrack.title};
+        String[] SELECTION_ARG = {artist, title};
         Cursor cursor = resolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 Track.COLUMNS,
@@ -166,20 +166,18 @@ public class ExTrack {
         );
 
         boolean move = cursor.moveToFirst();
-        while(move){
+        while (move) {
             if (cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)) > 3000){
                 Track track = new Track();
                 track.setTrack(cursor);
 
-                exTrack.addTrackDataToExTrack(track);
+                addTrackDataToExTrack(track);
                 cursor.close();
-                return exTrack;
 
             } else { move = cursor.moveToNext(); }
 
         }
         cursor.close();
-        return exTrack;
     }
 
     // add Track data to ExTrack
@@ -199,6 +197,10 @@ public class ExTrack {
         this.year     = track.year;
         this.uri      = track.uri;
         this.internal = 1;
+    }
+
+    public void addAlbumArt(Context context, long albumId) {
+        this.albumArt = Album.getAlbumArt(context, albumId);
     }
 
     public static void insertExTrack(SQLiteDatabase db, ExTrack exTrack) {

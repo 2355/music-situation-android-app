@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
 
     <FrameLayout
         android:id="@+id/fl_player_container"
@@ -62,7 +64,6 @@
             android:id="@+id/bt_bad"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
             android:padding="2dp"
@@ -71,10 +72,42 @@
             android:src="@drawable/icon_bad" />
 
         <ImageButton
+            android:id="@+id/bt_back"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitCenter"
+            android:padding="2dp"
+            android:background="@drawable/button_overlay"
+            android:layout_margin="8dp"
+            android:src="@drawable/icon_back" />
+
+        <ImageButton
+            android:id="@+id/bt_play"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/button_overlay"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:layout_margin="8dp"
+            android:src="@drawable/icon_play" />
+
+        <ImageButton
+            android:id="@+id/bt_skip"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/button_overlay"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:layout_margin="8dp"
+            android:src="@drawable/icon_skip" />
+
+        <ImageButton
             android:id="@+id/bt_good"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_overlay"
             android:padding="2dp"

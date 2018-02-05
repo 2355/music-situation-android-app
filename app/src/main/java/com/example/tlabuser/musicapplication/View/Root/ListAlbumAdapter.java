@@ -52,7 +52,7 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
 
         holder.tvAlbum.setText(item.album);
         holder.tvArtist.setText(item.artist);
-        holder.tvTracks.setText(String.valueOf(item.tracks)+"tracks");
+        holder.tvTracks.setText(String.valueOf(item.tracks)+" tracks");
 
         String path = item.albumArt;
         holder.ivAlbumArt.setImageResource(R.drawable.icon_album);
@@ -60,7 +60,7 @@ public class ListAlbumAdapter extends ArrayAdapter<Album> {
             path = String.valueOf(R.drawable.icon_album);
             Bitmap bitmap = ImageCache.getImage(path);
             if (bitmap == null) {
-                bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.icon_album);
+                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_album);
                 ImageCache.setImage(path, bitmap);
             }
         }

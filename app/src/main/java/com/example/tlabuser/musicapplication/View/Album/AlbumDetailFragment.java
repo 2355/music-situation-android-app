@@ -36,7 +36,7 @@ public class AlbumDetailFragment extends Fragment{
 
         tvAlbum.setText(item.album);
         tvArtist.setText(item.artist);
-        tvTracks.setText(String.valueOf(item.tracks)+"tracks");
+        tvTracks.setText(String.valueOf(item.tracks)+" tracks");
 
         String path = item.albumArt;
         ivAlbumArt.setImageResource(R.drawable.icon_album);

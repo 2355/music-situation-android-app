@@ -36,8 +36,8 @@ public class ArtistDetailFragment extends Fragment{
         TextView album_tracks  = (TextView) partView.findViewById(R.id.tracks);
 
         artist_name.setText(artist_item.artist);
-        artist_albums.setText(String.valueOf(artist_item.albums)+"albums");
-        album_tracks.setText( String.valueOf(artist_item.tracks)+"tracks");
+        artist_albums.setText(String.valueOf(artist_item.albums)+" albums");
+        album_tracks.setText( String.valueOf(artist_item.tracks)+" tracks");
 
         List<Album> albums  = Album.getItemsByArtist(getActivity(), artist_item.artist);
 

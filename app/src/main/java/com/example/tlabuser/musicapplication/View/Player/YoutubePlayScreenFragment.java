@@ -25,11 +25,16 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment.State.pause;
+import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment.State.playing;
+import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment.State.stop;
 
 /**
  * Created by tlabuser on 2018/02/03.
@@ -41,20 +46,43 @@ public class YoutubePlayScreenFragment extends Fragment {
 
     private static final String API_KEY = Keys.YOUTUBE_KEY;
 
+    public static final String FROM = "from";
+
+    public enum State { stop, playing, pause }
+    private State state;
+
+    public enum From { track, panel }
+    private From from;
+
     private Main mainActivity;
 
     private ExTrack exTrack;
     private String title, artist;
 
     private TextView tvTitle, tvArtist;
-    private ImageButton btGood, btBad;
-    private YouTubePlayerSupportFragment player;
+    private ImageButton btPlay, btBack, btSkip, btGood, btBad;
+
+    private YouTubePlayerSupportFragment playerFragment;
+    private YouTubePlayer player;
+
+
+    public static YoutubePlayScreenFragment newInstance(From from) {
+        Bundle args = new Bundle();
+        args.putString(FROM, from.toString());
+
+        YoutubePlayScreenFragment fragment = new YoutubePlayScreenFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mainActivity = (Main) getActivity();
+        state = stop;
+        from = From.valueOf(getArguments().getString(FROM));
+        Log.d(TAG, "from: " + from);
     }
 
     @Nullable
@@ -66,40 +94,227 @@ public class YoutubePlayScreenFragment extends Fragment {
         tvTitle  = (TextView) view.findViewById(R.id.tv_title);
         tvArtist = (TextView) view.findViewById(R.id.tv_artist);
 
+        btPlay = (ImageButton) view.findViewById(R.id.bt_play);
+        btBack = (ImageButton) view.findViewById(R.id.bt_back);
+        btSkip = (ImageButton) view.findViewById(R.id.bt_skip);
         btGood = (ImageButton) view.findViewById(R.id.bt_good);
         btBad  = (ImageButton) view.findViewById(R.id.bt_bad);
 
-        exTrack = Main.getFocusedExTrack();
+        exTrack = mainActivity.getFocusedExTrack();
         if (exTrack == null) {
             title = "-";
             artist = "-";
         } else {
             title = exTrack.title;
             artist = exTrack.artist;
+
+            Log.d(TAG, exTrack.title + " " + exTrack.artist + " " + exTrack.album + " " + exTrack.albumArt);
+
+
+            // TODO setting lifecycle method
+            player = new YouTubePlayer() {
+                @Override
+                public void release() {
+
+                }
+
+                @Override
+                public void cueVideo(String s) {
+
+                }
+
+                @Override
+                public void cueVideo(String s, int i) {
+
+                }
+
+                @Override
+                public void loadVideo(String s) {
+
+                }
+
+                @Override
+                public void loadVideo(String s, int i) {
+
+                }
+
+                @Override
+                public void cuePlaylist(String s) {
+
+                }
+
+                @Override
+                public void cuePlaylist(String s, int i, int i1) {
+
+                }
+
+                @Override
+                public void loadPlaylist(String s) {
+
+                }
+
+                @Override
+                public void loadPlaylist(String s, int i, int i1) {
+
+                }
+
+                @Override
+                public void cueVideos(List<String> list) {
+
+                }
+
+                @Override
+                public void cueVideos(List<String> list, int i, int i1) {
+
+                }
+
+                @Override
+                public void loadVideos(List<String> list) {
+
+                }
+
+                @Override
+                public void loadVideos(List<String> list, int i, int i1) {
+
+                }
+
+                @Override
+                public void play() {
+
+                }
+
+                @Override
+                public void pause() {
+
+                }
+
+                @Override
+                public boolean isPlaying() {
+                    return false;
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    return false;
+                }
+
+                @Override
+                public void next() {
+
+                }
+
+                @Override
+                public void previous() {
+
+                }
+
+                @Override
+                public int getCurrentTimeMillis() {
+                    return 0;
+                }
+
+                @Override
+                public int getDurationMillis() {
+                    return 0;
+                }
+
+                @Override
+                public void seekToMillis(int i) {
+
+                }
+
+                @Override
+                public void seekRelativeMillis(int i) {
+
+                }
+
+                @Override
+                public void setFullscreen(boolean b) {
+
+                }
+
+                @Override
+                public void setOnFullscreenListener(OnFullscreenListener onFullscreenListener) {
+
+                }
+
+                @Override
+                public void setFullscreenControlFlags(int i) {
+
+                }
+
+                @Override
+                public int getFullscreenControlFlags() {
+                    return 0;
+                }
+
+                @Override
+                public void addFullscreenControlFlag(int i) {
+
+                }
+
+                @Override
+                public void setPlayerStyle(PlayerStyle playerStyle) {
+
+                }
+
+                @Override
+                public void setShowFullscreenButton(boolean b) {
+
+                }
+
+                @Override
+                public void setManageAudioFocus(boolean b) {
+
+                }
+
+                @Override
+                public void setPlaylistEventListener(PlaylistEventListener playlistEventListener) {
+
+                }
+
+                @Override
+                public void setPlayerStateChangeListener(PlayerStateChangeListener playerStateChangeListener) {
+
+                }
+
+                @Override
+                public void setPlaybackEventListener(PlaybackEventListener playbackEventListener) {
+
+                }
+            };
+
+            // YouTubeフラグメントインスタンスを取得
+            playerFragment = YouTubePlayerSupportFragment.newInstance();
+
+            // レイアウトにYouTubeフラグメントを追加
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_youtube_player, playerFragment)
+                    .commit();
+
+            // Get JSON from server
+            Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onGetJson);
+
+            Toast.makeText(mainActivity, "動画を取得しています。\nしばらくお待ちください。", Toast.LENGTH_SHORT).show();
         }
 
         tvTitle.setText(title);
         tvArtist.setText(artist);
 
+        btPlay.setOnClickListener(this::onPlayButtonClick);
+        btBack.setOnClickListener(this::onBackButtonClick);
+        btSkip.setOnClickListener(this::onSkipButtonClick);
         btGood.setOnClickListener(this::onGoodButtonClick);
         btBad.setOnClickListener(this::onBadButtonClick);
-
-        // YouTubeフラグメントインスタンスを取得
-        player = YouTubePlayerSupportFragment.newInstance();
-
-        // レイアウトにYouTubeフラグメントを追加
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fl_youtube_player, player)
-                .commit();
-
-        // Get JSON from server
-        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onGetJson);
-
-        Toast.makeText(mainActivity, "動画を取得しています。\nしばらくお待ちください。", Toast.LENGTH_SHORT).show();
 
         return view;
     }
@@ -108,7 +323,8 @@ public class YoutubePlayScreenFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        //TODO ここでplaypanelをアップデートする（リスナー）作る
+        //TODO close playerFragment
+        player.release();
     }
 
     @Nullable
@@ -131,14 +347,11 @@ public class YoutubePlayScreenFragment extends Fragment {
             try {
                 String videoId = json.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("videoId");
 
-                player.initialize(API_KEY, new YouTubePlayer.OnInitializedListener() {
-
+                playerFragment.initialize(API_KEY, new YouTubePlayer.OnInitializedListener() {
                     @Override
                     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
                         if (!wasRestored) {
-                            player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                            player.loadVideo(videoId);
-                            player.play();
+                            initializePlayer(player, videoId);
                         }
                     }
 
@@ -150,6 +363,7 @@ public class YoutubePlayScreenFragment extends Fragment {
                         Log.d(TAG, errorMessage);
                     }
                 });
+
             } catch (JSONException e) {
                 Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
                 Toast.makeText(mainActivity, "動画がありません。", Toast.LENGTH_SHORT).show();
@@ -159,6 +373,68 @@ public class YoutubePlayScreenFragment extends Fragment {
             Log.d(TAG, "JSONObject is null");
             Toast.makeText(mainActivity, "読み込みエラーが発生しました。", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void initializePlayer(YouTubePlayer player, String videoId) {
+        this.player = player;
+        this.player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+        this.player.setPlaybackEventListener(new PlaybackListener());
+        // load and play
+        this.player.loadVideo(videoId);
+        if (from == From.panel) {
+            // TODO panelからのときは止めておきたい
+            //this.player.pause();
+        }
+    }
+
+    private class PlaybackListener implements YouTubePlayer.PlaybackEventListener {
+        @Override
+        public void onBuffering(boolean b) {
+
+        }
+
+        @Override
+        public void onPaused() {
+            state = pause;
+            btPlay.setImageResource(R.drawable.icon_play);
+        }
+
+        @Override
+        public void onPlaying() {
+            state = playing;
+            btPlay.setImageResource(R.drawable.icon_pause);
+        }
+
+        @Override
+        public void onSeekTo(int i) {
+
+        }
+
+        @Override
+        public void onStopped() {
+            state = stop;
+            btPlay.setImageResource(R.drawable.icon_play);
+        }
+    }
+
+    private void onPlayButtonClick(View view) {
+        Toast.makeText(mainActivity, "PlayButtonClick", Toast.LENGTH_SHORT).show();
+        switch (state) {
+            case stop:    player.play(); break;
+            case playing: player.pause(); break;
+            case pause:   player.play(); break;
+        }
+    }
+
+    private void onBackButtonClick(View view) {
+        Toast.makeText(mainActivity, "BackButtonClick", Toast.LENGTH_SHORT).show();
+        player.seekToMillis(0);
+    }
+
+    private void onSkipButtonClick(View view) {
+        Toast.makeText(mainActivity, "SkipButtonClick", Toast.LENGTH_SHORT).show();
+        int duration = player.getDurationMillis();
+        player.seekToMillis(duration);
     }
 
     public void onBadButtonClick(View view) {

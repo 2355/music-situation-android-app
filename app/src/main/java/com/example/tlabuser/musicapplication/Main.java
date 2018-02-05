@@ -32,33 +32,20 @@ import com.example.tlabuser.musicapplication.View.Player.PlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.awareness.snapshot.DetectedActivityResponse;
-import com.google.android.gms.awareness.snapshot.PlacesResponse;
-import com.google.android.gms.awareness.snapshot.WeatherResponse;
-import com.google.android.gms.awareness.state.Weather;
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import static com.example.tlabuser.musicapplication.CalendarUtil.calToSituations;
-import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.CLICK;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.pause;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.playing;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.stop;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.URI;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.setMainListener;
 
 
 public class Main extends FragmentActivity{
 
-    private final String TAG = "Main";
+    public final String TAG = "Main";
+
+    private final int PERMISSION_INITIAL = 1;
 
     private enum FrgmType { fRoot, fSituation, fAlbum, fArtist }
     private FrgmType fTop;
@@ -75,20 +62,20 @@ public class Main extends FragmentActivity{
     public  void   focusArtist(Artist item) {if(item != null) focusedArtist = item;}
     public  Artist getFocusedArtist() {return focusedArtist ;}
 
-    private static ExTrack focusedExTrack;
+    private ExTrack focusedExTrack;
     public  void   focusExTrack(ExTrack item) {if(item != null) focusedExTrack = item;}
-    public  static ExTrack getFocusedExTrack() {return focusedExTrack ;}
+    public  ExTrack getFocusedExTrack() {return focusedExTrack ;}
 
     private ImageView ivAlbumArt;
     private TextView tvTitle, tvArtist;
     private ImageButton btPlay;
-    private ImageButton btGood, btBad; // TODO plan to delete
 
-    private MediaPlayerService.State state = stop;
+    private MediaPlayerService.State mpState = stop;
 
     public static MainLifecycleListener listener;
 
-    private final int PERMISSION_INITIAL = 1;
+    private enum BackFrom { playScreen, youtubePlayScreen }
+    private BackFrom from = BackFrom.playScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +90,9 @@ public class Main extends FragmentActivity{
         }
 
         if (listener != null) {
-            state = listener.getState();
+            mpState = listener.getState();
 
-            switch (state) {
+            switch (mpState) {
                 case stop:    btPlay.setImageResource(R.drawable.icon_play); break;
                 case playing: btPlay.setImageResource(R.drawable.icon_pause); break;
                 case pause:   btPlay.setImageResource(R.drawable.icon_play); break;
@@ -138,156 +125,6 @@ public class Main extends FragmentActivity{
         }
     }
 
-    // test method
-    private void getWeatherSnapshot() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Awareness.getSnapshotClient(this).getWeather()
-                    .addOnSuccessListener(new OnSuccessListener<WeatherResponse>() {
-                        @Override
-                        public void onSuccess(WeatherResponse weatherResponse) {
-                            Weather weather = weatherResponse.getWeather();
-                            String conditions = String.valueOf(getConditions(weather.getConditions()));
-                            String temp = String.valueOf(weather.getTemperature(Weather.CELSIUS));
-                            String feelTemp = String.valueOf(weather.getFeelsLikeTemperature(Weather.CELSIUS));
-                            String humidity = String.valueOf(weather.getHumidity());
-                            String toast = "[Weather]:"
-                                    + "\nConditions: " + conditions
-                                    + ", \nTemperature: " + temp
-                                    + ", \nFeelLikeTemperature: " + feelTemp
-                                    + ", \nHumidity: " + humidity;
-
-                            Toast.makeText(Main.this, toast, Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, toast);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Could not get weather: " + e);
-                        }
-                    });
-        }
-    }
-
-    private void getPlacesSnapshot() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Awareness.getSnapshotClient(this).getPlaces()
-                    .addOnSuccessListener(new OnSuccessListener<PlacesResponse>() {
-                        @Override
-                        public void onSuccess(PlacesResponse placesResponse) {
-                            String toast = "[Places]: ";
-                            List<PlaceLikelihood> pls = placesResponse.getPlaceLikelihoods();
-                            if (pls != null) {
-                                for (PlaceLikelihood pl : pls) {
-                                    double likelihood = pl.getLikelihood();
-                                    Place place = pl.getPlace();
-                                    String name = String.valueOf(place.getName());
-                                    String type = String.valueOf(getPlaceTypes(place.getPlaceTypes()));
-                                    toast += "\nlikehood: " + String.valueOf(likelihood)
-                                            + ", \nname: " + name
-                                            + ", \ntype: " + type
-                                            + "\n--";
-                                }
-                            }
-                            Toast.makeText(Main.this, toast, Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, toast);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Could not get places: " + e);
-                        }
-                    });
-        }
-    }
-
-    private void getDetectedActivitySnapshot() {
-        Awareness.getSnapshotClient(this).getDetectedActivity()
-                .addOnSuccessListener(new OnSuccessListener<DetectedActivityResponse>() {
-                    @Override
-                    public void onSuccess(DetectedActivityResponse dar) {
-                        String toast = "[Activities]: ";
-                        ActivityRecognitionResult arr = dar.getActivityRecognitionResult();
-                        List<DetectedActivity> das = arr.getProbableActivities();
-                        for (DetectedActivity da : das) {
-                            String type = getActivityType(da.getType());
-                            int confidence = da.getConfidence();
-                            if (confidence < 10) {
-                                break;
-                            } else {
-                                toast += "\ntype: " + type + ", confidence: " + confidence + "\n--";
-                            }
-                        }
-                        Toast.makeText(Main.this, toast, Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, toast);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Could not detect activity: " + e);
-                    }
-                });
-    }
-
-    private List<String> getConditions(int[] condition) {
-        List<String> conditions = new ArrayList<>();
-        for (int con : condition) {
-            switch (con) {
-                case Weather.CONDITION_CLEAR: conditions.add("晴"); break;
-                case Weather.CONDITION_CLOUDY: conditions.add("曇"); break;
-                case Weather.CONDITION_FOGGY:
-                case Weather.CONDITION_HAZY: conditions.add("霧"); break;
-                case Weather.CONDITION_ICY: conditions.add("寒い"); break;
-                case Weather.CONDITION_RAINY: conditions.add("雨"); break;
-                case Weather.CONDITION_SNOWY: conditions.add("雪"); break;
-                case Weather.CONDITION_STORMY: conditions.add("嵐"); break;
-                case Weather.CONDITION_WINDY: conditions.add("風"); break;
-                case Weather.CONDITION_UNKNOWN: conditions.add("不明"); break;
-            }
-
-        }
-        return conditions;
-    }
-
-    private List<String> getPlaceTypes(List<Integer> types) {
-        List<String> placeTypes = new ArrayList<>();
-        for (int type : types) {
-            switch (type) {
-                case Place.TYPE_STORE: placeTypes.add("お店"); break;
-                case Place.TYPE_RESTAURANT: placeTypes.add("レストラン"); break;
-                case Place.TYPE_CAFE: placeTypes.add("カフェ"); break;
-                case Place.TYPE_SCHOOL: placeTypes.add("学校"); break;
-                case Place.TYPE_STADIUM:
-                case Place.TYPE_GYM: placeTypes.add("スポーツ"); break;
-                case Place.TYPE_PARK: placeTypes.add("公園"); break;
-                case Place.TYPE_ZOO: placeTypes.add("動物園"); break;
-                case Place.TYPE_AQUARIUM: placeTypes.add("水族館"); break;
-                case Place.TYPE_MUSEUM: placeTypes.add("博物館"); break;
-                case Place.TYPE_TRAIN_STATION: placeTypes.add("駅"); break;
-            }
-        }
-        return placeTypes;
-    }
-
-    private String getActivityType(int type) {
-        String activityType = "";
-        switch (type) {
-            case DetectedActivity.IN_VEHICLE: activityType = "車"; break;
-            case DetectedActivity.ON_BICYCLE: activityType = "自転車"; break;
-            case DetectedActivity.ON_FOOT:
-            case DetectedActivity.WALKING: activityType = "歩き"; break;
-            case DetectedActivity.RUNNING: activityType = "走り"; break;
-            case DetectedActivity.STILL: activityType = "停止"; break;
-            case DetectedActivity.TILTING: activityType = "起立"; break;
-            case DetectedActivity.UNKNOWN: activityType = "不明"; break;
-        }
-        return activityType;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == PERMISSION_INITIAL
@@ -314,27 +151,23 @@ public class Main extends FragmentActivity{
         tvArtist   = (TextView)  findViewById(R.id.artist);
         ivAlbumArt = (ImageView) findViewById(R.id.albumart);
 
-        btBad  = (ImageButton) findViewById(R.id.btBad);
         btPlay = (ImageButton) findViewById(R.id.btPlay);
-        btGood = (ImageButton) findViewById(R.id.btGood);
 
         btPlay.setOnClickListener(this::onPlayButtonClick);
-        btGood.setOnClickListener(this::onGoodButtonClick);
-        btBad.setOnClickListener(this::onBadButtonClick);
 
         updatePanel();
 
         setMainListener(new MediaPlayerService.PlayerStateListener() {
             @Override
             public void onStop() {
-                Main.this.state = stop;
+                Main.this.mpState = stop;
                 btPlay.setImageResource(R.drawable.icon_play);
                 Log.d(TAG, "onStop");
             }
 
             @Override
             public void onPlaying() {
-                Main.this.state = playing;
+                Main.this.mpState = playing;
                 btPlay.setImageResource(R.drawable.icon_pause);
                 updatePanel();
                 Log.d(TAG, "onPlaying");
@@ -342,7 +175,7 @@ public class Main extends FragmentActivity{
 
             @Override
             public void onPause() {
-                Main.this.state = pause;
+                Main.this.mpState = pause;
                 btPlay.setImageResource(R.drawable.icon_play);
                 Log.d(TAG, "onPause");
             }
@@ -372,17 +205,32 @@ public class Main extends FragmentActivity{
         Log.d(TAG, "popBackStack");
     }
 
-    public void updatePanel(){
+    private void updatePanel(){
         ExTrack exTrack = getFocusedExTrack();
         if (exTrack != null) {
             Log.d(TAG, "updatePanel");
 
+            exTrack.addAlbumArt(this, exTrack.albumId);
             tvTitle.setText(exTrack.title);
             tvArtist.setText(exTrack.artist);
-            // ivAlbumArt.setImageResource(exTrack.albumArt);
+
             ivAlbumArt.setImageResource(R.drawable.icon_album);
+            String path = exTrack.albumArt;
+            if (path != null && path != "") {
+                ivAlbumArt.setTag(path);
+                ImageGetTask task = new ImageGetTask(ivAlbumArt);
+                task.execute(path);
+            }
+            Log.d(TAG, "updatePanel: setAlbumArt");
+
         } else {
-            Log.d(TAG, "updatePanel error");
+            Log.d(TAG, "updatePanel error: exTrack == null");
+        }
+
+        if (from == BackFrom.youtubePlayScreen) {
+            btPlay.setVisibility(View.GONE);
+        } else {
+            btPlay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -435,16 +283,21 @@ public class Main extends FragmentActivity{
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        // TODO パネルの表示がやばい。パネルから開くとPlayScreenFragmentになる
+        // stop service before transition
+        mpState = stop;
         Intent intent = new Intent(this, MediaPlayerService.class);
-        state = stop;
         stopService(intent);
 
+        YoutubePlayScreenFragment fragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.track);
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fl_container, new YoutubePlayScreenFragment(), YoutubePlayScreenFragment.TAG)
+                .replace(R.id.fl_container, fragment, YoutubePlayScreenFragment.TAG)
                 .addToBackStack(YoutubePlayScreenFragment.TAG)
                 .commit();
+
+        from = BackFrom.youtubePlayScreen;
+        updatePanel();
+        // TODO hide playButton
     };
 
     public AdapterView.OnItemLongClickListener ExTrackLongClickListener = (parent, view, position, id) -> {
@@ -458,13 +311,14 @@ public class Main extends FragmentActivity{
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, state);
-
-        getFragmentManager()
+        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, mpState);
+        getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fl_container, fragment, PlayScreenFragment.TAG)
+                .replace(R.id.fl_container, fragment, PlayScreenFragment.TAG)
                 .addToBackStack(PlayScreenFragment.TAG)
                 .commit();
+
+        from = BackFrom.playScreen;
     };
 
     public AdapterView.OnItemLongClickListener internalExTrackLongClickListener = (parent, view, position, id) -> {
@@ -475,32 +329,56 @@ public class Main extends FragmentActivity{
     };
 
     public void onPlayPanelClick(View view) {
-        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.panel, state);
+        switch (from) {
+            case playScreen:
+                PlayScreenFragment psFragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.panel, mpState);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fl_container, psFragment, PlayScreenFragment.TAG)
+                        .addToBackStack(PlayScreenFragment.TAG)
+                        .commit();
 
-        getFragmentManager()
-                .beginTransaction()
-                .add(R.id.fl_container, fragment, PlayScreenFragment.TAG)
-                .addToBackStack(PlayScreenFragment.TAG)
-                .commit();
+                from = BackFrom.playScreen;
+                break;
 
-    }
+            case youtubePlayScreen:
+                YoutubePlayScreenFragment yFragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.panel);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fl_container, yFragment, YoutubePlayScreenFragment.TAG)
+                        .addToBackStack(YoutubePlayScreenFragment.TAG)
+                        .commit();
 
-    public void onBadButtonClick(View view) {
-        getWeatherSnapshot();
-        getPlacesSnapshot();
-        getDetectedActivitySnapshot();
+                from = BackFrom.youtubePlayScreen;
+                break;
+        }
+
+        updatePanel();
     }
 
     public void onPlayButtonClick(View view) {
         Toast.makeText(Main.this, "Click:PlayButton", Toast.LENGTH_SHORT).show();
-    }
 
-    public void onGoodButtonClick(View view) {
-        Calendar cal = Calendar.getInstance();
-        cal.getTime();
-        List<String> situations = calToSituations(cal);
+        Log.d(TAG, "onPlayButtonClick mpState: " + mpState);
 
-        Toast.makeText(Main.this, calToStr(cal)  + "\n" + situations.toString(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        switch(mpState){
+            case stop:
+                intent.putExtra(CLICK, MediaPlayerService.Click.start.toString());
+                intent.putExtra(URI, "");
+                this.startService(intent);
+                break;
+
+            case playing:
+                intent.putExtra(CLICK, MediaPlayerService.Click.pause.toString());
+                this.startService(intent);
+                break;
+
+            case pause:
+                intent.putExtra(CLICK, MediaPlayerService.Click.restart.toString());
+                this.startService(intent);
+                break;
+        }
     }
 
     public interface MainLifecycleListener {

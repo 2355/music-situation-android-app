@@ -1,9 +1,9 @@
 package com.example.tlabuser.musicapplication.View.Player;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tlabuser.musicapplication.ImageGetTask;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.MediaPlayerService;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
@@ -45,7 +46,7 @@ public class PlayScreenFragment extends Fragment {
     private Main mainActivity;
 
     private ExTrack exTrack;
-    private String title, artist, album, uri;
+    private String title, artist, album, uri, albumArt;
     private long duration;
 
     private TextView tvTitle, tvArtist, tvAlbum;
@@ -71,6 +72,8 @@ public class PlayScreenFragment extends Fragment {
 
         from = From.valueOf(getArguments().getString(FROM));
         state = MediaPlayerService.State.valueOf(getArguments().getString(STATE));
+        Log.d(TAG, "from: " + from);
+        Log.d(TAG, "state: " + state);
 
         setPlayScreenListener(new MediaPlayerService.PlayerStateListener() {
             @Override
@@ -113,25 +116,34 @@ public class PlayScreenFragment extends Fragment {
         btGood = (ImageButton) view.findViewById(R.id.bt_good);
         btBad  = (ImageButton) view.findViewById(R.id.bt_bad);
 
-        exTrack = Main.getFocusedExTrack();
+        exTrack = mainActivity.getFocusedExTrack();
         if (exTrack == null) {
             title = "-";
             artist = "-";
             album = "-";
             uri = "";
             duration = 0;
+            albumArt = "";
         } else {
+            exTrack.addAlbumArt(mainActivity, exTrack.albumId);
             title = exTrack.title;
             artist = exTrack.artist;
             album = exTrack.album;
             uri = exTrack.uri.toString();
             duration = exTrack.duration;
+            albumArt = exTrack.albumArt;
+            Log.d(TAG, exTrack.title + " " + exTrack.artist + " " + exTrack.album + " " + exTrack.albumArt);
         }
 
         tvTitle.setText(title);
         tvArtist.setText(artist);
         tvAlbum.setText(album);
         ivAlbumArt.setImageResource(R.drawable.icon_album);
+        if (albumArt != null && albumArt != "") {
+            ivAlbumArt.setTag(albumArt);
+            ImageGetTask task = new ImageGetTask(ivAlbumArt);
+            task.execute(albumArt);
+        }
 
         switch (from){
             case track:

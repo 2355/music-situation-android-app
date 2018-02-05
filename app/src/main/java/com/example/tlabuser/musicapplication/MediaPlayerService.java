@@ -121,7 +121,6 @@ public class MediaPlayerService extends Service {
      * メディア再生準備が完了時のリスナクラス。
      */
     private class PlayerPreparedListener implements MediaPlayer.OnPreparedListener {
-
         @Override
         public void onPrepared(MediaPlayer mp) {
             Log.i(TAG, "再生開始");
@@ -154,7 +153,6 @@ public class MediaPlayerService extends Service {
      * メディア再生が終了したときのリスナクラス。
      */
     private class PlayerCompletionListener implements MediaPlayer.OnCompletionListener {
-
         @Override
         public void onCompletion(MediaPlayer mp) {
             Log.i(TAG, "再生終了");
