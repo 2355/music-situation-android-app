@@ -323,7 +323,7 @@ public class YoutubePlayScreenFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        //TODO close playerFragment
+        //TODO releaseじゃなくて置いておきたい
         player.release();
     }
 

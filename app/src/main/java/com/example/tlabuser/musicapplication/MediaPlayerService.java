@@ -29,7 +29,7 @@ public class MediaPlayerService extends Service {
     public enum Click { start, pause, restart, back, skip }
     private Click click;
 
-    private MediaPlayer _player;
+    private MediaPlayer player;
 
     public static PlayerStateListener mainListener, playScreenListener;
 
@@ -38,7 +38,7 @@ public class MediaPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        _player = new MediaPlayer();
+        player = new MediaPlayer();
         state = stop;
 
         setMainLifecycleListener(() -> state);
@@ -51,50 +51,48 @@ public class MediaPlayerService extends Service {
 
         switch(click){
             case start:
-
                 // Stop player when playing other song
                 if(state == playing || state == pause) {
-                    _player.stop();
-                    _player.reset();
+                    player.stop();
+                    player.reset();
                 }
 
                 String uriStr = intent.getStringExtra(URI);
                 if (uriStr.equals("")) {
                     Log.d(TAG, "URI = null");
-
                     break;
                 }
 
                 Uri uri = Uri.parse(uriStr);
                 try {
-                    _player.setDataSource(MediaPlayerService.this, uri);
-                    _player.setOnPreparedListener(new PlayerPreparedListener());
-                    _player.setOnCompletionListener(new PlayerCompletionListener());
-                    _player.prepareAsync();
+                    player.setDataSource(MediaPlayerService.this, uri);
+                    player.setOnPreparedListener(new PlayerPreparedListener());
+                    player.setOnCompletionListener(new PlayerCompletionListener());
+                    player.prepareAsync();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
             case pause:
-                _player.pause();
+                player.pause();
                 state = pause;
                 listener.onPause();
                 break;
 
             case restart:
-                _player.start();
+                player.start();
                 state = playing;
                 listener.onPlaying();
                 break;
 
             case back:
-                _player.seekTo(0);
+                player.seekTo(0);
                 break;
 
             case skip:
                 long duration = intent.getLongExtra(DURATION, 0);
-                _player.seekTo((int) duration);
+                player.seekTo((int) duration);
                 break;
         }
 
@@ -105,11 +103,11 @@ public class MediaPlayerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "サービス破棄");
-        if(_player.isPlaying()) {
-            _player.stop();
+        if(player.isPlaying()) {
+            player.stop();
         }
-        _player.release();
-        _player = null;
+        player.release();
+        player = null;
     }
 
     @Override

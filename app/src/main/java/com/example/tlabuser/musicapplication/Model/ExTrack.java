@@ -172,7 +172,7 @@ public class ExTrack {
                 track.setTrack(cursor);
 
                 addTrackDataToExTrack(track);
-                cursor.close();
+                break;
 
             } else { move = cursor.moveToNext(); }
 

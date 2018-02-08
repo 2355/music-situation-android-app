@@ -78,23 +78,24 @@ public class PlayScreenFragment extends Fragment {
         setPlayScreenListener(new MediaPlayerService.PlayerStateListener() {
             @Override
             public void onStop() {
+                Log.d(TAG, "onStop");
                 PlayScreenFragment.this.state = stop;
                 btPlay.setImageResource(R.drawable.icon_play);
-                Log.d(TAG, "onStop");
+                // TODO updateExTrack(extrack, situations);
             }
 
             @Override
             public void onPlaying() {
+                Log.d(TAG, "onPlaying");
                 PlayScreenFragment.this.state = playing;
                 btPlay.setImageResource(R.drawable.icon_pause);
-                Log.d(TAG, "onPlaying");
             }
 
             @Override
             public void onPause() {
+                Log.d(TAG, "onPause");
                 PlayScreenFragment.this.state = pause;
                 btPlay.setImageResource(R.drawable.icon_play);
-                Log.d(TAG, "onPause");
             }
         });
     }
@@ -124,6 +125,7 @@ public class PlayScreenFragment extends Fragment {
             uri = "";
             duration = 0;
             albumArt = "";
+
         } else {
             exTrack.addAlbumArt(mainActivity, exTrack.albumId);
             title = exTrack.title;

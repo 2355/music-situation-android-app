@@ -25,6 +25,7 @@ public class ExTrackMenuFragment extends Fragment {
         List<Track> tracks = Track.getItems(activity);
         List<ExTrack> exTracks = new ArrayList<>();
 
+        // TODO ページネーション化 or 非同期化
         for (int i = 0; i < tracks.size(); i++){
             ExTrack exTrack = new ExTrack();
             exTrack.addTrackDataToExTrack(tracks.get(i));
@@ -32,12 +33,12 @@ public class ExTrackMenuFragment extends Fragment {
         }
 
         View v = inflater.inflate(R.layout.fragment_tracks_menu,container,false);
-        ListView exTrackList = (ListView) v.findViewById(R.id.track_list);
+        ListView lvExTracks = (ListView) v.findViewById(R.id.track_list);
         ListExTrackAllAdapter adapter = new ListExTrackAllAdapter(activity, exTracks);
-        exTrackList.setAdapter(adapter);
+        lvExTracks.setAdapter(adapter);
 
-        exTrackList.setOnItemClickListener(activity.internalExTrackClickListener);
-        exTrackList.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
+        lvExTracks.setOnItemClickListener(activity.internalExTrackClickListener);
+        lvExTracks.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
 
         return v;
     }

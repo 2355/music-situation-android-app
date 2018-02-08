@@ -32,7 +32,18 @@ import com.example.tlabuser.musicapplication.View.Player.PlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Root.RootMenuFragment;
 import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.state.Weather;
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceLikelihood;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToSituations;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.CLICK;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.pause;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.playing;
@@ -47,8 +58,19 @@ public class Main extends FragmentActivity{
 
     private final int PERMISSION_INITIAL = 1;
 
+    public static MainLifecycleListener mlListener;
+    private static NowSituationListener nsListener;
+
     private enum FrgmType { fRoot, fSituation, fAlbum, fArtist }
     private FrgmType fTop;
+
+    private MediaPlayerService.State mpState = stop;
+
+    private enum BackFrom { playScreen, youtubePlayScreen }
+    private BackFrom from = BackFrom.playScreen;
+
+    private List<String> nowSituations;
+    public List<String> getNowSituations() {return nowSituations;}
 
     private Situation focusedSituation;
     public  void      focusSituation(Situation item) {if(item != null) focusedSituation = item;}
@@ -70,12 +92,6 @@ public class Main extends FragmentActivity{
     private TextView tvTitle, tvArtist;
     private ImageButton btPlay;
 
-    private MediaPlayerService.State mpState = stop;
-
-    public static MainLifecycleListener listener;
-
-    private enum BackFrom { playScreen, youtubePlayScreen }
-    private BackFrom from = BackFrom.playScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +105,8 @@ public class Main extends FragmentActivity{
             showFragment();
         }
 
-        if (listener != null) {
-            mpState = listener.getState();
+        if (mlListener != null) {
+            mpState = mlListener.getState();
 
             switch (mpState) {
                 case stop:    btPlay.setImageResource(R.drawable.icon_play); break;
@@ -160,26 +176,30 @@ public class Main extends FragmentActivity{
         setMainListener(new MediaPlayerService.PlayerStateListener() {
             @Override
             public void onStop() {
+                Log.d(TAG, "onStop");
                 Main.this.mpState = stop;
                 btPlay.setImageResource(R.drawable.icon_play);
-                Log.d(TAG, "onStop");
+
+                getUserSituation();
             }
 
             @Override
             public void onPlaying() {
+                Log.d(TAG, "onPlaying");
                 Main.this.mpState = playing;
                 btPlay.setImageResource(R.drawable.icon_pause);
                 updatePanel();
-                Log.d(TAG, "onPlaying");
             }
 
             @Override
             public void onPause() {
+                Log.d(TAG, "onPause");
                 Main.this.mpState = pause;
                 btPlay.setImageResource(R.drawable.icon_play);
-                Log.d(TAG, "onPause");
             }
         });
+
+        getUserSituation();
     }
 
     public void setNewFragment(FrgmType CallFragment){
@@ -234,7 +254,137 @@ public class Main extends FragmentActivity{
         }
     }
 
-    public AdapterView.OnItemClickListener  SituationClickListener = new AdapterView.OnItemClickListener() {
+    private void getUserSituation() {
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+        nowSituations = calToSituations(cal);
+        Log.d(TAG, "Time " + String.valueOf(nowSituations));
+        if (nsListener != null) {
+            nsListener.getSituation(nowSituations);
+        }
+        getWeather();
+        getPlaces();
+        getDetectedActivity();
+
+        // TODO それぞれフラグを立てる、フラグがすべてオンになったら実行
+        // TODO GoodButtonを押したときに実行
+    }
+
+    private void getWeather() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Awareness.getSnapshotClient(this).getWeather()
+                    .addOnSuccessListener(weatherResponse -> {
+                        Weather weather = weatherResponse.getWeather();
+
+                        nowSituations.addAll(getWeatherConditions(weather));
+                        Log.d(TAG, "Weathers " + String.valueOf(nowSituations));
+                        nsListener.getSituation(nowSituations);
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG, "Could not get weather: " + e));
+        }
+    }
+
+    private List<String> getWeatherConditions(Weather weather) {
+        List<String> conditions = new ArrayList<>();
+
+        int[] condition = weather.getConditions();
+        float temp = weather.getTemperature(Weather.CELSIUS);
+
+        for (int con : condition) {
+            switch (con) {
+                case Weather.CONDITION_CLEAR: conditions.add("晴"); break;
+                case Weather.CONDITION_CLOUDY: conditions.add("曇"); break;
+                case Weather.CONDITION_FOGGY:
+                case Weather.CONDITION_HAZY: conditions.add("霧"); break;
+                case Weather.CONDITION_ICY: conditions.add("寒い"); break;
+                case Weather.CONDITION_RAINY: conditions.add("雨"); break;
+                case Weather.CONDITION_SNOWY: conditions.add("雪"); break;
+                case Weather.CONDITION_STORMY: conditions.add("嵐"); break;
+                case Weather.CONDITION_WINDY: conditions.add("風"); break;
+            }
+
+        }
+        if (temp < 10) conditions.add("寒い");
+        if (temp > 30) conditions.add("暑い");
+
+        return conditions;
+    }
+
+    private void getPlaces() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Awareness.getSnapshotClient(this).getPlaces()
+                    .addOnSuccessListener(placesResponse -> {
+                        List<PlaceLikelihood> pls = placesResponse.getPlaceLikelihoods();
+                        if (pls != null) {
+                            for (PlaceLikelihood pl : pls){
+                                if (pl.getLikelihood() == 0.0) break;
+
+                                List<String> types = getPlaceTypes(pl.getPlace().getPlaceTypes());
+                                nowSituations.addAll(types);
+                            }
+                            nsListener.getSituation(nowSituations);
+                        }
+                        Log.d(TAG, "Places " + String.valueOf(nowSituations));
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG, "Could not get places: " + e));
+        }
+    }
+
+    private List<String> getPlaceTypes(List<Integer> types) {
+        List<String> placeTypes = new ArrayList<>();
+
+        for (int type : types) {
+            switch (type) {
+                case Place.TYPE_STORE: placeTypes.add("ショッピング"); break;
+                case Place.TYPE_RESTAURANT: placeTypes.add("レストラン"); break;
+                case Place.TYPE_CAFE: placeTypes.add("カフェ"); break;
+                case Place.TYPE_SCHOOL:
+                case Place.TYPE_UNIVERSITY: placeTypes.add("学校"); break;
+                case Place.TYPE_LIBRARY: placeTypes.add("図書館"); break;
+                case Place.TYPE_STADIUM:
+                case Place.TYPE_GYM: placeTypes.add("スポーツ"); break;
+                case Place.TYPE_PARK: placeTypes.add("公園"); break;
+                case Place.TYPE_ZOO: placeTypes.add("動物園"); break;
+                case Place.TYPE_AQUARIUM: placeTypes.add("水族館"); break;
+                case Place.TYPE_MUSEUM: placeTypes.add("博物館"); break;
+                case Place.TYPE_TRAIN_STATION: placeTypes.add("駅"); break;
+            }
+        }
+        return placeTypes;
+    }
+
+    private void getDetectedActivity() {
+        Awareness.getSnapshotClient(this).getDetectedActivity()
+                .addOnSuccessListener(dar -> {
+                    ActivityRecognitionResult arr = dar.getActivityRecognitionResult();
+                    List<DetectedActivity> das = arr.getProbableActivities();
+                    for (DetectedActivity da : das) {
+                        if (da.getConfidence() < 10) break;
+                        String type = getDetectedActivityType(da.getType());
+                        if (type != null) nowSituations.add(type);
+                    }
+                    Log.d(TAG, "Activities " + String.valueOf(nowSituations));
+                    nsListener.getSituation(nowSituations);
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Could not detect activity: " + e));
+
+    }
+
+    private String getDetectedActivityType(int type) {
+        String activityType = null;
+        switch (type) {
+            case DetectedActivity.IN_VEHICLE: activityType = "ドライブ"; break;
+            case DetectedActivity.ON_BICYCLE: activityType = "ツーリング"; break;
+            case DetectedActivity.ON_FOOT:
+            case DetectedActivity.WALKING: activityType = "散歩"; break;
+            case DetectedActivity.RUNNING: activityType = "ランニング"; break;
+        }
+        return activityType;
+    }
+
+    public AdapterView.OnItemClickListener SituationClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             ListView lv = (ListView) parent;
@@ -253,7 +403,7 @@ public class Main extends FragmentActivity{
         }
     };
 
-    public AdapterView.OnItemClickListener  AlbumClickListener = (parent, view, position, id) -> {
+    public AdapterView.OnItemClickListener AlbumClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusAlbum( (Album)lv.getItemAtPosition(position) );
         setNewFragment(FrgmType.fAlbum);
@@ -266,7 +416,7 @@ public class Main extends FragmentActivity{
         return true;
     };
 
-    public AdapterView.OnItemClickListener  ArtistClickListener = (parent, view, position, id) -> {
+    public AdapterView.OnItemClickListener ArtistClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusArtist( (Artist)lv.getItemAtPosition(position) );
         setNewFragment(FrgmType.fArtist);
@@ -279,7 +429,7 @@ public class Main extends FragmentActivity{
         return true;
     };
 
-    public AdapterView.OnItemClickListener  ExTrackClickListener = (parent, view, position, id) -> {
+    public AdapterView.OnItemClickListener ExTrackClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
@@ -297,7 +447,6 @@ public class Main extends FragmentActivity{
 
         from = BackFrom.youtubePlayScreen;
         updatePanel();
-        // TODO hide playButton
     };
 
     public AdapterView.OnItemLongClickListener ExTrackLongClickListener = (parent, view, position, id) -> {
@@ -307,7 +456,7 @@ public class Main extends FragmentActivity{
         return true;
     };
 
-    public AdapterView.OnItemClickListener  internalExTrackClickListener = (parent, view, position, id) -> {
+    public AdapterView.OnItemClickListener internalExTrackClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
@@ -386,6 +535,14 @@ public class Main extends FragmentActivity{
     }
 
     public static void setMainLifecycleListener(MainLifecycleListener l) {
-        listener = l;
+        mlListener = l;
+    }
+
+    public interface NowSituationListener {
+        void getSituation(List<String> nowSituations);
+    }
+
+    public static void setNowSituationListener(NowSituationListener l) {
+        nsListener = l;
     }
 }
