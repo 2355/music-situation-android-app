@@ -35,6 +35,7 @@
                 android:layout_gravity="start"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_album"
+                android:background="@color/gray_light"
                 android:onClick="onPlayPanelClick"/>
 
             <LinearLayout

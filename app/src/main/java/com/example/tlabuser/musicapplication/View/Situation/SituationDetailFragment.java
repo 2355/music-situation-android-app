@@ -45,7 +45,7 @@ public class SituationDetailFragment extends Fragment {
 
     private static final String TAG = "SituationDetailFragment";
 
-    private final int INTERVAL = 100;
+    private final int INTERVAL = 50;
 
     private Main mainActivity;
     private SQLiteDatabase db;

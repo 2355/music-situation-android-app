@@ -16,8 +16,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Recommended Situations"
-                android:background="@color/colorPrimary"
+                android:text="Your Situations"
+                android:background="@color/gray"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:padding="8dp"/>
@@ -30,8 +30,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Other Situations"
-                android:background="@color/colorPrimary"
+                android:text="All Situations"
+                android:background="@color/gray"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:padding="8dp"/>

@@ -10,7 +10,8 @@
         android:id="@+id/iv_album_art"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:src="@drawable/icon_track"/>
+        android:src="@drawable/icon_track"
+        android:background="@color/gray_light"/>
 
     <LinearLayout
         android:orientation="vertical"
