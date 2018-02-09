@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
@@ -45,12 +46,16 @@ public class SituationsRecyclerAdapter extends RecyclerView.Adapter<SituationsRe
             viewHolder.tvTracks.setVisibility(View.VISIBLE);
         }
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) listener.onItemClicked(situation);
-            }
+        viewHolder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClicked(situation);
         });
+
+        viewHolder.itemView.setOnLongClickListener(v -> {
+            // TODO situationの再取得などができるダイアログを出す
+            Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
     }
 
     @Override

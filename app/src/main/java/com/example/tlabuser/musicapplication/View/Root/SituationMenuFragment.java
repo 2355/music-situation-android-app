@@ -142,6 +142,7 @@ public class SituationMenuFragment extends Fragment{
         rvSituations.setAdapter(adapter);
     }
 
+    // TODO 初回起動時に表示されない
     private void setRecommendedSituations(List<String> nowSituations) {
         List<Situation> recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
 

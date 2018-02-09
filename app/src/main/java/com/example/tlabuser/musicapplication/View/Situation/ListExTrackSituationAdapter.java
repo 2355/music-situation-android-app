@@ -21,14 +21,12 @@ public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
 
     private LayoutInflater mInflater;
     private String situationName;
-    private int tracks;
 
     public ListExTrackSituationAdapter(Context context, Situation situation, List<ExTrack> exTracks){
         super(context, 0, exTracks);
         mInflater =  (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
         this.situationName = situation.name;
-        this.tracks = exTracks.size();
     }
 
     @Override
@@ -60,7 +58,4 @@ public class ListExTrackSituationAdapter extends ArrayAdapter<ExTrack> {
         TextView tvArtist;
         TextView tvWeight;
     }
-
-    public int getTracks(){ return tracks; }
-
 }

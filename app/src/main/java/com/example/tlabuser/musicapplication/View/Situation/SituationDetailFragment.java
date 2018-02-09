@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -40,19 +42,25 @@ import io.reactivex.schedulers.Schedulers;
  * A simple {@link Fragment} subclass.
  */
 public class SituationDetailFragment extends Fragment {
+
     private static final String TAG = "SituationDetailFragment";
+
+    private final int INTERVAL = 100;
 
     private Main mainActivity;
     private SQLiteDatabase db;
 
+    private boolean isLoading = false;
+    private boolean loadCompleted = false;
+    private int offset;
     private Situation situation;
-    private List<ExTrack> exTracks, internalExTracks;
+    private List<ExTrack> exTracks, internalExTracks, padding, internalPadding;
     private ListExTrackSituationAdapter exTrackAdapter, internalExTrackAdapter;
 
     private CheckBox checkBox;
-    private TextView tvSituationName;
-    private TextView tvTracks;
-    private ListView lvTrackList;
+    private TextView tvSituationName, tvTracks;
+    private ListView lvExTracks,lvInternalExTracks;
+    private View footer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,17 +77,24 @@ public class SituationDetailFragment extends Fragment {
 
         View v =inflater.inflate(R.layout.part_situation, container, false);
 
-        checkBox        = (CheckBox) v.findViewById(R.id.checkbox);
+        checkBox = (CheckBox) v.findViewById(R.id.checkbox);
         tvSituationName = (TextView) v.findViewById(R.id.situation);
-        tvTracks        = (TextView) v.findViewById(R.id.tracks);
-        lvTrackList     = (ListView) v.findViewById(R.id.track_list);
+        tvTracks = (TextView) v.findViewById(R.id.tracks);
+        lvExTracks = (ListView) v.findViewById(R.id.lv_extracks);
+        lvInternalExTracks = (ListView) v.findViewById(R.id.lv_internal_extracks);
+
+        footer = inflater.inflate(R.layout.listview_footer, null);
 
         checkBox.setOnClickListener(CheckboxClickListener);
 
         situation = mainActivity.getFocusedSituation();
         tvSituationName.setText(situation.name);
 
+        padding = new ArrayList<>(); 
+        internalPadding = new ArrayList<>();
         exTracks = ExTrack.getExTracksBySituation(db, situation.name);
+        internalExTracks = ExTrack.getInternalExTracks(exTracks);
+        offset = exTracks.size();
 
         if (exTracks.isEmpty()) {
             Log.d(TAG, "exTracks is empty");
@@ -91,7 +106,8 @@ public class SituationDetailFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onGetJson);
         } else {
-            initializeView();
+            initializeListView();
+            padding.addAll(exTracks);
         }
 
         return v;
@@ -99,7 +115,7 @@ public class SituationDetailFragment extends Fragment {
 
     @Nullable
     private JSONObject requestJson() {
-        String urlStr = String.format(Urls.SELECT_TRACKS, situation.name);
+        String urlStr = String.format(Urls.SELECT_TRACKS, situation.name, INTERVAL, offset);
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         } catch (UnsupportedEncodingException e){
@@ -114,11 +130,17 @@ public class SituationDetailFragment extends Fragment {
         if (json != null) {
             try {
                 JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
-                if (jsonArray.getJSONObject(0).has("artist") && exTracks.isEmpty()) {
-                    exTracks = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
+                if (jsonArray.getJSONObject(0).has("artist")) {
+                    padding = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
+                    exTracks.addAll(padding);
                     situation.setTracks(db, exTracks.size());
 
-                    initializeView();
+                    // TODO この経路からだとlvInternalExTracksが表示されない
+                    initializeListView();
+                    offset += INTERVAL;
+
+                } else {
+                    loadCompleted = true;
                 }
 
             } catch (JSONException e) {
@@ -130,16 +152,77 @@ public class SituationDetailFragment extends Fragment {
         }
     }
 
-    private void initializeView() {
+    private void initializeListView() {
         exTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, exTracks);
-        lvTrackList.setAdapter(exTrackAdapter);
-        lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
-        lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
-        tvTracks.setText(String.valueOf(exTrackAdapter.getTracks())+" tracks");
+        lvExTracks.setAdapter(exTrackAdapter);
+        lvExTracks.setOnItemClickListener(mainActivity.ExTrackClickListener);
+        lvExTracks.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
+        lvExTracks.addFooterView(footer);
+        lvExTracks.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-        // 端末内のみリスト
-        internalExTracks = ExTrack.getInternalExTracks(exTracks);
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (!isLoading && totalItemCount == firstVisibleItem + visibleItemCount) {
+                    additionalReading();
+                }
+            }
+        });
+
         internalExTrackAdapter = new ListExTrackSituationAdapter(mainActivity, situation, internalExTracks);
+        lvInternalExTracks.setAdapter(internalExTrackAdapter);
+        lvInternalExTracks.setOnItemClickListener(mainActivity.internalExTrackClickListener);
+        lvInternalExTracks.setOnItemLongClickListener(mainActivity.internalExTrackLongClickListener);
+
+        tvTracks.setText(String.valueOf(exTrackAdapter.getCount())+" tracks");
+    }
+
+    private void additionalReading() {
+        if (loadCompleted) {
+            // TODO とりあえず一回はフッターが表示されてしまう
+            lvExTracks.removeFooterView(footer);
+        } else {
+            isLoading = true;
+
+            Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onGetAdditionalJson);
+        }
+    }
+
+    private void onGetAdditionalJson(JSONObject json) {
+        if (json != null) {
+            try {
+                JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
+                if (jsonArray.getJSONObject(0).has("artist")) {
+                    padding = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
+                    exTracks.addAll(padding);
+                    exTrackAdapter.notifyDataSetChanged();
+
+                    internalPadding = ExTrack.getInternalExTracks(padding);
+                    internalExTracks.addAll(internalPadding);
+                    exTrackAdapter.notifyDataSetChanged();
+
+                    situation.setTracks(db, exTrackAdapter.getCount());
+                    tvTracks.setText(String.valueOf(exTrackAdapter.getCount())+" tracks");
+
+                    offset += INTERVAL;
+                }
+
+            } catch (JSONException e) {
+                Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
+                loadCompleted = true;
+            }
+
+        } else {
+            Log.d(TAG, "JSONObject is null");
+        }
+
+        isLoading = false;
     }
 
     public View.OnClickListener CheckboxClickListener = new View.OnClickListener() {
@@ -151,16 +234,14 @@ public class SituationDetailFragment extends Fragment {
                 if (internalExTracks.size() == 0){
                     Toast.makeText(mainActivity, "端末内に該当楽曲がありません", Toast.LENGTH_LONG).show();
                 }
-                lvTrackList.setAdapter(internalExTrackAdapter);
-                lvTrackList.setOnItemClickListener(mainActivity.internalExTrackClickListener);
-                lvTrackList.setOnItemLongClickListener(mainActivity.internalExTrackLongClickListener);
-                tvTracks.setText(String.valueOf(internalExTrackAdapter.getTracks())+" tracks");
+                lvExTracks.setVisibility(View.INVISIBLE);
+                lvInternalExTracks.setVisibility(View.VISIBLE);
+                tvTracks.setText(String.valueOf(internalExTrackAdapter.getCount())+" tracks");
             } else {
                 // チェックボックスのチェックが外される
-                lvTrackList.setAdapter(exTrackAdapter);
-                lvTrackList.setOnItemClickListener(mainActivity.ExTrackClickListener);
-                lvTrackList.setOnItemLongClickListener(mainActivity.ExTrackLongClickListener);
-                tvTracks.setText(String.valueOf(exTrackAdapter.getTracks())+" tracks");
+                lvInternalExTracks.setVisibility(View.INVISIBLE);
+                lvExTracks.setVisibility(View.VISIBLE);
+                tvTracks.setText(String.valueOf(exTrackAdapter.getCount())+" tracks");
             }
         }
 
