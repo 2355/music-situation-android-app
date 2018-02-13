@@ -60,7 +60,7 @@ public class YoutubePlayScreenFragment extends Fragment {
     private String title, artist;
 
     private TextView tvTitle, tvArtist;
-    private ImageButton btPlay, btBack, btSkip, btGood, btBad;
+    private ImageButton btPlay, btBack, btSkip, btGood, btBad, btSurprise;
 
     private YouTubePlayerSupportFragment playerFragment;
     private YouTubePlayer player;
@@ -94,11 +94,12 @@ public class YoutubePlayScreenFragment extends Fragment {
         tvTitle  = (TextView) view.findViewById(R.id.tv_title);
         tvArtist = (TextView) view.findViewById(R.id.tv_artist);
 
-        btPlay = (ImageButton) view.findViewById(R.id.bt_play);
-        btBack = (ImageButton) view.findViewById(R.id.bt_back);
-        btSkip = (ImageButton) view.findViewById(R.id.bt_skip);
-        btGood = (ImageButton) view.findViewById(R.id.bt_good);
-        btBad  = (ImageButton) view.findViewById(R.id.bt_bad);
+        btPlay      = (ImageButton) view.findViewById(R.id.bt_play);
+        btBack      = (ImageButton) view.findViewById(R.id.bt_back);
+        btSkip      = (ImageButton) view.findViewById(R.id.bt_skip);
+        btGood      = (ImageButton) view.findViewById(R.id.bt_good);
+        btBad       = (ImageButton) view.findViewById(R.id.bt_bad);
+        btSurprise  = (ImageButton) view.findViewById(R.id.bt_surprise);
 
         exTrack = mainActivity.getFocusedExTrack();
         if (exTrack == null) {
@@ -315,6 +316,7 @@ public class YoutubePlayScreenFragment extends Fragment {
         btSkip.setOnClickListener(this::onSkipButtonClick);
         btGood.setOnClickListener(this::onGoodButtonClick);
         btBad.setOnClickListener(this::onBadButtonClick);
+        btSurprise.setOnClickListener(this::onSurpriseButtonClick);
 
         return view;
     }
@@ -370,7 +372,7 @@ public class YoutubePlayScreenFragment extends Fragment {
             }
 
         } else {
-            Log.d(TAG, "JSONObject is null");
+            Log.d(TAG, "JSONObject is null !");
             Toast.makeText(mainActivity, "読み込みエラーが発生しました。", Toast.LENGTH_SHORT).show();
         }
     }
@@ -444,4 +446,9 @@ public class YoutubePlayScreenFragment extends Fragment {
     public void onGoodButtonClick(View view) {
         Toast.makeText(mainActivity, "GoodButtonClick", Toast.LENGTH_SHORT).show();
     }
+
+    private void onSurpriseButtonClick(View view) {
+        Toast.makeText(mainActivity, "SurpriseButtonClick", Toast.LENGTH_SHORT).show();
+    }
+
 }

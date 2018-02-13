@@ -130,17 +130,25 @@ public class SituationDetailFragment extends Fragment {
         if (json != null) {
             try {
                 JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
-                if (jsonArray.getJSONObject(0).has("artist")) {
+                if (jsonArray.length() != 0) {
+                    Log.d(TAG, jsonArray.toString());
+
                     padding = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
                     exTracks.addAll(padding);
+
+                    internalPadding = ExTrack.getInternalExTracks(padding);
+                    internalExTracks.addAll(internalPadding);
+
                     situation.setTracks(db, exTracks.size());
 
-                    // TODO この経路からだとlvInternalExTracksが表示されない
                     initializeListView();
                     offset += INTERVAL;
 
-                } else {
-                    loadCompleted = true;
+                    if (jsonArray.length() < INTERVAL) {
+                        Log.d(TAG,"Finish loading JSONArray !");
+                        loadCompleted = true;
+                        lvExTracks.removeFooterView(footer);
+                    }
                 }
 
             } catch (JSONException e) {
@@ -148,7 +156,7 @@ public class SituationDetailFragment extends Fragment {
             }
 
         } else {
-            Log.d(TAG, "JSONObject is null");
+            Log.d(TAG, "JSONObject is null !");
         }
     }
 
@@ -181,10 +189,7 @@ public class SituationDetailFragment extends Fragment {
     }
 
     private void additionalReading() {
-        if (loadCompleted) {
-            // TODO とりあえず一回はフッターが表示されてしまう
-            lvExTracks.removeFooterView(footer);
-        } else {
+        if (!loadCompleted) {
             isLoading = true;
 
             Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson()))
@@ -198,28 +203,40 @@ public class SituationDetailFragment extends Fragment {
         if (json != null) {
             try {
                 JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
-                if (jsonArray.getJSONObject(0).has("artist")) {
+                if (jsonArray.length() != 0) {
+                    Log.d(TAG, jsonArray.toString());
+
                     padding = ExTrack.getExTracksFromJson(db, mainActivity, jsonArray);
                     exTracks.addAll(padding);
                     exTrackAdapter.notifyDataSetChanged();
 
                     internalPadding = ExTrack.getInternalExTracks(padding);
                     internalExTracks.addAll(internalPadding);
-                    exTrackAdapter.notifyDataSetChanged();
+                    internalExTrackAdapter.notifyDataSetChanged();
 
                     situation.setTracks(db, exTrackAdapter.getCount());
                     tvTracks.setText(String.valueOf(exTrackAdapter.getCount())+" tracks");
 
                     offset += INTERVAL;
+
+                    if (jsonArray.length() < INTERVAL) {
+                        Log.d(TAG,"Finish loading JSONArray !");
+                        loadCompleted = true;
+                        lvExTracks.removeFooterView(footer);
+                    }
+
+                } else {
+                    Log.d(TAG,"JSONArray is empty !");
+                    loadCompleted = true;
+                    lvExTracks.removeFooterView(footer);
                 }
 
             } catch (JSONException e) {
                 Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
-                loadCompleted = true;
             }
 
         } else {
-            Log.d(TAG, "JSONObject is null");
+            Log.d(TAG, "JSONObject is null !");
         }
 
         isLoading = false;

@@ -51,7 +51,7 @@ public class PlayScreenFragment extends Fragment {
 
     private TextView tvTitle, tvArtist, tvAlbum;
     private ImageView ivAlbumArt;
-    private ImageButton btPlay, btBack, btSkip, btGood, btBad;
+    private ImageButton btPlay, btBack, btSkip, btGood, btBad, btSurprise;
 
 
     public static PlayScreenFragment newInstance(From from, MediaPlayerService.State state) {
@@ -111,11 +111,12 @@ public class PlayScreenFragment extends Fragment {
         tvAlbum    = (TextView) view.findViewById(R.id.tv_album);
         ivAlbumArt = (ImageView) view.findViewById(R.id.iv_album_art);
 
-        btPlay = (ImageButton) view.findViewById(R.id.bt_play);
-        btBack = (ImageButton) view.findViewById(R.id.bt_back);
-        btSkip = (ImageButton) view.findViewById(R.id.bt_skip);
-        btGood = (ImageButton) view.findViewById(R.id.bt_good);
-        btBad  = (ImageButton) view.findViewById(R.id.bt_bad);
+        btPlay      = (ImageButton) view.findViewById(R.id.bt_play);
+        btBack      = (ImageButton) view.findViewById(R.id.bt_back);
+        btSkip      = (ImageButton) view.findViewById(R.id.bt_skip);
+        btGood      = (ImageButton) view.findViewById(R.id.bt_good);
+        btBad       = (ImageButton) view.findViewById(R.id.bt_bad);
+        btSurprise  = (ImageButton) view.findViewById(R.id.bt_surprise);
 
         exTrack = mainActivity.getFocusedExTrack();
         if (exTrack == null) {
@@ -183,6 +184,7 @@ public class PlayScreenFragment extends Fragment {
         btSkip.setOnClickListener(this::onSkipButtonClick);
         btGood.setOnClickListener(this::onGoodButtonClick);
         btBad.setOnClickListener(this::onBadButtonClick);
+        btSurprise.setOnClickListener(this::onSurpriseButtonClick);
 
         return view;
     }
@@ -232,6 +234,10 @@ public class PlayScreenFragment extends Fragment {
 
     private void onBadButtonClick(View view) {
         Toast.makeText(mainActivity, "BadButtonClick", Toast.LENGTH_SHORT).show();
+    }
+
+    private void onSurpriseButtonClick(View view) {
+        Toast.makeText(mainActivity, "SurpriseButtonClick", Toast.LENGTH_SHORT).show();
     }
 
 }

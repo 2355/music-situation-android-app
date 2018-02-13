@@ -115,7 +115,7 @@ public class SituationMenuFragment extends Fragment{
         if (json != null) {
             try {
                 JSONArray jsonArray = json.getJSONObject("results").getJSONArray("bindings");
-                if (jsonArray.getJSONObject(0).has("tag") && situations.isEmpty()) {
+                if (jsonArray.length() != 0 && situations.isEmpty()) {
                     situations = Situation.getSituationsFromJson(db, jsonArray);
                     initializeRecyclerView();
                 }
@@ -125,7 +125,7 @@ public class SituationMenuFragment extends Fragment{
             }
 
         } else {
-            Log.d(TAG, "JSONObject is null");
+            Log.d(TAG, "JSONObject is null !");
         }
     }
 
