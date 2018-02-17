@@ -245,10 +245,10 @@ public class PlayScreenFragment extends Fragment {
 
     private void onGoodButtonClick(View view) {
         // Get JSON from server
-        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson("suit")))
+        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(sendEvaluation("suit")))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onGetJson);
+                .subscribe(this::returnStatus);
     }
 
     private void onBadButtonClick(View view) {
@@ -256,14 +256,15 @@ public class PlayScreenFragment extends Fragment {
 
     private void onSurpriseButtonClick(View view) {
         // Get JSON from server
-        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson("unexp")))
+        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(sendEvaluation("unexp")))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onGetJson);
+                .subscribe(this::returnStatus);
     }
 
     @Nullable
-    private JSONObject requestJson(String evaluation) {
+    private JSONObject sendEvaluation(String evaluation) {
+        // TODO set uid
         String uid = "test";
         Calendar cal = Calendar.getInstance();
         cal.getTime();
@@ -291,7 +292,7 @@ public class PlayScreenFragment extends Fragment {
         return JsonUtil.getJson(urlStr);
     }
 
-    private void onGetJson(JSONObject json) {
+    private void returnStatus(JSONObject json) {
         if (json != null) {
             try {
                 if (json.getString("status") == "OK") {
