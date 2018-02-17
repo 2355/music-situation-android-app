@@ -14,11 +14,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tlabuser.musicapplication.ImageGetTask;
+import com.example.tlabuser.musicapplication.JsonUtil;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.MediaPlayerService;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.R;
+import com.example.tlabuser.musicapplication.Urls;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Calendar;
+
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.example.tlabuser.musicapplication.CalendarUtil.calToStr;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.CLICK;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.DURATION;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.STATE;
@@ -229,15 +244,68 @@ public class PlayScreenFragment extends Fragment {
     }
 
     private void onGoodButtonClick(View view) {
-        Toast.makeText(mainActivity, "GoodButtonClick", Toast.LENGTH_SHORT).show();
+        // Get JSON from server
+        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson("suit")))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onGetJson);
     }
 
     private void onBadButtonClick(View view) {
-        Toast.makeText(mainActivity, "BadButtonClick", Toast.LENGTH_SHORT).show();
     }
 
     private void onSurpriseButtonClick(View view) {
-        Toast.makeText(mainActivity, "SurpriseButtonClick", Toast.LENGTH_SHORT).show();
+        // Get JSON from server
+        Single.create((SingleOnSubscribe<JSONObject>) emitter -> emitter.onSuccess(requestJson("unexp")))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onGetJson);
+    }
+
+    @Nullable
+    private JSONObject requestJson(String evaluation) {
+        String uid = "test";
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+        String time = calToStr(cal);
+        String artist = exTrack.artist;
+        String title = exTrack.title;
+        String selected_situation = mainActivity.getFocusedSituation().name;
+        String now_situations = mainActivity.getNowSituations().toString();
+
+        try {
+            uid = URLEncoder.encode(uid, "UTF-8");
+            time = URLEncoder.encode(time, "UTF-8");
+            artist = URLEncoder.encode(artist, "UTF-8");
+            title = URLEncoder.encode(title, "UTF-8");
+            selected_situation = URLEncoder.encode(selected_situation, "UTF-8");
+            now_situations = URLEncoder.encode(now_situations, "UTF-8");
+            evaluation = URLEncoder.encode(evaluation, "UTF-8");
+        } catch (UnsupportedEncodingException e){
+            Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
+        }
+        String urlStr = String.format(Urls.Evaluation.SET, uid, time, artist, title,
+                selected_situation, now_situations, evaluation);
+        urlStr = Urls.Evaluation.HEAD + urlStr;
+
+        return JsonUtil.getJson(urlStr);
+    }
+
+    private void onGetJson(JSONObject json) {
+        if (json != null) {
+            try {
+                if (json.getString("status") == "OK") {
+                    Log.d(TAG, "send evaluation succeeded");
+                    Toast.makeText(mainActivity, "send evaluation succeeded", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                Log.d(TAG,"JSONのパースに失敗しました。 JSONException=" + e);
+            }
+
+        } else {
+            Log.d(TAG, "JSONArray is null !");
+        }
     }
 
 }

@@ -115,13 +115,13 @@ public class SituationDetailFragment extends Fragment {
 
     @Nullable
     private JSONObject requestJson() {
-        String urlStr = String.format(Urls.SELECT_TRACKS, situation.name, INTERVAL, offset);
+        String urlStr = String.format(Urls.Fuseki.SELECT_TRACKS, situation.name, INTERVAL, offset);
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         } catch (UnsupportedEncodingException e){
             Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
-        urlStr = Urls.HEAD + urlStr + Urls.TAIL;
+        urlStr = Urls.Fuseki.HEAD + urlStr + Urls.Fuseki.TAIL;
 
         return JsonUtil.getJson(urlStr);
     }

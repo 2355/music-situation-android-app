@@ -100,13 +100,13 @@ public class SituationMenuFragment extends Fragment{
 
     @Nullable
     private JSONObject requestJson() {
-        String urlStr = Urls.SELECT_SITUATIONS;
+        String urlStr = Urls.Fuseki.SELECT_SITUATIONS;
         try {
             urlStr = URLEncoder.encode(urlStr, "UTF-8");
         } catch (UnsupportedEncodingException e){
             Log.d(TAG,"URLエンコードに失敗しました。 UnsupportedEncodingException=" + e);
         }
-        urlStr = Urls.HEAD + urlStr + Urls.TAIL;
+        urlStr = Urls.Fuseki.HEAD + urlStr + Urls.Fuseki.TAIL;
 
         return JsonUtil.getJson(urlStr);
     }
@@ -147,7 +147,6 @@ public class SituationMenuFragment extends Fragment{
         List<Situation> recommendedSituations = Situation.getRecommendedSituations(db, nowSituations);
 
         SituationsRecyclerAdapter adapter;
-
         adapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
         adapter.setItemClickedListener(situation -> {
             mainActivity.focusSituation(situation);
