@@ -41,7 +41,7 @@ import static com.example.tlabuser.musicapplication.MediaPlayerService.State.pau
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.playing;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.State.stop;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.URI;
-import static com.example.tlabuser.musicapplication.MediaPlayerService.setPlayScreenListener;
+import static com.example.tlabuser.musicapplication.MediaPlayerService.setPlayScreenPSListener;
 
 /**
  * Created by tlabuser on 2018/02/01.
@@ -90,7 +90,7 @@ public class PlayScreenFragment extends Fragment {
         Log.d(TAG, "from: " + from);
         Log.d(TAG, "state: " + state);
 
-        setPlayScreenListener(new MediaPlayerService.PlayerStateListener() {
+        setPlayScreenPSListener(new MediaPlayerService.PlayerStateListener() {
             @Override
             public void onStop() {
                 Log.d(TAG, "onStop");

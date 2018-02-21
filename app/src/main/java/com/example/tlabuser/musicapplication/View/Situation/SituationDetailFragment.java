@@ -43,7 +43,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class SituationDetailFragment extends Fragment {
 
-    private static final String TAG = "SituationDetailFragment";
+    public static final String TAG = "SituationDetailFragment";
 
     private final int INTERVAL = 50;
 
@@ -75,7 +75,7 @@ public class SituationDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View v =inflater.inflate(R.layout.part_situation, container, false);
+        View v =inflater.inflate(R.layout.fragment_situation_detail, container, false);
 
         checkBox = (CheckBox) v.findViewById(R.id.checkbox);
         tvSituationName = (TextView) v.findViewById(R.id.situation);

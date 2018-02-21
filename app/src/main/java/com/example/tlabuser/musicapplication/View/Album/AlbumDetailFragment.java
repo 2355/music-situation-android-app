@@ -22,9 +22,11 @@ import java.util.List;
 
 public class AlbumDetailFragment extends Fragment{
 
+    public static final String TAG = "AlbumDetailFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View partView =inflater.inflate(R.layout.part_album, container, false);
+        View partView =inflater.inflate(R.layout.fragment_album_detail, container, false);
 
         Main activity = (Main)getActivity();
         Album item = activity.getFocusedAlbum();

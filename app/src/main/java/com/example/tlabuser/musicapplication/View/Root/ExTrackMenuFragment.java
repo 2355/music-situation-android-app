@@ -1,5 +1,6 @@
 package com.example.tlabuser.musicapplication.View.Root;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -40,6 +41,9 @@ public class ExTrackMenuFragment extends Fragment {
         lvExTracks.setOnItemClickListener(activity.internalExTrackClickListener);
         lvExTracks.setOnItemLongClickListener(activity.internalExTrackLongClickListener);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lvExTracks.setNestedScrollingEnabled(true);
+        }
         return v;
     }
 

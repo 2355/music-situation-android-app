@@ -10,6 +10,7 @@ public class SQLOpenHelper extends SQLiteOpenHelper {
     public static final String EXTRACK_TABLE = "extrack";
     public static final String EXTRACK_SITUATION_TABLE = "extrack_situation";
     public static final String SITUATION_TABLE = "situation";
+    public static final String USER_TABLE = "user_table";
 
     public SQLOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -61,6 +62,12 @@ public class SQLOpenHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + SITUATION_TABLE + "(" +
                         "name "        + "text "    + "UNIQUE DEFAULT '', " +
                         "tracks "      + "integer " + "DEFAULT 0" +
+                        ");";
+
+        String createUserTable =
+                "CREATE TABLE " + USER_TABLE + "(" +
+                        "name "        + "text "    + "UNIQUE DEFAULT '', " +
+                        "created_at "  + "text " + "DEFAULT ''" +
                         ");";
 
         db.execSQL(createExTrackTable);

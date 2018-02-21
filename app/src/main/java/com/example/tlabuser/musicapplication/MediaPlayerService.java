@@ -31,7 +31,7 @@ public class MediaPlayerService extends Service {
 
     private MediaPlayer player;
 
-    public static PlayerStateListener mainListener, playScreenListener;
+    public static PlayerStateListener mainPSListener, rootPSListener, playScreenPSListener;
 
 
     @Override
@@ -172,28 +172,39 @@ public class MediaPlayerService extends Service {
     private PlayerStateListener listener = new PlayerStateListener() {
         @Override
         public void onStop() {
-            mainListener.onStop();
-            playScreenListener.onStop();
+            mainPSListener.onStop();
+            rootPSListener.onStop();
+            playScreenPSListener.onStop();
         }
 
         @Override
         public void onPlaying() {
-            mainListener.onPlaying();
-            playScreenListener.onPlaying();
+            mainPSListener.onPlaying();
+            rootPSListener.onPlaying();
+            playScreenPSListener.onPlaying();
         }
 
         @Override
         public void onPause() {
-            mainListener.onPause();
-            playScreenListener.onPause();
+            mainPSListener.onPause();
+            rootPSListener.onPause();
+            playScreenPSListener.onPause();
         }
     };
 
-    public static void setMainListener(PlayerStateListener l) {
-        mainListener = l;
+    public State getState() {
+        return state;
     }
 
-    public static void setPlayScreenListener(PlayerStateListener l) {
-        playScreenListener = l;
+    public static void setMainPSListener(PlayerStateListener l) {
+        mainPSListener = l;
+    }
+
+    public static void setRootPSListener(PlayerStateListener l) {
+        rootPSListener = l;
+    }
+
+    public static void setPlayScreenPSListener(PlayerStateListener l) {
+        playScreenPSListener = l;
     }
 }

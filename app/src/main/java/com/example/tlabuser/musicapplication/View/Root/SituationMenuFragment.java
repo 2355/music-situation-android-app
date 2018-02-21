@@ -4,8 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,7 +37,7 @@ import static com.example.tlabuser.musicapplication.Main.setNowSituationListener
 
 public class SituationMenuFragment extends Fragment{
 
-    private final String TAG = "SituationMenuFragment";
+    public final String TAG = "SituationMenuFragment";
 
     private Main mainActivity;
     private SQLiteDatabase db;
@@ -135,9 +133,12 @@ public class SituationMenuFragment extends Fragment{
         adapter = new SituationsRecyclerAdapter(mainActivity, situations);
         adapter.setItemClickedListener(situation -> {
             mainActivity.focusSituation(situation);
-            FragmentManager fm = mainActivity.getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
+
+            mainActivity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_container, new SituationDetailFragment(), SituationDetailFragment.TAG)
+                    .addToBackStack(SituationDetailFragment.TAG)
+                    .commit();
         });
         rvSituations.setAdapter(adapter);
     }
@@ -150,9 +151,12 @@ public class SituationMenuFragment extends Fragment{
         adapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
         adapter.setItemClickedListener(situation -> {
             mainActivity.focusSituation(situation);
-            FragmentManager fm = mainActivity.getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.root, new SituationDetailFragment()).addToBackStack(null).commit();
+
+            mainActivity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_container, new SituationDetailFragment(), SituationDetailFragment.TAG)
+                    .addToBackStack(SituationDetailFragment.TAG)
+                    .commit();
         });
         rvRecommendedSituations.setAdapter(adapter);
     }

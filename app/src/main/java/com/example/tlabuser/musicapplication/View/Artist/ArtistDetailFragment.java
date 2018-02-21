@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.tlabuser.musicapplication.View.Root.ListAlbumAdapter;
 import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.Album;
 import com.example.tlabuser.musicapplication.Model.Artist;
 import com.example.tlabuser.musicapplication.R;
+import com.example.tlabuser.musicapplication.View.Root.ListAlbumAdapter;
 
 import java.util.List;
 
@@ -22,11 +22,13 @@ import java.util.List;
  */
 public class ArtistDetailFragment extends Fragment{
 
+    public static final String TAG = "ArtistDetailFragment";
+
     private static Artist artist_item;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View partView =inflater.inflate(R.layout.part_artist, container, false);
+        View partView =inflater.inflate(R.layout.fragment_artist_detail, container, false);
 
         Main activity = (Main)getActivity();
         artist_item = activity.getFocusedArtist();

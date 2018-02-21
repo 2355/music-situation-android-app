@@ -1,6 +1,7 @@
 package com.example.tlabuser.musicapplication.View.Root;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,12 +25,16 @@ public class AlbumMenuFragment extends Fragment {
         List<Album> albums = Album.getItems(activity);
 
         View v = inflater.inflate(R.layout.fragment_albums_menu,container,false);
-        ListView albumList = (ListView) v.findViewById(R.id.album_list);
+        ListView lvAlbum = (ListView) v.findViewById(R.id.album_list);
         ListAlbumAdapter adapter = new ListAlbumAdapter(activity, albums);
-        albumList.setAdapter(adapter);
+        lvAlbum.setAdapter(adapter);
 
-        albumList.setOnItemClickListener(activity.AlbumClickListener);
-        albumList.setOnItemLongClickListener(activity.AlbumLongClickListener);
+        lvAlbum.setOnItemClickListener(activity.AlbumClickListener);
+        lvAlbum.setOnItemLongClickListener(activity.AlbumLongClickListener);
+        // TODO replace listView with recyclerView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lvAlbum.setNestedScrollingEnabled(true);
+        }
 
         return v;
 
