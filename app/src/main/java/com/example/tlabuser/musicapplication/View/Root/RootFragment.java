@@ -45,8 +45,8 @@ public class RootFragment extends Fragment {
 
     private Main mainActivity;
 
-    public enum Scene { root, situation, album, artist }
-    private Scene top = Scene.root;
+    public enum Scene {rootMenu, situationDetail, albumDetail, artistDetail, playScreen, youtubePlayScreen }
+    private Scene top = Scene.rootMenu;
 
     public enum BackFrom { playScreen, youtubePlayScreen }
     private BackFrom from = BackFrom.playScreen;
@@ -158,21 +158,31 @@ public class RootFragment extends Fragment {
         // TODO playScreenへの遷移もここに入れる
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         switch (scene) {
-            case root:
+            case rootMenu:
                 ft.replace(R.id.fl_container, new RootFragment(), RootFragment.TAG);
                 ft.addToBackStack(RootFragment.TAG);
                 break;
-            case situation:
+            case situationDetail:
                 ft.replace(R.id.fl_container, new SituationDetailFragment(), SituationDetailFragment.TAG);
                 ft.addToBackStack(SituationDetailFragment.TAG);
                 break;
-            case album:
+            case albumDetail:
                 ft.replace(R.id.fl_container, new AlbumDetailFragment(), AlbumDetailFragment.TAG);
                 ft.addToBackStack(AlbumDetailFragment.TAG);
                 break;
-            case artist:
+            case artistDetail:
                 ft.replace(R.id.fl_container, new ArtistDetailFragment(), ArtistDetailFragment.TAG);
                 ft.addToBackStack(ArtistDetailFragment.TAG);
+                break;
+            case playScreen:
+                PlayScreenFragment psFragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, mainActivity.mpState);
+                ft.replace(R.id.fl_root, psFragment, PlayScreenFragment.TAG);
+                ft.addToBackStack(PlayScreenFragment.TAG);
+                break;
+            case youtubePlayScreen:
+                YoutubePlayScreenFragment ypsFragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.track);
+                ft.replace(R.id.fl_root, ypsFragment, YoutubePlayScreenFragment.TAG);
+                ft.addToBackStack(YoutubePlayScreenFragment.TAG);
                 break;
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

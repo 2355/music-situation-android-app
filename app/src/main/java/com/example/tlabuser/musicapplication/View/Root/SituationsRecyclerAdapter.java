@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
@@ -21,7 +20,8 @@ public class SituationsRecyclerAdapter extends RecyclerView.Adapter<SituationsRe
 
     private LayoutInflater inflater;
     private Context context;
-    private ItemClickedListener listener;
+    private OnItemClickListener clickListener;
+    private OnItemLongClickListener longClickListener;
 
     private List<Situation> situations;
 
@@ -47,12 +47,12 @@ public class SituationsRecyclerAdapter extends RecyclerView.Adapter<SituationsRe
         }
 
         viewHolder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onItemClicked(situation);
+            if (clickListener != null) clickListener.onItemClick(situation);
         });
 
         viewHolder.itemView.setOnLongClickListener(v -> {
             // TODO situationの再取得などができるダイアログを出す
-            Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show();
+            if (longClickListener != null) longClickListener.onItemLongClick(situation);
             return true;
         });
 
@@ -74,11 +74,19 @@ public class SituationsRecyclerAdapter extends RecyclerView.Adapter<SituationsRe
         }
     }
 
-    public void setItemClickedListener(ItemClickedListener listener) {
-        this.listener = listener;
+    public void setOnItemClickedListener(OnItemClickListener listener) {
+        this.clickListener = listener;
     }
 
-    public interface ItemClickedListener {
-        void onItemClicked(Situation situation);
+    public interface OnItemClickListener {
+        void onItemClick(Situation situation);
+    }
+
+    public void setOnItemLongClickedListener(OnItemLongClickListener listener) {
+        this.longClickListener = listener;
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(Situation situation);
     }
 }

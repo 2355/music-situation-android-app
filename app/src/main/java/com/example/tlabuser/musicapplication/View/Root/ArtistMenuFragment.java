@@ -23,8 +23,8 @@ public class ArtistMenuFragment extends Fragment {
         Main activity = (Main)getActivity();
         List<Artist> artists = Artist.getItems(activity);
 
-        View v = inflater.inflate(R.layout.fragment_artists_menu,container,false);
-        ListView lvArtist = (ListView) v.findViewById(R.id.artist_list);
+        View view = inflater.inflate(R.layout.fragment_artists_menu,container,false);
+        ListView lvArtist = (ListView) view.findViewById(R.id.artist_list);
         ListArtistAdapter adapter = new ListArtistAdapter(activity, artists);
         lvArtist.setAdapter(adapter);
 
@@ -35,7 +35,7 @@ public class ArtistMenuFragment extends Fragment {
             lvArtist.setNestedScrollingEnabled(true);
         }
 
-        return v;
+        return view;
 
     }
 

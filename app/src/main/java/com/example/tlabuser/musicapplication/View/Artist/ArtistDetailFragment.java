@@ -24,32 +24,30 @@ public class ArtistDetailFragment extends Fragment{
 
     public static final String TAG = "ArtistDetailFragment";
 
-    private static Artist artist_item;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View partView =inflater.inflate(R.layout.fragment_artist_detail, container, false);
+        View view =inflater.inflate(R.layout.fragment_artist_detail, container, false);
 
         Main activity = (Main)getActivity();
-        artist_item = activity.getFocusedArtist();
+        Artist artist = activity.getFocusedArtist();
 
-        TextView artist_name   = (TextView) partView.findViewById(R.id.artist);
-        TextView artist_albums = (TextView) partView.findViewById(R.id.albums);
-        TextView album_tracks  = (TextView) partView.findViewById(R.id.tracks);
+        TextView tvArtist = (TextView) view.findViewById(R.id.artist);
+        TextView tvAlbums = (TextView) view.findViewById(R.id.albums);
+        TextView tvTracks = (TextView) view.findViewById(R.id.tracks);
 
-        artist_name.setText(artist_item.artist);
-        artist_albums.setText(String.valueOf(artist_item.albums)+" albums");
-        album_tracks.setText( String.valueOf(artist_item.tracks)+" tracks");
+        tvArtist.setText(artist.artist);
+        tvAlbums.setText(String.valueOf(artist.albums)+" albums");
+        tvTracks.setText(String.valueOf(artist.tracks)+" tracks");
 
-        List<Album> albums  = Album.getItemsByArtist(getActivity(), artist_item.artist);
+        List<Album> albums  = Album.getItemsByArtist(getActivity(), artist.artist);
 
-        ListView albumList = (ListView) partView.findViewById(R.id.album_list);
+        ListView lvAlbums = (ListView) view.findViewById(R.id.album_list);
         ListAlbumAdapter adapter = new ListAlbumAdapter(activity, albums);
-        albumList.setAdapter(adapter);
+        lvAlbums.setAdapter(adapter);
 
-        albumList.setOnItemClickListener(activity.AlbumClickListener);
-        albumList.setOnItemLongClickListener(activity.AlbumLongClickListener);
+        lvAlbums.setOnItemClickListener(activity.AlbumClickListener);
+        lvAlbums.setOnItemLongClickListener(activity.AlbumLongClickListener);
 
-        return partView;
+        return view;
     }
 }

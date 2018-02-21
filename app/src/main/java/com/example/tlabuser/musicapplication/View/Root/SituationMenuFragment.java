@@ -18,7 +18,6 @@ import com.example.tlabuser.musicapplication.Model.Situation;
 import com.example.tlabuser.musicapplication.R;
 import com.example.tlabuser.musicapplication.SQLOpenHelper;
 import com.example.tlabuser.musicapplication.Urls;
-import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,15 +130,8 @@ public class SituationMenuFragment extends Fragment{
         SituationsRecyclerAdapter adapter;
 
         adapter = new SituationsRecyclerAdapter(mainActivity, situations);
-        adapter.setItemClickedListener(situation -> {
-            mainActivity.focusSituation(situation);
-
-            mainActivity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fl_container, new SituationDetailFragment(), SituationDetailFragment.TAG)
-                    .addToBackStack(SituationDetailFragment.TAG)
-                    .commit();
-        });
+        adapter.setOnItemClickedListener(mainActivity.SituationClickListener);
+        adapter.setOnItemLongClickedListener(mainActivity.SituationLongClickListener);
         rvSituations.setAdapter(adapter);
     }
 
@@ -149,15 +141,8 @@ public class SituationMenuFragment extends Fragment{
 
         SituationsRecyclerAdapter adapter;
         adapter = new SituationsRecyclerAdapter(mainActivity, recommendedSituations);
-        adapter.setItemClickedListener(situation -> {
-            mainActivity.focusSituation(situation);
-
-            mainActivity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fl_container, new SituationDetailFragment(), SituationDetailFragment.TAG)
-                    .addToBackStack(SituationDetailFragment.TAG)
-                    .commit();
-        });
+        adapter.setOnItemClickedListener(mainActivity.SituationClickListener);
+        adapter.setOnItemLongClickedListener(mainActivity.SituationLongClickListener);
         rvRecommendedSituations.setAdapter(adapter);
     }
 }

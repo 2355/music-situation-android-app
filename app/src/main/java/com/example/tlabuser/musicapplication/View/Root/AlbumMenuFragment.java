@@ -1,6 +1,5 @@
 package com.example.tlabuser.musicapplication.View.Root;
 
-
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,8 +23,8 @@ public class AlbumMenuFragment extends Fragment {
         Main activity = (Main)getActivity();
         List<Album> albums = Album.getItems(activity);
 
-        View v = inflater.inflate(R.layout.fragment_albums_menu,container,false);
-        ListView lvAlbum = (ListView) v.findViewById(R.id.album_list);
+        View view = inflater.inflate(R.layout.fragment_albums_menu,container,false);
+        ListView lvAlbum = (ListView) view.findViewById(R.id.album_list);
         ListAlbumAdapter adapter = new ListAlbumAdapter(activity, albums);
         lvAlbum.setAdapter(adapter);
 
@@ -36,7 +35,7 @@ public class AlbumMenuFragment extends Fragment {
             lvAlbum.setNestedScrollingEnabled(true);
         }
 
-        return v;
+        return view;
 
     }
 

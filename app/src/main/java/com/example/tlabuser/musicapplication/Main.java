@@ -21,9 +21,8 @@ import com.example.tlabuser.musicapplication.Model.Album;
 import com.example.tlabuser.musicapplication.Model.Artist;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.Model.Situation;
-import com.example.tlabuser.musicapplication.View.Player.PlayScreenFragment;
-import com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment;
 import com.example.tlabuser.musicapplication.View.Root.RootFragment;
+import com.example.tlabuser.musicapplication.View.Root.SituationsRecyclerAdapter;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.location.ActivityRecognitionResult;
@@ -292,29 +291,38 @@ public class Main extends AppCompatActivity {
         return activityType;
     }
 
+    public SituationsRecyclerAdapter.OnItemClickListener SituationClickListener = situation -> {
+        focusSituation(situation);
+        cfListener.setFragment(RootFragment.Scene.situationDetail);
+    };
+
+    public SituationsRecyclerAdapter.OnItemLongClickListener SituationLongClickListener = situation -> {
+        Toast.makeText(Main.this, "LongClick: " + situation.name, Toast.LENGTH_LONG).show();
+    };
+
     public AdapterView.OnItemClickListener AlbumClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusAlbum( (Album)lv.getItemAtPosition(position) );
-        cfListener.setFragment(RootFragment.Scene.album);
+        cfListener.setFragment(RootFragment.Scene.albumDetail);
     };
 
     public AdapterView.OnItemLongClickListener AlbumLongClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         Album item = (Album)lv.getItemAtPosition(position);
-        Toast.makeText(Main.this, "LongClick:"+item.album, Toast.LENGTH_LONG).show();
+        Toast.makeText(Main.this, "LongClick: " + item.album, Toast.LENGTH_LONG).show();
         return true;
     };
 
     public AdapterView.OnItemClickListener ArtistClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusArtist( (Artist)lv.getItemAtPosition(position) );
-        cfListener.setFragment(RootFragment.Scene.artist);
+        cfListener.setFragment(RootFragment.Scene.artistDetail);
     };
 
     public AdapterView.OnItemLongClickListener ArtistLongClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         Artist item = (Artist)lv.getItemAtPosition(position);
-        Toast.makeText(Main.this, "LongClick:"+item.artist, Toast.LENGTH_LONG).show();
+        Toast.makeText(Main.this, "LongClick: " + item.artist, Toast.LENGTH_LONG).show();
         return true;
     };
 
@@ -327,13 +335,7 @@ public class Main extends AppCompatActivity {
         Intent intent = new Intent(this, MediaPlayerService.class);
         stopService(intent);
 
-        YoutubePlayScreenFragment fragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.track);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fl_root, fragment, YoutubePlayScreenFragment.TAG)
-                .addToBackStack(YoutubePlayScreenFragment.TAG)
-                .commit();
-
+        cfListener.setFragment(RootFragment.Scene.youtubePlayScreen);
         fListener.setFrom(RootFragment.BackFrom.youtubePlayScreen);
     };
 
@@ -348,13 +350,7 @@ public class Main extends AppCompatActivity {
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
 
-        PlayScreenFragment fragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, mpState);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fl_root, fragment, PlayScreenFragment.TAG)
-                .addToBackStack(PlayScreenFragment.TAG)
-                .commit();
-
+        cfListener.setFragment(RootFragment.Scene.playScreen);
         fListener.setFrom(RootFragment.BackFrom.playScreen);
     };
 

@@ -75,13 +75,13 @@ public class SituationDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View v =inflater.inflate(R.layout.fragment_situation_detail, container, false);
+        View view =inflater.inflate(R.layout.fragment_situation_detail, container, false);
 
-        checkBox = (CheckBox) v.findViewById(R.id.checkbox);
-        tvSituationName = (TextView) v.findViewById(R.id.situation);
-        tvTracks = (TextView) v.findViewById(R.id.tracks);
-        lvExTracks = (ListView) v.findViewById(R.id.lv_extracks);
-        lvInternalExTracks = (ListView) v.findViewById(R.id.lv_internal_extracks);
+        checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+        tvSituationName = (TextView) view.findViewById(R.id.situation);
+        tvTracks = (TextView) view.findViewById(R.id.tracks);
+        lvExTracks = (ListView) view.findViewById(R.id.lv_extracks);
+        lvInternalExTracks = (ListView) view.findViewById(R.id.lv_internal_extracks);
 
         footer = inflater.inflate(R.layout.listview_footer, null);
 
@@ -110,7 +110,7 @@ public class SituationDetailFragment extends Fragment {
             padding.addAll(exTracks);
         }
 
-        return v;
+        return view;
     }
 
     @Nullable
