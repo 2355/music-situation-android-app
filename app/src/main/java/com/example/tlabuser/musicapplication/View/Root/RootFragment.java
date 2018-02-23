@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -36,22 +35,22 @@ import com.example.tlabuser.musicapplication.View.Situation.SituationDetailFragm
 import static com.example.tlabuser.musicapplication.MediaPlayerService.setRootPSListener;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class RootFragment extends Fragment {
 
     public static final String TAG = "RootFragment";
 
     private Main mainActivity;
 
-    public enum Scene {rootMenu, situationDetail, albumDetail, artistDetail, playScreen, youtubePlayScreen }
+    public enum Scene { rootMenu, situationDetail, albumDetail, artistDetail, playScreen, youtubePlayScreen }
     private Scene top = Scene.rootMenu;
+
+    // TODO replace PlayScreenFragment.From with this
+    public enum TransitionBy { list, panel, notification }
 
     public enum BackFrom { playScreen, youtubePlayScreen }
     private BackFrom from = BackFrom.playScreen;
 
-    private DrawerLayout drawerLayout;
+    public DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -68,8 +67,6 @@ public class RootFragment extends Fragment {
 
         mainActivity = (Main) getActivity();
 
-        mainActivity.setChangeFragmentListener(this::setNewFragment);
-        mainActivity.setFromListener(this::setFrom);
         setRootPSListener(new PSListener());
     }
 
@@ -131,31 +128,10 @@ public class RootFragment extends Fragment {
         return view;
     }
 
-    private NavigationView.OnNavigationItemSelectedListener select = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem item) {
-            int count = getFragmentManager().getBackStackEntryCount();
-            for (int i=0; i<count; i++){
-                getFragmentManager().popBackStack();
-            }
-
-            switch (item.getItemId()) {
-                case R.id.menu_situation: viewPager.setCurrentItem(0); break;
-                case R.id.menu_track: viewPager.setCurrentItem(1); break;
-                case R.id.menu_album: viewPager.setCurrentItem(2); break;
-                case R.id.menu_artist: viewPager.setCurrentItem(3); break;
-
-            }
-            drawerLayout.closeDrawers();
-            return false;
-        }
-    };
-
-    private void setNewFragment(Scene scene){
+    public void setNewFragment(Scene scene) {
         // TODO 戻ったときにtop=rootにする
         top = scene;
 
-        // TODO playScreenへの遷移もここに入れる
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         switch (scene) {
             case rootMenu:
@@ -174,31 +150,56 @@ public class RootFragment extends Fragment {
                 ft.replace(R.id.fl_container, new ArtistDetailFragment(), ArtistDetailFragment.TAG);
                 ft.addToBackStack(ArtistDetailFragment.TAG);
                 break;
+        }
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+    }
+
+    public void showPlayer(Scene scene, TransitionBy by) {
+        top = scene;
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        switch (scene) {
             case playScreen:
-                PlayScreenFragment psFragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.track, mainActivity.mpState);
+                from = BackFrom.playScreen;
+
+                PlayScreenFragment psFragment;
+                switch (by) {
+                    case panel:
+                        psFragment = PlayScreenFragment.newInstance(TransitionBy.panel, mainActivity.mpState);
+                        break;
+                    case notification:
+                        psFragment = PlayScreenFragment.newInstance(TransitionBy.notification, mainActivity.mpState);
+                        break;
+                    case list:
+                    default:
+                        psFragment = PlayScreenFragment.newInstance(TransitionBy.list, mainActivity.mpState);
+                        break;
+                }
                 ft.replace(R.id.fl_root, psFragment, PlayScreenFragment.TAG);
                 ft.addToBackStack(PlayScreenFragment.TAG);
                 break;
             case youtubePlayScreen:
-                YoutubePlayScreenFragment ypsFragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.track);
+                from = BackFrom.youtubePlayScreen;
+                updatePanel();
+
+                YoutubePlayScreenFragment ypsFragment;
+                switch (by) {
+                    case panel:
+                        ypsFragment = YoutubePlayScreenFragment.newInstance(TransitionBy.panel);
+                        break;
+                    case list:
+                    default:
+                        ypsFragment = YoutubePlayScreenFragment.newInstance(TransitionBy.list);
+                        break;
+                }
                 ft.replace(R.id.fl_root, ypsFragment, YoutubePlayScreenFragment.TAG);
                 ft.addToBackStack(YoutubePlayScreenFragment.TAG);
                 break;
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
-    }
 
-    private void setFrom(BackFrom backFrom) {
-        switch (backFrom) {
-            case playScreen:
-                from = BackFrom.playScreen;
-                break;
-            case youtubePlayScreen:
-                from = BackFrom.youtubePlayScreen;
-                updatePanel();
-                break;
-        }
     }
 
     private void updatePanel(){
@@ -229,6 +230,30 @@ public class RootFragment extends Fragment {
             btPlay.setVisibility(View.VISIBLE);
         }
     }
+
+    private NavigationView.OnNavigationItemSelectedListener select = (item) -> {
+        // TODO forを使わず一回でbottomに行く
+        int count = getFragmentManager().getBackStackEntryCount();
+        for (int i=0; i<count; i++){
+            getFragmentManager().popBackStack();
+        }
+
+        switch (item.getItemId()) {
+            case R.id.player:
+                switch (from) {
+                    case playScreen: showPlayer(Scene.playScreen, TransitionBy.panel); break;
+                    case youtubePlayScreen: showPlayer(Scene.youtubePlayScreen, TransitionBy.panel); break;
+                }
+                break;
+            case R.id.menu_situation: viewPager.setCurrentItem(0); break;
+            case R.id.menu_track: viewPager.setCurrentItem(1); break;
+            case R.id.menu_album: viewPager.setCurrentItem(2); break;
+            case R.id.menu_artist: viewPager.setCurrentItem(3); break;
+
+        }
+        drawerLayout.closeDrawers();
+        return false;
+    };
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -265,25 +290,10 @@ public class RootFragment extends Fragment {
     private void onPlayPanelClick(View view) {
         switch (from) {
             case playScreen:
-                PlayScreenFragment psFragment = PlayScreenFragment.newInstance(PlayScreenFragment.From.panel, mainActivity.mpState);
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fl_root, psFragment, PlayScreenFragment.TAG)
-                        .addToBackStack(PlayScreenFragment.TAG)
-                        .commit();
-
-                from = BackFrom.playScreen;
+                showPlayer(Scene.playScreen, TransitionBy.panel);
                 break;
-
             case youtubePlayScreen:
-                YoutubePlayScreenFragment yFragment = YoutubePlayScreenFragment.newInstance(YoutubePlayScreenFragment.From.panel);
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fl_root, yFragment, YoutubePlayScreenFragment.TAG)
-                        .addToBackStack(YoutubePlayScreenFragment.TAG)
-                        .commit();
-
-                from = BackFrom.youtubePlayScreen;
+                showPlayer(Scene.youtubePlayScreen, TransitionBy.panel);
                 break;
         }
     }

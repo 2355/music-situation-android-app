@@ -20,6 +20,7 @@ import com.example.tlabuser.musicapplication.MediaPlayerService;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.R;
 import com.example.tlabuser.musicapplication.Urls;
+import com.example.tlabuser.musicapplication.View.Root.RootFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,18 +44,14 @@ import static com.example.tlabuser.musicapplication.MediaPlayerService.State.sto
 import static com.example.tlabuser.musicapplication.MediaPlayerService.URI;
 import static com.example.tlabuser.musicapplication.MediaPlayerService.setPlayScreenPSListener;
 
-/**
- * Created by tlabuser on 2018/02/01.
- */
 
 public class PlayScreenFragment extends Fragment {
 
     public static final String TAG = "PlayScreenFragment";
 
-    public static final String FROM = "from";
+    private static final String FROM = "from";
 
-    public enum From { track, panel, notification }
-    private From from;
+    private RootFragment.TransitionBy from;
 
     private MediaPlayerService.State state;
 
@@ -69,7 +66,7 @@ public class PlayScreenFragment extends Fragment {
     private ImageButton btPlay, btBack, btSkip, btGood, btBad, btSurprise;
 
 
-    public static PlayScreenFragment newInstance(From from, MediaPlayerService.State state) {
+    public static PlayScreenFragment newInstance(RootFragment.TransitionBy from, MediaPlayerService.State state) {
         Bundle args = new Bundle();
         args.putString(FROM, from.toString());
         args.putString(STATE, state.toString());
@@ -85,7 +82,7 @@ public class PlayScreenFragment extends Fragment {
 
         mainActivity = (Main) getActivity();
 
-        from = From.valueOf(getArguments().getString(FROM));
+        from = RootFragment.TransitionBy.valueOf(getArguments().getString(FROM));
         state = MediaPlayerService.State.valueOf(getArguments().getString(STATE));
         Log.d(TAG, "from: " + from);
         Log.d(TAG, "state: " + state);
@@ -164,7 +161,7 @@ public class PlayScreenFragment extends Fragment {
         }
 
         switch (from){
-            case track:
+            case list:
                 Intent intent = new Intent(mainActivity, MediaPlayerService.class);
                 state = playing;
                 intent.putExtra(CLICK, MediaPlayerService.Click.start.toString());

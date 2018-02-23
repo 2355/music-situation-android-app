@@ -17,6 +17,7 @@ import com.example.tlabuser.musicapplication.Main;
 import com.example.tlabuser.musicapplication.Model.ExTrack;
 import com.example.tlabuser.musicapplication.R;
 import com.example.tlabuser.musicapplication.Urls;
+import com.example.tlabuser.musicapplication.View.Root.RootFragment;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -39,9 +40,6 @@ import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScree
 import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment.State.playing;
 import static com.example.tlabuser.musicapplication.View.Player.YoutubePlayScreenFragment.State.stop;
 
-/**
- * Created by tlabuser on 2018/02/03.
- */
 
 public class YoutubePlayScreenFragment extends Fragment {
 
@@ -49,13 +47,12 @@ public class YoutubePlayScreenFragment extends Fragment {
 
     private static final String API_KEY = Keys.YOUTUBE_KEY;
 
-    public static final String FROM = "from";
+    private static final String FROM = "from";
 
     public enum State { stop, playing, pause }
     private State state;
 
-    public enum From { track, panel }
-    private From from;
+    private RootFragment.TransitionBy from;
 
     private Main mainActivity;
 
@@ -64,12 +61,11 @@ public class YoutubePlayScreenFragment extends Fragment {
 
     private TextView tvTitle, tvArtist;
     private ImageButton btPlay, btBack, btSkip, btGood, btBad, btSurprise;
-
     private YouTubePlayerSupportFragment playerFragment;
     private YouTubePlayer player;
 
 
-    public static YoutubePlayScreenFragment newInstance(From from) {
+    public static YoutubePlayScreenFragment newInstance(RootFragment.TransitionBy from) {
         Bundle args = new Bundle();
         args.putString(FROM, from.toString());
 
@@ -84,7 +80,7 @@ public class YoutubePlayScreenFragment extends Fragment {
 
         mainActivity = (Main) getActivity();
         state = stop;
-        from = From.valueOf(getArguments().getString(FROM));
+        from = RootFragment.TransitionBy.valueOf(getArguments().getString(FROM));
         Log.d(TAG, "from: " + from);
     }
 
@@ -386,7 +382,7 @@ public class YoutubePlayScreenFragment extends Fragment {
         this.player.setPlaybackEventListener(new PlaybackListener());
         // load and play
         this.player.loadVideo(videoId);
-        if (from == From.panel) {
+        if (from == RootFragment.TransitionBy.panel) {
             // TODO panelからのときは止めておきたい
             //this.player.pause();
         }

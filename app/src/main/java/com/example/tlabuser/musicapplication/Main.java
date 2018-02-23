@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -50,11 +51,11 @@ public class Main extends AppCompatActivity {
     private final int PERMISSION_INITIAL = 1;
 
     private static MainLifecycleListener mlListener;
-    private static ChangeFragmentListener cfListener;
-    private static FromListener fListener;
     private static NowSituationListener nsListener;
 
     public MediaPlayerService.State mpState = stop;
+
+    private RootFragment rootFragment;
 
     private List<String> nowSituations;
     public List<String> getNowSituations() {return nowSituations;}
@@ -153,12 +154,22 @@ public class Main extends AppCompatActivity {
     private void showFragment(){
         setContentView(R.layout.main);
 
+        rootFragment = new RootFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fl_main, new RootFragment(),RootFragment.TAG)
+                .replace(R.id.fl_main, rootFragment, RootFragment.TAG)
                 .commit();
 
         getUserSituation();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (rootFragment.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            rootFragment.drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void getUserSituation() {
@@ -293,7 +304,7 @@ public class Main extends AppCompatActivity {
 
     public SituationsRecyclerAdapter.OnItemClickListener SituationClickListener = situation -> {
         focusSituation(situation);
-        cfListener.setFragment(RootFragment.Scene.situationDetail);
+        rootFragment.setNewFragment(RootFragment.Scene.situationDetail);
     };
 
     public SituationsRecyclerAdapter.OnItemLongClickListener SituationLongClickListener = situation -> {
@@ -303,7 +314,7 @@ public class Main extends AppCompatActivity {
     public AdapterView.OnItemClickListener AlbumClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusAlbum( (Album)lv.getItemAtPosition(position) );
-        cfListener.setFragment(RootFragment.Scene.albumDetail);
+        rootFragment.setNewFragment(RootFragment.Scene.albumDetail);
     };
 
     public AdapterView.OnItemLongClickListener AlbumLongClickListener = (parent, view, position, id) -> {
@@ -316,7 +327,7 @@ public class Main extends AppCompatActivity {
     public AdapterView.OnItemClickListener ArtistClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusArtist( (Artist)lv.getItemAtPosition(position) );
-        cfListener.setFragment(RootFragment.Scene.artistDetail);
+        rootFragment.setNewFragment(RootFragment.Scene.artistDetail);
     };
 
     public AdapterView.OnItemLongClickListener ArtistLongClickListener = (parent, view, position, id) -> {
@@ -335,8 +346,7 @@ public class Main extends AppCompatActivity {
         Intent intent = new Intent(this, MediaPlayerService.class);
         stopService(intent);
 
-        cfListener.setFragment(RootFragment.Scene.youtubePlayScreen);
-        fListener.setFrom(RootFragment.BackFrom.youtubePlayScreen);
+        rootFragment.showPlayer(RootFragment.Scene.youtubePlayScreen, RootFragment.TransitionBy.list);
     };
 
     public AdapterView.OnItemLongClickListener ExTrackLongClickListener = (parent, view, position, id) -> {
@@ -349,9 +359,7 @@ public class Main extends AppCompatActivity {
     public AdapterView.OnItemClickListener internalExTrackClickListener = (parent, view, position, id) -> {
         ListView lv = (ListView)parent;
         focusExTrack( (ExTrack) lv.getItemAtPosition(position) );
-
-        cfListener.setFragment(RootFragment.Scene.playScreen);
-        fListener.setFrom(RootFragment.BackFrom.playScreen);
+        rootFragment.showPlayer(RootFragment.Scene.playScreen, RootFragment.TransitionBy.list);
     };
 
     public AdapterView.OnItemLongClickListener internalExTrackLongClickListener = (parent, view, position, id) -> {
@@ -393,24 +401,6 @@ public class Main extends AppCompatActivity {
 
     public static void setMainLifecycleListener(MainLifecycleListener l) {
         mlListener = l;
-    }
-
-    // どのFragmentに遷移したかを通知
-    public interface ChangeFragmentListener {
-        void setFragment(RootFragment.Scene scene);
-    }
-
-    public void setChangeFragmentListener(ChangeFragmentListener l) {
-        cfListener = l;
-    }
-
-    // どちらのplayScreenから戻ってきたかを通知
-    public interface FromListener {
-        void setFrom(RootFragment.BackFrom from);
-    }
-
-    public void setFromListener(FromListener l) {
-        fListener = l;
     }
 
     // SituationMenuFragmentにrecommendedSituationsを表示
